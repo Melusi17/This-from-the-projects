@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Unprocessed Scripts - Ibhayi Pharmacy</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f4f6f9;
+            display: flex;
+        }
+
+        /* ===== LEGENDARY SIDEBAR ===== */
+        .sidebar {
+            width: 220px;
+            background: linear-gradient(to bottom, #2c3e50, #1a252f);
+            height: 100vh;
+            padding: 20px 0;
+            color: white;
+            position: fixed;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        }
+        
+        .sidebar-header {
+            padding: 0 20px 20px;
+            border-bottom: 1px solid #34495e;
+            margin-bottom: 15px;
+        }
+        
+        .sidebar h2 {
+            font-size: 22px;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .sidebar h2 i {
+            color: #3498db;
+        }
+        
+        .sidebar-nav {
+            padding: 0 10px;
+        }
+        
+        .sidebar a {
+            color: #ecf0f1;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 8px 0;
+            padding: 10px 15px;
+            border-radius: 5px;
+            transition: all 0.3s;
+            font-size: 15px;
+        }
+        
+        .sidebar a:hover, .sidebar a.active {
+            background-color: #34495e;
+            transform: translateX(5px);
+        }
+        
+        .sidebar a i {
+            width: 20px;
+            text-align: center;
+        }
+        
+        .sidebar-footer {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            padding: 0 20px;
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+
+        /* Top Nav */
+        .topnav {
+            background-color: #ffffff;
+            height: 60px;
+            line-height: 60px;
+            padding: 0 20px;
+            position: fixed;
+            left: 220px;
+            right: 0;
+            top: 0;
+            border-bottom: 1px solid #ccc;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .topnav span {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 220px;
+            margin-top: 60px;
+            padding: 30px;
+            width: calc(100% - 220px);
+        }
+
+        /* Scripts Page Styles */
+        .search-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+
+        .search-bar {
+            display: flex;
+            gap: 15px;
+        }
+
+        .search-bar input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .search-bar button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 0 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .search-bar button:hover {
+            background-color: #2980b9;
+        }
+
+        .scripts-list {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            overflow: hidden;
+        }
+
+        .script-card {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            transition: all 0.2s;
+            cursor: pointer;
+            
+        }
+
+        .script-card:hover {
+            background-color: #f8fafc;
+        }
+
+        .script-card.expanded {
+            background-color: #f0f7ff;
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.2);
+        }
+
+        .script-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .script-patient, .script-doctor {
+            font-weight: 600;
+        }
+
+        .script-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .script-status {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-ready {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .script-repeat {
+            color: #d35400;
+            font-weight: 600;
+        }
+
+        .dispense-btn {
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            float: right;
+            transition: all 0.2s;
+            margin-left: 10px;
+        }
+
+        .dispense-btn:hover {
+            background-color: #219653;
+            transform: scale(1.05);
+        }
+
+        .email-btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            float: right;
+            transition: all 0.2s;
+        }
+
+        .email-btn:hover {
+            background-color: #2980b9;
+            transform: scale(1.05);
+        }
+
+        .script-details {
+            display: none;
+            margin-top: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .expanded .script-details {
+            display: block;
+        }
+
+        .doctor-prescriptions {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+
+        .prescription-option {
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            min-width: 200px;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .prescription-option:hover {
+            border-color: #3498db;
+            transform: translateY(-3px);
+        }
+
+        .prescription-option.selected {
+            border-color: #27ae60;
+            background-color: #e8f5e9;
+        }
+
+        .prescription-pdf {
+            height: 250px;
+            width: 100%;
+            border: 1px dashed #3498db;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #7f8c8d;
+        }
+
+        .prescription-meta {
+            font-size: 13px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(0,0,0,0.1);
+            border-radius: 50%;
+            border-top-color: #3498db;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- LEGENDARY SIDEBAR -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2><i class="fas fa-prescription-bottle-alt"></i> Pharmacist Panel</h2>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <a href="#"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+            <a href="LoadPrescription.html"><i class="fas fa-tachometer-alt"></i> Load Prescription</a>
+            <a href="PrescriptionReview.html"><i class="fas fa-clipboard-list"></i> Dispensary</a>
+            <a href="UnprocessesScripts.html" class="active"><i class="fas fa-file-prescription"></i> Prescriptions</a>
+            <a href="processedOrders.html"><i class="fas fa-boxes"></i> Processed Orders</a>
+            <a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </nav>
+        
+        <div class="sidebar-footer">
+            <p>Ibhayi Pharmacy v2.1</p>
+        </div>
+    </div>
+
+    <!-- Topbar -->
+    <div class="topnav">
+        <span>Unprocessed Scripts</span>
+        <div>Welcome, Pharmacist</div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <h2>Prescriptions Ready for Dispensing</h2>
+        
+        <div class="search-container">
+            <div class="search-bar">
+                <input type="text" placeholder="Search by patient name or ID..." id="searchInput">
+                <button onclick="searchScripts()"><i class="fas fa-search"></i> Search</button>
+            </div>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="loading-spinner"></div> Searching...
+        </div>
+
+        <div class="scripts-list" id="scriptsList">
+            <!-- Script 1 - With Multiple Doctors -->
+            <div class="script-card" onclick="toggleScriptDetails(this)" data-script-id="1001">
+                <div class="script-header">
+                    <div>
+                        <span class="script-patient">Patient: John Doe (ID: 9001011234081)</span>
+                    </div>
+                    <span class="script-status status-pending">Ready</span>
+                </div>
+                <div class="script-meta">
+                    <span>Primary Doctor: Dr. Sarah Smith (PR1234567)</span>
+                    <span>Date: 2023-05-15</span>
+                    <span class="script-repeat">Repeat (2 remaining)</span>
+                </div>
+                
+                <div class="script-details">
+                    <h4>Available Prescriptions:</h4>
+                    <div class="doctor-prescriptions">
+                        <div class="prescription-option selected" onclick="selectPrescription(event, this)" data-pdf="script1001a.pdf">
+                            <strong>Dr. Sarah Smith</strong>
+                            <div class="prescription-meta">Issued: 15 May 2023</div>
+                            <div class="prescription-pdf">
+                                <embed src="script1001a.pdf" type="application/pdf" width="100%" height="100%">
+                            </div>
+                        </div>
+                        <div class="prescription-option" onclick="selectPrescription(event, this)" data-pdf="script1001b.pdf">
+                            <strong>Dr. Michael Brown</strong>
+                            <div class="prescription-meta">Issued: 10 May 2023</div>
+                            <div class="prescription-pdf">
+                                <embed src="script1001b.pdf" type="application/pdf" width="100%" height="100%">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="email-btn" onclick="emailScript(event, '1001')">
+                    <i class="fas fa-envelope"></i> Email
+                </button>
+                <button class="dispense-btn" onclick="dispenseScript(event, '1001')">
+                    <i class="fas fa-pills"></i> Dispense Selected
+                </button>
+                <div style="clear:both"></div>
+            </div>
+
+            <!-- Script 2 - Single Doctor -->
+            <div class="script-card" onclick="toggleScriptDetails(this)" data-script-id="1002">
+                <div class="script-header">
+                    <div>
+                        <span class="script-patient">Patient: Amanda Johnson (ID: 8902021234082)</span>
+                    </div>
+                    <span class="script-status status-pending">Ready</span>
+                </div>
+                <div class="script-meta">
+                    <span>Doctor: Dr. Michael Brown (PR7654321)</span>
+                    <span>Date: 2023-05-14</span>
+                </div>
+                
+                <div class="script-details">
+                    <h4>Available Prescription:</h4>
+                    <div class="doctor-prescriptions">
+                        <div class="prescription-option selected" onclick="selectPrescription(event, this)" data-pdf="script1002.pdf">
+                            <strong>Dr. Michael Brown</strong>
+                            <div class="prescription-meta">Issued: 14 May 2023</div>
+                            <div class="prescription-pdf">
+                                <embed src="script1002.pdf" type="application/pdf" width="100%" height="100%">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="email-btn" onclick="emailScript(event, '1002')">
+                    <i class="fas fa-envelope"></i> Email
+                </button>
+                <button class="dispense-btn" onclick="dispenseScript(event, '1002')">
+                    <i class="fas fa-pills"></i> Dispense
+                </button>
+                <div style="clear:both"></div>
+            </div>
+
+            <!-- Script 3 - Another Multi-Doctor -->
+            <div class="script-card" onclick="toggleScriptDetails(this)" data-script-id="1003">
+                <div class="script-header">
+                    <div>
+                        <span class="script-patient">Patient: Lunga Dlamini (ID: 8803031234083)</span>
+                    </div>
+                    <span class="script-status status-pending">Ready</span>
+                </div>
+                <div class="script-meta">
+                    <span>Primary Doctor: Dr. Thando Nkosi (PR9876543)</span>
+                    <span>Date: 2023-05-12</span>
+                    <span class="script-repeat">Repeat (FINAL)</span>
+                </div>
+                
+                <div class="script-details">
+                    <h4>Available Prescriptions:</h4>
+                    <div class="doctor-prescriptions">
+                        <div class="prescription-option selected" onclick="selectPrescription(event, this)" data-pdf="script1003a.pdf">
+                            <strong>Dr. Thando Nkosi</strong>
+                            <div class="prescription-meta">Issued: 12 May 2023</div>
+                            <div class="prescription-pdf">
+                                <embed src="script1003a.pdf" type="application/pdf" width="100%" height="100%">
+                            </div>
+                        </div>
+                        <div class="prescription-option" onclick="selectPrescription(event, this)" data-pdf="script1003b.pdf">
+                            <strong>Dr. Sarah Smith</strong>
+                            <div class="prescription-meta">Issued: 05 May 2023</div>
+                            <div class="prescription-pdf">
+                                <embed src="script1003b.pdf" type="application/pdf" width="100%" height="100%">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="email-btn" onclick="emailScript(event, '1003')">
+                    <i class="fas fa-envelope"></i> Email
+                </button>
+                <button class="dispense-btn" onclick="dispenseScript(event, '1003')">
+                    <i class="fas fa-pills"></i> Dispense Selected
+                </button>
+                <div style="clear:both"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Enhanced search with loading animation
+        function searchScripts() {
+            const loading = document.getElementById('loading');
+            const scriptsList = document.getElementById('scriptsList');
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            
+            loading.style.display = 'block';
+            scriptsList.style.opacity = '0.5';
+            
+            setTimeout(() => {
+                const cards = document.querySelectorAll('.script-card');
+                
+                cards.forEach(card => {
+                    const patientText = card.querySelector('.script-patient').textContent.toLowerCase();
+                    card.style.display = patientText.includes(searchTerm) ? 'block' : 'none';
+                });
+                
+                loading.style.display = 'none';
+                scriptsList.style.opacity = '1';
+            }, 800);
+        }
+
+        // Toggle script details
+        function toggleScriptDetails(card) {
+            // Don't toggle if clicking on buttons or prescription options
+            if (!event.target.classList.contains('dispense-btn') && 
+                !event.target.classList.contains('email-btn') &&
+                !event.target.classList.contains('prescription-option') &&
+                !event.target.closest('.prescription-option')) {
+                card.classList.toggle('expanded');
+            }
+        }
+
+        // Select prescription
+        function selectPrescription(event, element) {
+            event.stopPropagation(); // Prevent card toggle
+            
+            // Remove selected class from siblings
+            const siblings = element.parentElement.querySelectorAll('.prescription-option');
+            siblings.forEach(el => el.classList.remove('selected'));
+            
+            // Add to clicked element
+            element.classList.add('selected');
+        }
+
+        // Dispense selected prescription
+        function dispenseScript(event, scriptId) {
+            event.stopPropagation();
+            
+            const card = document.querySelector(`.script-card[data-script-id="${scriptId}"]`);
+            const selectedPrescription = card.querySelector('.prescription-option.selected');
+            
+            if (selectedPrescription) {
+                const pdfFile = selectedPrescription.getAttribute('data-pdf');
+                const doctorName = selectedPrescription.querySelector('strong').textContent;
+                
+                alert(`Dispensing prescription from ${doctorName}\nPDF: ${pdfFile}`);
+                // In real app, this would redirect with parameters:
+                // location.href = `/Pharmacist/Dispensory?script=${scriptId}&pdf=${pdfFile}`;
+                
+                // Mark as processing
+                card.querySelector('.script-status').className = 'script-status status-ready';
+                card.querySelector('.script-status').textContent = 'Processing';
+                card.classList.remove('expanded');
+            }
+        }
+
+        // Email script
+        function emailScript(event, scriptId) {
+            event.stopPropagation();
+            const card = document.querySelector(`.script-card[data-script-id="${scriptId}"]`);
+            const patient = card.querySelector('.script-patient').textContent;
+            alert(`Email sent to patient: ${patient}`);
+        }
+
+        // Make search work on Enter key
+        document.getElementById('searchInput').addEventListener('keyup', function(event) {
+            if (event.key === 'Enter') {
+                searchScripts();
+            }
+        });
+    </script>
+</body>
+</html>

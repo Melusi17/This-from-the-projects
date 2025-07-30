@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Pharmacist Dashboard - Ibhayi Pharmacy</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            margin: 0;
+            background-color: #f5f7fa;
+            color: #333;
+        }
+
+        .topbar {
+            background-color: #00695c;
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .topbar .logout-btn {
+            background-color: #004d40;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .sidebar {
+            width: 220px;
+            height: 100vh;
+            background-color: #004d40;
+            padding-top: 2rem;
+            position: fixed;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 1rem 2rem;
+            color: white;
+            text-decoration: none;
+            transition: background 0.3s;
+        }
+
+        .sidebar a:hover {
+            background-color: #00695c;
+        }
+
+        .main-content {
+            margin-left: 220px;
+            padding: 2rem;
+        }
+
+        .card {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        h1, h2 {
+            color: #00695c;
+        }
+
+        .btn {
+            background-color: #00695c;
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-right: 10px;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn:hover {
+            background-color: #004d40;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="topbar">
+        <div><strong>Ibhayi Pharmacy</strong> - Pharmacist Dashboard</div>
+        <div>
+            Logged in as: <strong>John Doe</strong>
+            <button class="logout-btn">Logout</button>
+        </div>
+    </div>
+
+    <div class="sidebar">
+        <a href="dispense-prescription.html">Dispense Prescription</a>
+        <a href="#">Dispense to Walk-In</a>
+        <a href="#">View Reports</a>
+        <a href="#">Manage Patients</a>
+    </div>
+
+    <div class="main-content">
+        <div class="card">
+            <h1>Welcome, Pharmacist</h1>
+            <p>Select an option from the menu to get started with your tasks.</p>
+            <div>
+                <a href="DispenseNewPrescription.html" class="btn">Dispense New Prescription</a>
+                <button class="btn">Handle Walk-In Customer</button>
+                <button class="btn">Generate Report</button>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

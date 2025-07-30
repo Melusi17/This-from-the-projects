@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Processed Orders - Ibhayi Pharmacy</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f4f6f9;
+            display: flex;
+        }
+
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            width: 220px;
+            background: linear-gradient(to bottom, #2c3e50, #1a252f);
+            height: 100vh;
+            padding: 20px 0;
+            color: white;
+            position: fixed;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        }
+        
+        .sidebar-header {
+            padding: 0 20px 20px;
+            border-bottom: 1px solid #34495e;
+            margin-bottom: 15px;
+        }
+        
+        .sidebar h2 {
+            font-size: 22px;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .sidebar h2 i {
+            color: #3498db;
+        }
+        
+        .sidebar-nav {
+            padding: 0 10px;
+        }
+        
+        .sidebar a {
+            color: #ecf0f1;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 8px 0;
+            padding: 10px 15px;
+            border-radius: 5px;
+            transition: all 0.3s;
+            font-size: 15px;
+        }
+        
+        .sidebar a:hover, .sidebar a.active {
+            background-color: #34495e;
+            transform: translateX(5px);
+        }
+        
+        .sidebar a i {
+            width: 20px;
+            text-align: center;
+        }
+        
+        .sidebar-footer {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            padding: 0 20px;
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+
+        /* Top Nav */
+        .topnav {
+            background-color: #ffffff;
+            height: 60px;
+            line-height: 60px;
+            padding: 0 20px;
+            position: fixed;
+            left: 220px;
+            right: 0;
+            top: 0;
+            border-bottom: 1px solid #ccc;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .topnav span {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 220px;
+            margin-top: 60px;
+            padding: 30px;
+            width: calc(100% - 220px);
+        }
+
+        /* Orders Page Styles */
+        .search-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+
+        .search-bar {
+            display: flex;
+            gap: 15px;
+        }
+
+        .search-bar input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .search-bar button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 0 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .search-bar button:hover {
+            background-color: #2980b9;
+        }
+
+        .orders-list {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            overflow: hidden;
+        }
+
+        .order-card {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .order-card:hover {
+            background-color: #f8fafc;
+        }
+
+        .order-card.expanded {
+            background-color: #f0f7ff;
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .order-patient, .order-doctor {
+            font-weight: 600;
+        }
+
+        .order-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .order-status {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .status-packing {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-ready {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-rejected {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .order-repeat {
+            color: #d35400;
+            font-weight: 600;
+        }
+
+        .order-actions {
+            float: right;
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+
+        .pack-btn {
+            background-color: #f39c12;
+        }
+
+        .collect-btn {
+            background-color: #2ecc71;
+        }
+
+        .email-btn {
+            background-color: #3498db;
+        }
+
+        .action-btn:hover {
+            transform: scale(1.05);
+            opacity: 0.9;
+        }
+
+        .order-details {
+            display: none;
+            margin-top: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 5px;
+            border: 1px solid #eee;
+        }
+
+        .order-details table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .order-details th {
+            background: #3498db;
+            color: white;
+            padding: 10px;
+            text-align: left;
+        }
+
+        .order-details td {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .med-badge {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-s0 { background: #d4edda; color: #155724; }
+        .badge-s1 { background: #fff3cd; color: #856404; }
+        .badge-s2 { background: #ffeeba; color: #856404; }
+        .badge-s3 { background: #bee5eb; color: #0c5460; }
+        .badge-s4 { background: #f5c6cb; color: #721c24; }
+        .badge-s5 { background: #c6c8ca; color: #1b1e21; }
+        .badge-s6 { background: #f8d7da; color: #721c24; }
+        .badge-s7 { background: #343a40; color: white; }
+
+        .filter-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .filter-btn {
+            padding: 8px 15px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .filter-btn:hover, .filter-btn.active {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+
+        /* Animation for expanding */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .expanded .order-details {
+            display: block;
+            animation: fadeIn 0.3s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2><i class="fas fa-prescription-bottle-alt"></i> Pharmacist Panel</h2>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <a href="#"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+            <a href="LoadPrescription.html"><i class="fas fa-tachometer-alt"></i> Load Prescription</a>
+            <a href="PrescriptionReview.html"><i class="fas fa-clipboard-list"></i> Dispensary</a>
+            <a href="UnprocessesScripts.html"><i class="fas fa-file-prescription"></i> Prescriptions</a>
+            <a href="processedOrders.html" class="active"><i class="fas fa-boxes"></i> Processed Orders</a>
+            <a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </nav>
+        
+        <div class="sidebar-footer">
+            <p>Ibhayi Pharmacy v2.1</p>
+        </div>
+    </div>
+
+    <!-- Topbar -->
+    <div class="topnav">
+        <span>Processed Orders</span>
+        <div>Welcome, Pharmacist</div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <h2>Order Status Tracking</h2>
+        
+        <div class="filter-container">
+            <button class="filter-btn active" onclick="filterOrders('all')">All Orders</button>
+            <button class="filter-btn" onclick="filterOrders('packing')">Packing</button>
+            <button class="filter-btn" onclick="filterOrders('ready')">Ready for Collection</button>
+            <button class="filter-btn" onclick="filterOrders('rejected')">Rejected</button>
+        </div>
+        
+        <div class="search-container">
+            <div class="search-bar">
+                <input type="text" placeholder="Search by patient name or ID..." id="searchInput">
+                <button onclick="searchOrders()"><i class="fas fa-search"></i> Search</button>
+            </div>
+        </div>
+
+        <div class="orders-list" id="ordersList">
+            <!-- Order 1 - Ready for Packing -->
+            <div class="order-card" data-status="packing">
+                <div class="order-header">
+                    <div>
+                        <span class="order-patient">Patient: John Doe (ID: 9001011234081)</span>
+                    </div>
+                    <span class="order-status status-packing">Packing</span>
+                </div>
+                <div class="order-meta">
+                    <span>Doctor: Dr. Sarah Smith (PR1234567)</span>
+                    <span>Date: 2023-05-15</span>
+                    <span class="order-repeat">Repeat (2 remaining)</span>
+                </div>
+                <div class="order-actions">
+                    <button class="action-btn email-btn" onclick="emailOrder(this)">
+                        <i class="fas fa-envelope"></i> Email
+                    </button>
+                    <button class="action-btn collect-btn" onclick="collectOrder(this)">
+                        <i class="fas fa-check"></i> Collect
+                    </button>
+                </div>
+                <div class="order-details">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Medication</th>
+                                <th>Dosage Form</th>
+                                <th>Qty</th>
+                                <th>Schedule</th>
+                                <th>Price (ZAR)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Amoxicillin 500mg</td>
+                                <td>Capsule</td>
+                                <td>14</td>
+                                <td><span class="med-badge badge-s4">S4</span></td>
+                                <td>R 85.50</td>
+                            </tr>
+                            <tr>
+                                <td>Panado Extra</td>
+                                <td>Tablet</td>
+                                <td>20</td>
+                                <td><span class="med-badge badge-s0">S0</span></td>
+                                <td>R 45.75</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div style="clear:both"></div>
+            </div>
+
+            <!-- Order 2 - Ready for Collection -->
+            <div class="order-card" data-status="ready">
+                <div class="order-header">
+                    <div>
+                        <span class="order-patient">Patient: Amanda Johnson (ID: 8902021234082)</span>
+                    </div>
+                    <span class="order-status status-ready">Ready for Collection</span>
+                </div>
+                <div class="order-meta">
+                    <span>Doctor: Dr. Michael Brown (PR7654321)</span>
+                    <span>Date: 2023-05-14</span>
+                </div>
+                <div class="order-actions">
+                    <button class="action-btn email-btn" onclick="emailOrder(this)">
+                        <i class="fas fa-envelope"></i> Email
+                    </button>
+                </div>
+                <div class="order-details">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Medication</th>
+                                <th>Dosage Form</th>
+                                <th>Qty</th>
+                                <th>Schedule</th>
+                                <th>Price (ZAR)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Lisinopril 10mg</td>
+                                <td>Tablet</td>
+                                <td>30</td>
+                                <td><span class="med-badge badge-s2">S2</span></td>
+                                <td>R 120.00</td>
+                            </tr>
+                            <tr>
+                                <td>Simvastatin 20mg</td>
+                                <td>Tablet</td>
+                                <td>30</td>
+                                <td><span class="med-badge badge-s3">S3</span></td>
+                                <td>R 95.00</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div style="clear:both"></div>
+            </div>
+
+            <!-- Order 3 - Rejected -->
+            <div class="order-card" data-status="rejected">
+                <div class="order-header">
+                    <div>
+                        <span class="order-patient">Patient: Lunga Dlamini (ID: 8803031234083)</span>
+                    </div>
+                    <span class="order-status status-rejected">Rejected</span>
+                </div>
+                <div class="order-meta">
+                    <span>Doctor: Dr. Thando Nkosi (PR9876543)</span>
+                    <span>Date: 2023-05-12</span>
+                </div>
+                <div class="order-actions">
+                    <button class="action-btn email-btn" onclick="emailOrder(this)">
+                        <i class="fas fa-envelope"></i> Email
+                    </button>
+                </div>
+                <div class="order-details">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Medication</th>
+                                <th>Dosage Form</th>
+                                <th>Qty</th>
+                                <th>Schedule</th>
+                                <th>Price (ZAR)</th>
+                                <th>Rejection Reason</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Ibuprofen 200mg</td>
+                                <td>Tablet</td>
+                                <td>10</td>
+                                <td><span class="med-badge badge-s1">S1</span></td>
+                                <td>R 32.50</td>
+                                <td>Patient allergic</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div style="clear:both"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Toggle order details on card click
+        document.querySelectorAll('.order-card').forEach(card => {
+            card.addEventListener('click', function(e) {
+                // Don't toggle if clicking on buttons
+                if (!e.target.classList.contains('action-btn')) {
+                    this.classList.toggle('expanded');
+                }
+            });
+        });
+
+        // Filter orders by status
+        function filterOrders(status) {
+            // Update active filter button
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            const cards = document.querySelectorAll('.order-card');
+            
+            cards.forEach(card => {
+                if (status === 'all') {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = card.dataset.status === status ? 'block' : 'none';
+                }
+            });
+        }
+        
+        // Pack order function
+        function packOrder(button) {
+            const card = button.closest('.order-card');
+            card.dataset.status = 'packing';
+            card.querySelector('.order-status').className = 'order-status status-packing';
+            card.querySelector('.order-status').textContent = 'Packing';
+            
+            // Change button to collect button
+            button.outerHTML = `
+                <button class="action-btn collect-btn" onclick="collectOrder(this)">
+                    <i class="fas fa-check"></i> Collect
+                </button>
+            `;
+        }
+        
+        // Collect order function
+        function collectOrder(button) {
+            const card = button.closest('.order-card');
+            card.dataset.status = 'ready';
+            card.querySelector('.order-status').className = 'order-status status-ready';
+            card.querySelector('.order-status').textContent = 'Ready for Collection';
+            
+            // Remove the collect button after marking as ready
+            button.remove();
+        }
+
+        // Email order function
+        function emailOrder(button) {
+            const card = button.closest('.order-card');
+            const patient = card.querySelector('.order-patient').textContent;
+            alert(`Email sent to ${patient}`);
+            // In a real app, this would trigger an email API
+        }
+
+        // Search orders
+        function searchOrders() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const cards = document.querySelectorAll('.order-card');
+            
+            cards.forEach(card => {
+                const patientText = card.querySelector('.order-patient').textContent.toLowerCase();
+                card.style.display = patientText.includes(searchTerm) ? 'block' : 'none';
+            });
+        }
+
+        // Make search work on Enter key
+        document.getElementById('searchInput').addEventListener('keyup', function(event) {
+            if (event.key === 'Enter') {
+                searchOrders();
+            }
+        });
+    </script>
+</body>
+</html>

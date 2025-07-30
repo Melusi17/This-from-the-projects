@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Prescription System - Ibhayi Pharmacy</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ===== GLOBAL STYLES ===== */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f4f6f9;
+            color: #333;
+        }
+        
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            width: 220px;
+            background: linear-gradient(to bottom, #2c3e50, #1a252f);
+            height: 100vh;
+            padding: 20px 0;
+            position: fixed;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+        
+        .sidebar-header {
+            padding: 0 20px 20px;
+            border-bottom: 1px solid #34495e;
+            margin-bottom: 15px;
+        }
+        
+        .sidebar h2 {
+            font-size: 22px;
+            margin: 0;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .sidebar h2 i {
+            color: #3498db;
+        }
+        
+        .sidebar-nav {
+            padding: 0 10px;
+        }
+        
+        .sidebar a {
+            color: #ecf0f1;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 8px 0;
+            padding: 10px 15px;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        
+        .sidebar a:hover, .sidebar a.active {
+            background-color: #34495e;
+            transform: translateX(5px);
+        }
+        
+        .sidebar-footer {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            padding: 0 20px;
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+        
+        /* ===== TOPBAR ===== */
+        .topbar {
+            background-color: #ffffff;
+            height: 60px;
+            padding: 0 20px;
+            position: fixed;
+            left: 220px;
+            right: 0;
+            top: 0;
+            border-bottom: 1px solid #ccc;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 999;
+        }
+        
+        .topbar span {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        /* ===== MAIN CONTENT ===== */
+        .main-content {
+            margin-left: 220px;
+            margin-top: 60px;
+            padding: 30px;
+        }
+        
+        /* ===== FLEXIBLE GRID LAYOUT ===== */
+        .form-container {
+            display: grid;
+            grid-template-areas:
+                "customer doctor"
+                "meds pdf";
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .customer-card { grid-area: customer; }
+        .doctor-card { grid-area: doctor; }
+        .meds-card { grid-area: meds; }
+        .pdf-card { 
+            grid-area: pdf;
+            position: relative;
+            min-height: 300px;
+            transition: all 0.3s ease;
+        }
+        
+        /* PDF card expanded state */
+        .pdf-card.expanded {
+            position: fixed;
+            top: 80px;
+            left: 250px;
+            right: 30px;
+            bottom: 30px;
+            z-index: 1001;
+            height: auto !important;
+        }
+        
+        .pdf-card.expanded #pdfViewer {
+            height: calc(100% - 60px);
+        }
+        
+        h3 {
+            color: #2c3e50;
+            margin-top: 0;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        /* ===== PDF VIEWER CONTROLS ===== */
+        .pdf-controls {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            display: flex;
+            gap: 10px;
+            z-index: 2;
+        }
+        
+        .expand-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .expand-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        /* ===== PDF VIEWER ===== */
+        #pdfViewer {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px dashed #3498db;
+            border-radius: 5px;
+            position: relative;
+            overflow: hidden;
+            transition: height 0.3s ease;
+        }
+        
+        #pdfViewer embed {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .placeholder {
+            color: #95a5a6;
+            text-align: center;
+            font-style: italic;
+            padding: 20px;
+        }
+        
+        /* ===== FORM COMPONENTS ===== */
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #34495e;
+            font-size: 14px;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        
+        .search-container {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .search-container input {
+            flex: 1;
+        }
+        
+        .info-box {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+            border-left: 3px solid #3498db;
+        }
+        
+        .btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+        
+        .btn-add {
+            background: #27ae60;
+        }
+        
+        .btn-alert {
+            background: #e74c3c;
+        }
+        
+        /* ===== MEDICATION TABLE ===== */
+        .medication-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        .medication-table th {
+            background: #3498db;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+        
+        .medication-table td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+            vertical-align: top;
+        }
+        
+        .medication-table select, 
+        .medication-table input {
+            margin: 0;
+        }
+        
+        .med-details {
+            font-size: 12px;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+        
+        .remove-btn {
+            color: #e74c3c;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        /* ===== MODALS ===== */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        /* ===== OVERLAY FOR EXPANDED PDF ===== */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+        
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .form-container {
+                grid-template-areas:
+                    "customer"
+                    "doctor"
+                    "meds"
+                    "pdf";
+                grid-template-columns: 1fr;
+            }
+            
+            .pdf-card.expanded {
+                left: 20px;
+                right: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2><i class="fas fa-prescription-bottle-alt"></i> Pharmacist Panel</h2>
+            <small style="color: #bdc3c7;">Dedicated Dictionary</small>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="#"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+            <a href="#" class="active"><i class="fas fa-clipboard-list"></i> Dispensary</a>
+            <a href="#"><i class="fas fa-file-prescription"></i> Prescriptions</a>
+            <a href="#"><i class="fas fa-boxes"></i> Order Stock</a>
+            <a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </nav>
+        <div class="sidebar-footer">
+            <p>Ibhayi Pharmacy v2.1</p>
+        </div>
+    </div>
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+        <span>Load New Prescription</span>
+        <div>Welcome, <strong>Pharmacist</strong></div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <div class="form-container">
+            <!-- CUSTOMER CARD -->
+            <div class="card customer-card">
+                <h3><i class="fas fa-user-injured"></i> Customer Information</h3>
+                
+                <div class="search-container">
+                    <select id="customerSelect">
+                        <option value="">Select patient...</option>
+                        <option value="1">John Doe (ID: 9001011234081)</option>
+                        <option value="2">Amanda Johnson (ID: 8902021234082)</option>
+                        <option value="3">Lunga Dlamini (ID: 8803031234083)</option>
+                    </select>
+                    <button class="btn"><i class="fas fa-search"></i> Search</button>
+                </div>
+                
+                <div class="info-box" id="patientDetails">
+                    <p><strong>DOB:</strong> <span id="dob">15/06/1990</span></p>
+                    <p><strong>Allergies:</strong> <span id="allergies">Penicillin, Sulfa drugs</span></p>
+                    <p><strong>Chronic Conditions:</strong> <span id="conditions">Hypertension</span></p>
+                </div>
+                
+                <button class="btn btn-add" id="addPatientBtn"><i class="fas fa-user-plus"></i> Add New Patient</button>
+            </div>
+            
+            <!-- DOCTOR CARD -->
+            <div class="card doctor-card">
+                <h3><i class="fas fa-user-md"></i> Doctor Information</h3>
+                
+                <div class="form-group">
+                    <label for="doctorSelect">Select Doctor</label>
+                    <select id="doctorSelect">
+                        <option value="">Select doctor...</option>
+                        <option value="1">Dr. Sarah Smith (PR1234567)</option>
+                        <option value="2">Dr. Michael Brown (PR7654321)</option>
+                        <option value="3">Dr. Thando Nkosi (PR9876543)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="prescriptionDate">Prescription Date</label>
+                    <input type="date" id="prescriptionDate">
+                </div>
+                
+                <div class="form-group">
+                    <label for="prescriptionUpload">Upload Prescription</label>
+                    <input type="file" id="prescriptionUpload" accept=".pdf">
+                </div>
+            </div>
+            
+            <!-- MEDICATION CARD -->
+            <div class="card meds-card">
+                <h3><i class="fas fa-pills"></i> Medication</h3>
+                
+                <table class="medication-table">
+                    <thead>
+                        <tr>
+                            <th width="25%">Medication</th>
+                            <th width="15%">Dosage Form</th>
+                            <th width="10%">Qty</th>
+                            <th width="30%">Instructions</th>
+                            <th width="15%">Details</th>
+                            <th width="5%"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="medsTableBody">
+                        <!-- Rows will be added here -->
+                    </tbody>
+                </table>
+                
+                <button class="btn btn-add" id="addMedBtn"><i class="fas fa-plus"></i> Add Medication</button>
+                
+                <div class="form-footer" style="margin-top: 25px;">
+                    <button class="btn btn-alert"><i class="fas fa-exclamation-triangle"></i> Check Interactions</button>
+                    <button class="btn btn-add"><i class="fas fa-save"></i> Save Prescription</button>
+                </div>
+            </div>
+
+            <!-- PDF VIEWER CARD -->
+            <div class="card pdf-card" id="pdfCard">
+                <h3>
+                    <i class="fas fa-file-pdf"></i> Prescription Preview
+                    <div class="pdf-controls">
+                        <button class="expand-btn" id="expandPdfBtn" title="Expand view">
+                            <i class="fas fa-expand"></i>
+                        </button>
+                        <button class="expand-btn" id="collapsePdfBtn" title="Collapse view" style="display: none;">
+                            <i class="fas fa-compress"></i>
+                        </button>
+                    </div>
+                </h3>
+                <div id="pdfViewer">
+                    <p class="placeholder">Upload a prescription to preview.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- OVERLAY FOR EXPANDED PDF -->
+    <div class="overlay" id="pdfOverlay"></div>
+
+    <!-- MODALS -->
+    <div class="modal" id="patientModal">
+        <div class="modal-content">
+            <h3><i class="fas fa-user-plus"></i> Add New Patient</h3>
+            <!-- Patient form would go here -->
+            <div style="text-align: right; margin-top: 20px;">
+                <button class="btn" onclick="closeModal('patientModal')">Cancel</button>
+                <button class="btn btn-add">Save Patient</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="instructionModal">
+        <div class="modal-content">
+            <h3><i class="fas fa-edit"></i> Custom Instructions</h3>
+            <textarea id="customInstructions" rows="4" style="width: 100%;"></textarea>
+            <div style="text-align: right; margin-top: 20px;">
+                <button class="btn" onclick="closeModal('instructionModal')">Cancel</button>
+                <button class="btn btn-add" onclick="saveCustomInstruction()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample data
+        const medications = [
+            {
+                id: 1,
+                name: "Panado Extra",
+                active: "Paracetamol 500mg + Caffeine 65mg",
+                stock: 256,
+                reorder: 100,
+                forms: ["Tablet", "Capsule"],
+                schedule: "S0"
+            },
+            {
+                id: 2,
+                name: "Amoxicillin 500mg",
+                active: "Amoxicillin",
+                stock: 142,
+                reorder: 50,
+                forms: ["Capsule"],
+                schedule: "S4"
+            },
+            {
+                id: 3,
+                name: "Lisinopril 10mg",
+                active: "Lisinopril",
+                stock: 89,
+                reorder: 30,
+                forms: ["Tablet"],
+                schedule: "S2"
+            }
+        ];
+
+        const commonInstructions = [
+            "Take 1 tablet daily",
+            "Take 1 tablet twice daily",
+            "Take 2 tablets at bedtime",
+            "Take as needed for pain",
+            "Other (specify)"
+        ];
+
+        // Initialize with one medication row
+        document.addEventListener('DOMContentLoaded', function() {
+            addMedicationRow();
+            
+            // Patient modal
+            document.getElementById('addPatientBtn').addEventListener('click', function() {
+                document.getElementById('patientModal').style.display = 'flex';
+            });
+
+            // PDF upload handler
+            document.getElementById('prescriptionUpload').addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                const pdfViewer = document.getElementById('pdfViewer');
+                
+                if (file && file.type === 'application/pdf') {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        pdfViewer.innerHTML = `
+                            <embed src="${e.target.result}" type="application/pdf" width="100%" height="100%">
+                        `;
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    pdfViewer.innerHTML = '<p class="placeholder">Please upload a valid PDF file.</p>';
+                }
+            });
+
+            // PDF expand/collapse functionality
+            const pdfCard = document.getElementById('pdfCard');
+            const expandBtn = document.getElementById('expandPdfBtn');
+            const collapseBtn = document.getElementById('collapsePdfBtn');
+            const overlay = document.getElementById('pdfOverlay');
+
+            expandBtn.addEventListener('click', function() {
+                pdfCard.classList.add('expanded');
+                expandBtn.style.display = 'none';
+                collapseBtn.style.display = 'block';
+                overlay.style.display = 'block';
+            });
+
+            collapseBtn.addEventListener('click', function() {
+                pdfCard.classList.remove('expanded');
+                expandBtn.style.display = 'block';
+                collapseBtn.style.display = 'none';
+                overlay.style.display = 'none';
+            });
+
+            overlay.addEventListener('click', function() {
+                pdfCard.classList.remove('expanded');
+                expandBtn.style.display = 'block';
+                collapseBtn.style.display = 'none';
+                overlay.style.display = 'none';
+            });
+        });
+
+        // Add medication row
+        function addMedicationRow() {
+            const tbody = document.getElementById('medsTableBody');
+            const rowId = Date.now();
+            
+            // Medication options
+            let medOptions = '<option value="">Select medication</option>';
+            medications.forEach(med => {
+                medOptions += `<option value="${med.id}">${med.name} (${med.schedule})</option>`;
+            });
+            
+            // Instruction options
+            let instructionOptions = '';
+            commonInstructions.forEach(inst => {
+                instructionOptions += `<option value="${inst}">${inst}</option>`;
+            });
+            
+            const row = document.createElement('tr');
+            row.id = `row-${rowId}`;
+            row.innerHTML = `
+                <td>
+                    <select class="med-select" onchange="updateMedDetails(this, ${rowId})">
+                        ${medOptions}
+                    </select>
+                </td>
+                <td>
+                    <select class="form-select" id="form-${rowId}">
+                        <option value="">Select form</option>
+                    </select>
+                </td>
+                <td><input type="number" min="1" value="1" class="qty-input"></td>
+                <td>
+                    <select class="inst-select" onchange="handleInstructionSelect(this, ${rowId})">
+                        ${instructionOptions}
+                    </select>
+                    <div id="custom-inst-${rowId}" style="display:none; margin-top:5px;">
+                        <textarea placeholder="Enter custom instructions..." rows="2"></textarea>
+                    </div>
+                </td>
+                <td>
+                    <div class="med-details" id="details-${rowId}">
+                        <!-- Details will populate here -->
+                    </div>
+                </td>
+                <td><button class="remove-btn" onclick="removeRow(${rowId})"><i class="fas fa-trash"></i></button></td>
+            `;
+            
+            tbody.appendChild(row);
+        }
+
+        // Update medication details
+        function updateMedDetails(select, rowId) {
+            const medId = select.value;
+            const detailsDiv = document.getElementById(`details-${rowId}`);
+            const formSelect = document.getElementById(`form-${rowId}`);
+            
+            if (medId) {
+                const med = medications.find(m => m.id == medId);
+                
+                // Update details display
+                detailsDiv.innerHTML = `
+                    <small><strong>Active:</strong> ${med.active}</small><br>
+                    <small><strong>Stock:</strong> ${med.stock}</small><br>
+                    <small><strong>Reorder:</strong> ${med.reorder}</small>
+                `;
+                
+                // Update dosage forms
+                formSelect.innerHTML = '<option value="">Select form</option>';
+                med.forms.forEach(form => {
+                    formSelect.innerHTML += `<option value="${form}">${form}</option>`;
+                });
+            } else {
+                detailsDiv.innerHTML = '';
+                formSelect.innerHTML = '<option value="">Select form</option>';
+            }
+        }
+
+        // Handle instruction selection
+        function handleInstructionSelect(select, rowId) {
+            const customDiv = document.getElementById(`custom-inst-${rowId}`);
+            if (select.value === "Other (specify)") {
+                customDiv.style.display = 'block';
+            } else {
+                customDiv.style.display = 'none';
+            }
+        }
+
+        // Remove row
+        function removeRow(rowId) {
+            document.getElementById(`row-${rowId}`).remove();
+        }
+
+        // Modal functions
+        function closeModal(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+
+        function saveCustomInstruction() {
+            // Implementation would save the custom instruction
+            closeModal('instructionModal');
+        }
+
+        // Add medication button
+        document.getElementById('addMedBtn').addEventListener('click', addMedicationRow);
+    </script>
+</body>
+</html>

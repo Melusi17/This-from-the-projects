@@ -1,0 +1,68 @@
+@{
+    ViewData["Title"] = "Dispense New Prescription";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-5 mb-5">
+    <h2 class="text-primary mb-4">Dispense New Prescription</h2>
+
+    <div class="card shadow-sm p-4">
+        <!-- Patient Info -->
+        <h5 class="mb-3 text-secondary">Patient Information</h5>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label class="form-label">Patient ID Number</label>
+                <input type="text" class="form-control" placeholder="Enter Patient ID">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Prescription Date</label>
+                <input type="date" class="form-control">
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Doctor</label>
+            <select class="form-select">
+                <option selected disabled>Select Doctor</option>
+                <option>Dr. M. Daniels</option>
+                <option>Dr. T. Mokoena</option>
+            </select>
+        </div>
+
+        <!-- Medication Info -->
+        <h5 class="mt-4 mb-3 text-secondary">Medication Details</h5>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label class="form-label">Medication Name</label>
+                <select class="form-select">
+                    <option selected disabled>Select Medication</option>
+                    <option>Paracetamol 500mg</option>
+                    <option>Ibuprofen 200mg</option>
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Quantity</label>
+                <input type="number" class="form-control" placeholder="Enter quantity">
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Instructions</label>
+            <textarea class="form-control" rows="3" placeholder="e.g. Take one tablet every 6 hours"></textarea>
+        </div>
+
+        <!-- PDF Upload & Download -->
+        <h5 class="mt-4 mb-3 text-secondary">Prescription PDF</h5>
+        <div class="mb-3">
+            <label class="form-label">Download Existing Prescription:</label><br />
+            <a href="/Files/Prescriptions/prescription123.pdf" class="btn btn-outline-primary" download>Download PDF</a>
+        </div>
+
+        <div class="mb-4">
+            <label class="form-label">Upload Updated Prescription (PDF):</label>
+            <input type="file" class="form-control" accept=".pdf" />
+        </div>
+
+        <button class="btn btn-primary">Dispense</button>
+    </div>
+</div>

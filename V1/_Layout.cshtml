@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Ibhayi Pharmacy</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="~/css/pharmacy-styles.css" />
+</head>
+<body>
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2><i class="fas fa-prescription-bottle-alt"></i> Pharmacist Panel</h2>
+            <small style="color: #bdc3c7;">Dedicated Dictionary</small>
+        </div>
+        <nav class="sidebar-nav">
+            <a asp-controller="Home" asp-action="Index"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+            <a asp-controller="Prescription" asp-action="LoadPrescription"><i class="fas fa-file-import"></i> Load Prescription</a>
+            <a asp-controller="Dispensary" asp-action="Index" class="active"><i class="fas fa-clipboard-list"></i> Dispensary</a>
+            <a asp-controller="Prescription" asp-action="Index"><i class="fas fa-file-prescription"></i> Prescriptions</a>
+            <a asp-controller="Inventory" asp-action="Index"><i class="fas fa-boxes"></i> Inventory</a>
+            <a asp-controller="Account" asp-action="Logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </nav>
+        <div class="sidebar-footer">
+            <p>Ibhayi Pharmacy v2.1</p>
+        </div>
+    </div>
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+        <span>@ViewData["PageTitle"]</span>
+        <div>Welcome, <strong>@User.Identity?.Name</strong></div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        @RenderBody()
+    </div>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dispensary - Ibhayi Pharmacy</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f4f6f9;
+            display: flex;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 220px;
+            background-color: #2c3e50;
+            height: 100vh;
+            padding: 20px;
+            color: white;
+            position: fixed;
+        }
+
+        .sidebar h2 {
+            font-size: 20px;
+            margin-bottom: 30px;
+        }
+
+        .sidebar a {
+            color: white;
+            text-decoration: none;
+            display: block;
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .sidebar a:hover {
+            background-color: #34495e;
+        }
+
+        /* Top Nav */
+        .topnav {
+            background-color: #ffffff;
+            height: 60px;
+            line-height: 60px;
+            padding: 0 20px;
+            position: fixed;
+            left: 220px;
+            right: 0;
+            top: 0;
+            border-bottom: 1px solid #ccc;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .topnav span {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 220px;
+            margin-top: 60px;
+            padding: 30px;
+            width: calc(100% - 220px);
+        }
+
+        /* Dispensary Styles */
+        .container {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .patient-info, .prescription-info {
+            flex: 1;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+
+        .prescription-info {
+            background-color: #f2f9f2;
+        }
+
+        h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        h3 {
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+
+        /* Enhanced Medication Table */
+        .medication-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .medication-table th {
+            background-color: #3498db;
+            color: white;
+            text-align: left;
+            padding: 12px 15px;
+            font-weight: 600;
+        }
+
+        .medication-table td {
+            padding: 10px 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .medication-table tr:nth-child(even) {
+            background-color: #f5f5f5;
+        }
+
+        .medication-table tr:hover {
+            background-color: #e8f4fc;
+        }
+
+        .active-ingredient {
+            margin: 3px 0;
+            padding: 3px 0;
+        }
+
+        .schedule-badge {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            line-height: 24px;
+            text-align: center;
+            border-radius: 50%;
+            background-color: #e74c3c;
+            color: white;
+            font-weight: bold;
+        }
+
+        .schedule-0 { background-color: #27ae60; }
+        .schedule-1 { background-color: #e67e22; }
+        .schedule-2 { background-color: #f39c12; }
+        .schedule-3 { background-color: #d35400; }
+        .schedule-4 { background-color: #e74c3c; }
+        .schedule-5 { background-color: #c0392b; }
+        .schedule-6 { background-color: #7f8c8d; }
+
+        /* Buttons */
+        .btn-primary {
+            background-color: #3498db;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 15px;
+            transition: background 0.3s ease;
+            margin-top: 15px;
+        }
+
+        .btn-primary:hover {
+            background-color: #2980b9;
+        }
+
+        .btn-danger {
+            background-color: #e74c3c;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-size: 15px;
+            transition: background 0.3s ease;
+        }
+
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+
+        /* Popup */
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            z-index: 9999;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .popup-content {
+            position: relative;
+        }
+
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+            resize: vertical;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h2>Pharmacist Panel</h2>
+        <a href="/Pharmacist/Dashboard">Dashboard</a>
+        <a href="/Pharmacist/Dispensory">Dispensory</a>
+        <a href="/Pharmacist/Prescriptions">Prescriptions</a>
+        <a href="/Pharmacist/Orders">Order Stock</a>
+        <a href="/Account/Logout">Logout</a>
+    </div>
+
+    <!-- Top Nav -->
+    <div class="topnav">
+        <span>Dispensary</span>
+        <div>Welcome, Pharmacist</div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <h2>Prescription Dispensing</h2>
+        
+        <div class="container">
+            <div class="patient-info">
+                <h3>Patient Information</h3>
+                <p><strong>Name:</strong> John Doe</p>
+                <p><strong>Patient ID:</strong> 9001011234081</p>
+                <p><strong>Age:</strong> 34</p>
+                <p><strong>Email:</strong> john.doe@example.com</p>
+                <p><strong>Contact Number:</strong> 0831234567</p>
+
+                <h4>Allergies</h4>
+                <ul id="allergiesList">
+                    <li>Penicillin</li>
+                    <li>Sulfa drugs</li>
+                </ul>
+
+                <h4>Chronic Conditions</h4>
+                <ul id="chronicConditionsList">
+                    <li>Hypertension</li>
+                    <li>Type 2 Diabetes</li>
+                </ul>
+            </div>
+
+            <div class="prescription-info">
+                <h3>Prescription Information</h3>
+                <p><strong>Status:</strong> Pending</p>
+                <p><strong>Date:</strong> 05/15/2023</p>
+
+                <h4>Medication Details</h4>
+                <table class="medication-table">
+                    <thead>
+                        <tr>
+                            <th>Medication</th>
+                            <th>Schedule</th>
+                            <th>Dosage Form</th>
+                            <th>Active Ingredients</th>
+                            <th>Quantity</th>
+                            <th>Instructions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Amoxicillin 500mg</td>
+                            <td><span class="schedule-badge schedule-4">4</span></td>
+                            <td>Capsule</td>
+                            <td>
+                                <div class="active-ingredient">Amoxicillin (500mg)</div>
+                            </td>
+                            <td>21</td>
+                            <td>Take one capsule three times daily</td>
+                        </tr>
+                        <tr>
+                            <td>Lisinopril 10mg</td>
+                            <td><span class="schedule-badge schedule-2">2</span></td>
+                            <td>Tablet</td>
+                            <td>
+                                <div class="active-ingredient">Lisinopril (10mg)</div>
+                            </td>
+                            <td>30</td>
+                            <td>Take one tablet daily in the morning</td>
+                        </tr>
+                        <tr>
+                            <td>Panado Extra</td>
+                            <td><span class="schedule-badge schedule-0">0</span></td>
+                            <td>Tablet</td>
+                            <td>
+                                <div class="active-ingredient">Paracetamol (500mg)</div>
+                                <div class="active-ingredient">Caffeine (65mg)</div>
+                            </td>
+                            <td>24</td>
+                            <td>Take 1-2 tablets every 4-6 hours as needed</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <button type="button" class="btn-primary" onclick="dispensePrescription()">Dispense Prescription</button>
+                <button type="button" class="btn-danger" onclick="openRejectPopup()">Reject Prescription</button>
+
+                <div id="rejectPopup" class="popup">
+                    <div class="popup-content">
+                        <span class="close" onclick="closeRejectPopup()">&times;</span>
+                        <h4>Reason for Rejection</h4>
+                        <textarea id="rejectionReason" rows="4" required placeholder="Enter reason for rejection..."></textarea>
+                        <br>
+                        <button type="button" class="btn-danger" onclick="rejectPrescription()">Submit Rejection</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        // Open the rejection popup
+        function openRejectPopup() {
+            document.getElementById("rejectPopup").style.display = "block";
+        }
+
+        // Close the rejection popup
+        function closeRejectPopup() {
+            document.getElementById("rejectPopup").style.display = "none";
+        }
+
+        // Function to dispense prescription
+        function dispensePrescription() {
+            alert("Prescription dispensed successfully!");
+            // In a real implementation, this would make an AJAX call to your backend
+            // window.location.href = '/Pharmacist/DispensedPrescriptions';
+        }
+
+        // Function to reject prescription
+        function rejectPrescription() {
+            var reason = document.getElementById("rejectionReason").value;
+            if (!reason.trim()) {
+                alert("Please provide a reason for rejection.");
+                return;
+            }
+
+            alert("Prescription rejected with reason: " + reason);
+            closeRejectPopup();
+            // In a real implementation, this would make an AJAX call to your backend
+            // setTimeout(() => { window.location.href = '/Pharmacist/AllPrescriptions'; }, 3000);
+        }
+    </script>
+</body>
+</html>

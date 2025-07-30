@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prescription Review - Ibhayi Pharmacy</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ===== GLOBAL STYLES ===== */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f4f6f9;
+            color: #333;
+            overflow-x: hidden;
+        }
+        
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            width: 220px;
+            background: linear-gradient(to bottom, #2c3e50, #1a252f);
+            height: 100vh;
+            padding: 20px 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+        
+        .sidebar-header {
+            padding: 0 20px 20px;
+            border-bottom: 1px solid #34495e;
+            margin-bottom: 15px;
+        }
+        
+        .sidebar h2 {
+            font-size: 22px;
+            margin: 0;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .sidebar h2 i {
+            color: #3498db;
+        }
+        
+        .sidebar-nav {
+            padding: 0 10px;
+        }
+        
+        .sidebar a {
+            color: #ecf0f1;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 8px 0;
+            padding: 10px 15px;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        
+        .sidebar a:hover, .sidebar a.active {
+            background-color: #34495e;
+            transform: translateX(5px);
+        }
+        
+        .sidebar-footer {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            padding: 0 20px;
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+        
+        /* ===== TOPBAR ===== */
+        .topbar {
+            background-color: #ffffff;
+            height: 60px;
+            padding: 0 20px;
+            position: fixed;
+            left: 220px;
+            right: 0;
+            top: 0;
+            border-bottom: 1px solid #ccc;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 999;
+        }
+        
+        .topbar span {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        /* ===== MAIN CONTENT ===== */
+        .main-content {
+            margin-left: 220px;
+            margin-top: 60px;
+            padding: 30px;
+        }
+        
+        /* ===== THREE-CARD LAYOUT ===== */
+        .form-container-three-cards {
+            display: grid;
+            grid-template-areas:
+                "patient patient"
+                "meds pdf";
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .patient-card { grid-area: patient; }
+        .medication-card { grid-area: meds; }
+        .pdf-viewer-card { 
+            grid-area: pdf;
+            min-height: 600px;
+        }
+        
+        h3 {
+            color: #2c3e50;
+            margin-top: 0;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        /* ===== PATIENT INFO GRID ===== */
+        .patient-info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .detail-row {
+            display: flex;
+            margin-bottom: 10px;
+        }
+        
+        .detail-label {
+            font-weight: bold;
+            width: 120px;
+            color: #34495e;
+        }
+        
+        .detail-value {
+            flex: 1;
+        }
+        
+        /* ===== ALERTS ===== */
+        .alert {
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        
+        .alert-danger {
+            background-color: #f8d7da;
+            border-left: 4px solid #dc3545;
+            color: #721c24;
+        }
+        
+        .alert-warning {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            color: #856404;
+        }
+        
+        .allergy-alert, .stock-alert {
+            display: none;
+        }
+        
+        /* ===== MEDICATION TABLE ===== */
+        .medication-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        .medication-table th {
+            background: #3498db;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+        
+        .medication-table td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+            vertical-align: top;
+        }
+        
+        .med-details {
+            font-size: 12px;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+        
+        /* ===== BADGES ===== */
+        .badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .bg-success { background-color: #d4edda; color: #155724; }
+        .bg-warning { background-color: #fff3cd; color: #856404; }
+        .bg-danger { background-color: #f8d7da; color: #721c24; }
+        
+        /* ===== BUTTONS ===== */
+        .btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+        
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 12px;
+        }
+        
+        .btn-add {
+            background: #27ae60;
+        }
+        
+        .btn-alert {
+            background: #e74c3c;
+        }
+        
+        .action-btn {
+            color: #fff;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            padding: 5px;
+            border-radius: 3px;
+            margin-right: 5px;
+        }
+        
+        .reject-btn {
+            background-color: #e74c3c;
+        }
+        
+        .remove-btn {
+            background-color: #95a5a6;
+        }
+        
+        /* ===== PDF VIEWER ===== */
+        #pdfViewer {
+            height: 500px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        #pdfViewer embed {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .pdf-controls {
+            display: flex;
+            gap: 10px;
+        }
+        
+        /* ===== FORM FOOTER ===== */
+        .form-footer {
+            margin-top: 25px;
+            display: flex;
+            gap: 15px;
+        }
+        
+        /* ===== REJECTION MODAL ===== */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            width: 450px;
+            max-width: 90%;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-header h4 {
+            margin: 0;
+            color: #2c3e50;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #7f8c8d;
+        }
+        
+        .rejection-reasons {
+            margin-bottom: 20px;
+        }
+        
+        .reason-option {
+            margin-bottom: 10px;
+        }
+        
+        .reason-option input {
+            margin-right: 10px;
+        }
+        
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        
+        /* ===== ROW STATUS STYLES ===== */
+        .rejected-row {
+            background-color: #fce4e4 !important;
+            opacity: 0.8;
+        }
+        
+        .rejected-row .reject-btn {
+            display: none;
+        }
+        
+        .dispensed-row {
+            background-color: #e8f5e9 !important;
+        }
+        
+        .dispensed-row .dispense-checkbox,
+        .dispensed-row .action-btn {
+            display: none;
+        }
+        
+        /* ===== CHECKBOX STYLES ===== */
+        .dispense-checkbox {
+            width: 18px;
+            height: 18px;
+            margin-right: 8px;
+        }
+        
+        /* ===== REPEATS INPUT STYLE ===== */
+        .repeats-input {
+            width: 50px;
+            text-align: center;
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            padding: 5px;
+            border-radius: 4px;
+        }
+        
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 992px) {
+            .form-container-three-cards {
+                grid-template-areas:
+                    "patient"
+                    "meds"
+                    "pdf";
+            }
+            
+            .patient-info-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            #pdfViewer {
+                height: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2><i class="fas fa-prescription-bottle-alt"></i> Pharmacist Panel</h2>
+            <small style="color: #bdc3c7;">Dedicated Dictionary</small>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="#"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+            <a href="LoadPrescription.html"><i class="fas fa-tachometer-alt"></i> Load Prescription</a>
+            <a href="PrescriptionReview.html"><i class="fas fa-clipboard-list"></i> Dispensary</a>
+            <a href="UnprocessesScripts.html"><i class="fas fa-file-prescription"></i> Prescriptions</a>
+            <a href="processedOrders.html"><i class="fas fa-boxes"></i> Processed Orders</a>
+            <a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </nav>
+        <div class="sidebar-footer">
+            <p>Ibhayi Pharmacy v2.1</p>
+        </div>
+    </div>
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+        <span>Prescription Review</span>
+        <div>Welcome, <strong>Pharmacist</strong></div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <div class="form-container-three-cards">
+            <!-- CARD 1: PATIENT INFO -->
+            <div class="card patient-card">
+                <h3><i class="fas fa-user-injured"></i> Patient Information</h3>
+                
+                <div class="patient-info-grid">
+                    <div class="patient-details">
+                        <div class="detail-row">
+                            <span class="detail-label">Name:</span>
+                            <span class="detail-value">John Doe</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Surname:</span>
+                            <span class="detail-value">Smith</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">DOB:</span>
+                            <span class="detail-value">15/06/1990 (33 yrs)</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">ID Number:</span>
+                            <span class="detail-value">9001011234081</span>
+                        </div>
+                    </div>
+                    
+                    <div class="medical-info">
+                        <div class="alert alert-warning">
+                            <h4><i class="fas fa-allergy"></i> Allergies</h4>
+                            <ul>
+                                <li>Penicillin</li>
+                                <li>Sulfa drugs</li>
+                                <li>Ibuprofen</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="doctor-info">
+                            <h4><i class="fas fa-user-md"></i> Prescribing Doctor</h4>
+                            <p>Dr. Sarah Smith (PR1234567)</p>
+                            <p>Date: <strong>15 June 2023</strong></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARD 2: MEDICATION DISPENSING -->
+            <div class="card medication-card">
+                <h3><i class="fas fa-pills"></i> Medication Dispensing</h3>
+                
+                <div class="alert alert-danger allergy-alert">
+                    <i class="fas fa-exclamation-triangle"></i> <strong>ALLERGY WARNING:</strong> Patient is allergic to this medication!
+                </div>
+                
+                <div class="alert alert-warning stock-alert">
+                    <i class="fas fa-box-open"></i> <strong>LOW STOCK:</strong> This medication is near reorder level!
+                </div>
+                
+                <table class="medication-table">
+                    <thead>
+                        <tr>
+                            <th width="5%"></th>
+                            <th width="20%">Medication</th>
+                            <th width="10%">Dosage</th>
+                            <th width="10%">Qty</th>
+                            <th width="10%">Price (ZAR)</th>
+                            <th width="20%">Instructions</th>
+                            <th width="10%">Repeats Left</th>
+                            <th width="10%">Status</th>
+                            <th width="5%">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="medsTableBody">
+                        <!-- Sample row with allergy warning -->
+                        <tr class="has-allergy">
+                            <td><input type="checkbox" class="dispense-checkbox"></td>
+                            <td>
+                                Amoxicillin 500mg
+                                <div class="med-details">
+                                    <small><strong>Active:</strong> Amoxicillin</small><br>
+                                    <small><strong>Stock:</strong> 142 (Reorder: 50)</small>
+                                </div>
+                            </td>
+                            <td>Capsule</td>
+                            <td>14</td>
+                            <td>R 85.50</td>
+                            <td>Take 1 capsule twice daily for 7 days</td>
+                            <td>
+                                <input type="number" class="repeats-input" min="0" value="2" readonly>
+                            </td>
+                            <td><span class="badge bg-warning">Pending</span></td>
+                            <td>
+                                <button class="action-btn reject-btn" onclick="showRejectionModal(this)"><i class="fas fa-ban"></i></button>
+                                <button class="action-btn remove-btn" onclick="removeMedication(this)"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>
+                        
+                        <!-- Sample row with low stock -->
+                        <tr class="low-stock">
+                            <td><input type="checkbox" class="dispense-checkbox"></td>
+                            <td>
+                                Lisinopril 10mg
+                                <div class="med-details">
+                                    <small><strong>Active:</strong> Lisinopril</small><br>
+                                    <small><strong>Stock:</strong> 12 (Reorder: 30)</small>
+                                </div>
+                            </td>
+                            <td>Tablet</td>
+                            <td>30</td>
+                            <td>R 120.00</td>
+                            <td>Take 1 tablet daily</td>
+                            <td>
+                                <!-- Empty for no repeats -->
+                            </td>
+                            <td><span class="badge bg-warning">Pending</span></td>
+                            <td>
+                                <button class="action-btn reject-btn" onclick="showRejectionModal(this)"><i class="fas fa-ban"></i></button>
+                                <button class="action-btn remove-btn" onclick="removeMedication(this)"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>
+                        
+                        <!-- Normal row -->
+                        <tr>
+                            <td><input type="checkbox" class="dispense-checkbox"></td>
+                            <td>
+                                Panado Extra
+                                <div class="med-details">
+                                    <small><strong>Active:</strong> Paracetamol 500mg + Caffeine 65mg</small><br>
+                                    <small><strong>Stock:</strong> 256 (Reorder: 100)</small>
+                                </div>
+                            </td>
+                            <td>Tablet</td>
+                            <td>20</td>
+                            <td>R 45.75</td>
+                            <td>Take 2 tablets every 6 hours as needed</td>
+                            <td>
+                                <input type="number" class="repeats-input" min="0" value="3" readonly>
+                            </td>
+                            <td><span class="badge bg-warning">Pending</span></td>
+                            <td>
+                                <button class="action-btn reject-btn" onclick="showRejectionModal(this)"><i class="fas fa-ban"></i></button>
+                                <button class="action-btn remove-btn" onclick="removeMedication(this)"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>
+
+                        <!-- Rejected row example -->
+                        <tr class="rejected-row">
+                            <td></td>
+                            <td>
+                                Ibuprofen 200mg
+                                <div class="med-details">
+                                    <small><strong>Active:</strong> Ibuprofen</small><br>
+                                    <small><strong>Stock:</strong> 85 (Reorder: 40)</small>
+                                </div>
+                            </td>
+                            <td>Tablet</td>
+                            <td>10</td>
+                            <td>R 32.50</td>
+                            <td>Take 1 tablet every 8 hours</td>
+                            <td>
+                                <!-- Empty for no repeats -->
+                            </td>
+                            <td><span class="badge bg-danger">Rejected</span></td>
+                            <td>
+                                <button class="action-btn remove-btn" onclick="removeMedication(this)"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>
+
+                        <!-- Dispensed row example -->
+                        <tr class="dispensed-row">
+                            <td></td>
+                            <td>
+                                Simvastatin 20mg
+                                <div class="med-details">
+                                    <small><strong>Active:</strong> Simvastatin</small><br>
+                                    <small><strong>Stock:</strong> 120 (Reorder: 40)</small>
+                                </div>
+                            </td>
+                            <td>Tablet</td>
+                            <td>30</td>
+                            <td>R 95.00</td>
+                            <td>Take 1 tablet at bedtime</td>
+                            <td>
+                                <!-- Empty for no repeats -->
+                            </td>
+                            <td><span class="badge bg-success">Dispensed</span></td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div class="form-footer">
+                    <button class="btn btn-alert"><i class="fas fa-exclamation-triangle"></i> Check Interactions</button>
+                    <button class="btn btn-add" onclick="markAsDispensed()"><i class="fas fa-check-circle"></i> Mark as Dispensed</button>
+                </div>
+            </div>
+
+            <!-- CARD 3: PDF VIEWER -->
+            <div class="card pdf-viewer-card">
+                <h3>
+                    <i class="fas fa-file-prescription"></i> Prescription
+                    <div class="pdf-controls">
+                        <button class="btn btn-sm"><i class="fas fa-print"></i> Print</button>
+                        <button class="btn btn-sm"><i class="fas fa-download"></i> Download</button>
+                    </div>
+                </h3>
+                <div id="pdfViewer">
+                    <embed src="/sample-prescription.pdf" type="application/pdf" width="100%" height="100%">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- REJECTION MODAL -->
+    <div class="modal-overlay" id="rejectionModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4><i class="fas fa-ban"></i> Reject Medication</h4>
+                <button class="close-modal" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="rejection-reasons">
+                <p>Please select the reason for rejecting this medication:</p>
+                <div class="reason-option">
+                    <input type="radio" id="reason1" name="rejectionReason" value="Out of stock">
+                    <label for="reason1">Out of stock</label>
+                </div>
+                <div class="reason-option">
+                    <input type="radio" id="reason2" name="rejectionReason" value="Patient allergic">
+                    <label for="reason2">Patient allergic</label>
+                </div>
+                <div class="reason-option">
+                    <input type="radio" id="reason3" name="rejectionReason" value="Patient already has it">
+                    <label for="reason3">Patient already has it</label>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn" onclick="closeModal()">Cancel</button>
+                <button class="btn btn-alert" onclick="confirmRejection()">Confirm Rejection</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Track which medication row is being rejected
+        let currentRejectionRow = null;
+
+        // Show rejection modal
+        function showRejectionModal(button) {
+            currentRejectionRow = button.closest('tr');
+            document.getElementById('rejectionModal').style.display = 'flex';
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('rejectionModal').style.display = 'none';
+            // Clear selection
+            document.querySelectorAll('input[name="rejectionReason"]').forEach(radio => {
+                radio.checked = false;
+            });
+        }
+
+        // Confirm rejection
+        function confirmRejection() {
+            const selectedReason = document.querySelector('input[name="rejectionReason"]:checked');
+            
+            if (!selectedReason) {
+                alert('Please select a rejection reason');
+                return;
+            }
+            
+            // Update the row
+            currentRejectionRow.classList.add('rejected-row');
+            
+            // Change status badge
+            const statusCell = currentRejectionRow.querySelector('td:nth-child(8)');
+            statusCell.innerHTML = '<span class="badge bg-danger">Rejected</span>';
+            
+            // Hide checkbox and reject button
+            const checkbox = currentRejectionRow.querySelector('.dispense-checkbox');
+            const rejectBtn = currentRejectionRow.querySelector('.reject-btn');
+            if (checkbox) checkbox.style.display = 'none';
+            if (rejectBtn) rejectBtn.style.display = 'none';
+            
+            closeModal();
+        }
+
+        // Remove medication row
+        function removeMedication(button) {
+            if (confirm('Are you sure you want to remove this medication?')) {
+                const row = button.closest('tr');
+                const hadAllergy = row.classList.contains('has-allergy');
+                const hadLowStock = row.classList.contains('low-stock');
+                
+                row.remove();
+                
+                // Update alerts if needed
+                if (hadAllergy && !document.querySelector('.has-allergy')) {
+                    document.querySelector('.allergy-alert').style.display = 'none';
+                }
+                
+                if (hadLowStock && !document.querySelector('.low-stock')) {
+                    document.querySelector('.stock-alert').style.display = 'none';
+                }
+            }
+        }
+
+        // Mark checked medications as dispensed
+        function markAsDispensed() {
+            const checkboxes = document.querySelectorAll('.dispense-checkbox:checked');
+            
+            if (checkboxes.length === 0) {
+                alert('Please select at least one medication to mark as dispensed');
+                return;
+            }
+            
+            if (confirm(`Mark ${checkboxes.length} medication(s) as dispensed?`)) {
+                checkboxes.forEach(checkbox => {
+                    const row = checkbox.closest('tr');
+                    const repeatsInput = row.querySelector('.repeats-input');
+                    
+                    if (repeatsInput) {
+                        let repeatsLeft = parseInt(repeatsInput.value);
+                        
+                        if (repeatsLeft > 0) {
+                            // Decrease repeats if available
+                            repeatsLeft--;
+                            repeatsInput.value = repeatsLeft;
+                            
+                            // Keep the row active if there are repeats left
+                            if (repeatsLeft > 0) {
+                                return;
+                            }
+                        }
+                    }
+                    
+                    // If no repeats left, mark as dispensed
+                    // Add dispensed class
+                    row.classList.add('dispensed-row');
+                    
+                    // Update status
+                    const statusCell = row.querySelector('td:nth-child(8)');
+                    statusCell.innerHTML = '<span class="badge bg-success">Dispensed</span>';
+                    
+                    // Remove checkbox and action buttons
+                    checkbox.remove();
+                    const actionButtons = row.querySelectorAll('.action-btn');
+                    actionButtons.forEach(btn => btn.remove());
+                });
+            }
+        }
+
+        // Show/hide alerts based on medication rows
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check for allergy warnings
+            if (document.querySelector('.has-allergy')) {
+                document.querySelector('.allergy-alert').style.display = 'block';
+            } else {
+                document.querySelector('.allergy-alert').style.display = 'none';
+            }
+            
+            // Check for low stock
+            if (document.querySelector('.low-stock')) {
+                document.querySelector('.stock-alert').style.display = 'block';
+            } else {
+                document.querySelector('.stock-alert').style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

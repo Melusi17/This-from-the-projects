@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Processed Orders - Pharmacist</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f5f6fa;
+    }
+
+    .sidebar {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 220px;
+      height: 100%;
+      background-color: #2f3542;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      padding-top: 20px;
+    }
+
+    .sidebar h2 {
+      text-align: center;
+      font-size: 20px;
+      margin-bottom: 30px;
+    }
+
+    .sidebar a {
+      padding: 15px 20px;
+      color: white;
+      text-decoration: none;
+      display: block;
+    }
+
+    .sidebar a:hover,
+    .sidebar a.active {
+      background-color: #57606f;
+    }
+
+    .container {
+      margin-left: 240px;
+      padding: 30px;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+    }
+
+    .search-bar {
+      margin-bottom: 30px;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .search-bar input {
+      padding: 10px;
+      width: 300px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .order-cards {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .order-card {
+      background-color: #ffffff;
+      padding: 20px;
+      width: 100%;
+      max-width: 480px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    .order-card:hover {
+      transform: scale(1.02);
+    }
+
+    .order-header {
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .order-details p {
+      margin: 5px 0;
+    }
+
+    .medication-list {
+      margin-top: 10px;
+      padding-left: 20px;
+      display: none;
+    }
+
+    .generate-btn {
+      margin-top: 15px;
+      padding: 10px 16px;
+      background-color: #2ed573;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .generate-btn:hover {
+      background-color: #1eae60;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <h2><i class="fas fa-user-nurse"></i> Pharmacist</h2>
+    <a href="PharmacistDashboard.html">Dashboard</a>
+    <a href="LoadPrescription.html">Load Prescription</a>
+    <a href="PrescriptionReview.html">Dispensary</a>
+    <a href="UnprocessesScripts.html">Prescriptions</a>
+    <a href="ProcessedOrders.html" class="active">Processed Orders</a>
+    <a href="#">Logout</a>
+  </div>
+
+  <!-- Main Content -->
+  <div class="container">
+    <h2>Processed & Collected Orders</h2>
+
+    <div class="search-bar">
+      <input type="text" id="searchInput" onkeyup="filterCards()" placeholder="Search customer, doctor, or order number...">
+    </div>
+
+    <div class="order-cards" id="ordersContainer">
+
+      <!-- Order Card 1 -->
+      <div class="order-card" onclick="toggleDetails(this)">
+        <div class="order-details">
+          <div class="order-header">Customer: John Doe</div>
+          <p>Doctor: Dr. Smith</p>
+          <p>Date: 2025-05-18</p>
+          <p>Order #: ORD12345</p>
+        </div>
+        <div class="medication-list">
+          <ul>
+            <li>Paracetamol 500mg</li>
+            <li>Ibuprofen 200mg</li>
+          </ul>
+        </div>
+        <button class="generate-btn">Generate Report</button>
+      </div>
+
+      <!-- Order Card 2 -->
+      <div class="order-card" onclick="toggleDetails(this)">
+        <div class="order-details">
+          <div class="order-header">Customer: Jane Roe</div>
+          <p>Doctor: Dr. Adams</p>
+          <p>Date: 2025-05-17</p>
+          <p>Order #: ORD12346</p>
+        </div>
+        <div class="medication-list">
+          <ul>
+            <li>Amoxicillin 250mg</li>
+            <li>Vitamin C 500mg</li>
+          </ul>
+        </div>
+        <button class="generate-btn">Generate Report</button>
+      </div>
+
+      <!-- Order Card 3 -->
+      <div class="order-card" onclick="toggleDetails(this)">
+        <div class="order-details">
+          <div class="order-header">Customer: Chris Evans</div>
+          <p>Doctor: Dr. Carter</p>
+          <p>Date: 2025-05-14</p>
+          <p>Order #: ORD12349</p>
+        </div>
+        <div class="medication-list">
+          <ul>
+            <li>Azithromycin 500mg</li>
+            <li>Panado 500mg</li>
+          </ul>
+        </div>
+        <button class="generate-btn">Generate Report</button>
+      </div>
+
+      <!-- Add more cards dynamically as needed -->
+
+    </div>
+  </div>
+
+  <script>
+    function toggleDetails(card) {
+      const medList = card.querySelector('.medication-list');
+      medList.style.display = medList.style.display === 'block' ? 'none' : 'block';
+    }
+
+    function filterCards() {
+      const input = document.getElementById("searchInput").value.toLowerCase();
+      const cards = document.querySelectorAll(".order-card");
+
+      cards.forEach(card => {
+        const text = card.innerText.toLowerCase();
+        card.style.display = text.includes(input) ? "block" : "none";
+      });
+    }
+  </script>
+
+</body>
+</html>

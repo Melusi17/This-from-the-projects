@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Handle Walk-In Customer</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f5f7fa;
+            margin: 0;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background-color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: #00695c;
+            margin-bottom: 1rem;
+        }
+
+        label {
+            display: block;
+            margin-top: 1rem;
+            margin-bottom: 0.3rem;
+            font-weight: 600;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 0.6rem;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+
+        .medication-group {
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid #ddd;
+        }
+
+        .btn {
+            background-color: #00695c;
+            color: white;
+            border: none;
+            padding: 0.7rem 1.5rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 2rem;
+        }
+
+        .btn:hover {
+            background-color: #004d40;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Handle Walk-In Customer</h2>
+
+        <form action="/Pharmacist/HandleWalkIn" method="post">
+            <!-- Customer Details -->
+            <label for="name">First Name</label>
+            <input type="text" id="name" name="FirstName" required>
+
+            <label for="surname">Last Name</label>
+            <input type="text" id="surname" name="LastName" required>
+
+            <label for="idNumber">ID Number</label>
+            <input type="text" id="idNumber" name="IDNumber" required>
+
+            <label for="cell">Cellphone Number</label>
+            <input type="text" id="cell" name="Cellphone" required>
+
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="Email" required>
+
+            <label for="allergies">Allergies to Active Ingredients</label>
+            <textarea id="allergies" name="Allergies" rows="3"></textarea>
+
+            <!-- Medication Details -->
+            <div class="medication-group">
+                <h3>Medication Dispensed</h3>
+
+                <label for="medicationName">Medication Name</label>
+                <select id="medicationName" name="MedicationName" required>
+                    <option value="">-- Select Medication --</option>
+                    <option value="Paracetamol">Paracetamol</option>
+                    <option value="Ibuprofen">Ibuprofen</option>
+                    <option value="Aspirin">Aspirin</option>
+                    <!-- Populate this from your medication database -->
+                </select>
+
+                <label for="quantity">Quantity Dispensed</label>
+                <input type="number" id="quantity" name="Quantity" min="1" required>
+
+                <label for="instructions">Instructions</label>
+                <textarea id="instructions" name="Instructions" rows="2"></textarea>
+            </div>
+
+            <button type="submit" class="btn">Dispense Medication</button>
+        </form>
+    </div>
+
+</body>
+</html>
