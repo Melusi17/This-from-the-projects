@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Prescription System - Ibhayi Pharmacy</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ===== GLOBAL STYLES ===== */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f4f6f9;
+            color: #333;
+        }
+        
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            width: 220px;
+            background: linear-gradient(to bottom, #22586A, #22586A);
+            height: 100vh;
+            padding: 20px 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+        
+        .sidebar-header {
+            padding: 0 20px 20px;
+            border-bottom: 1px solid #34495e;
+            margin-bottom: 15px;
+        }
+        
+        .sidebar h2 {
+            font-size: 22px;
+            margin: 0;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .sidebar h2 i {
+            color: #3498db;
+        }
+        
+        .sidebar-nav {
+            padding: 0 10px;
+        }
+        
+        .sidebar a {
+            color: #ecf0f1;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 8px 0;
+            padding: 10px 15px;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        
+        .sidebar a:hover, .sidebar a.active {
+            background-color: #34495e;
+            transform: translateX(5px);
+        }
+        
+        .sidebar-footer {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            padding: 0 20px;
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+        
+        /* ===== TOPBAR ===== */
+        .topbar {
+            background-color: #ffffff;
+            height: 60px;
+            padding: 0 20px;
+            position: fixed;
+            left: 220px;
+            right: 0;
+            top: 0;
+            border-bottom: 1px solid #ccc;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 999;
+        }
+        
+        .topbar span {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        /* ===== MAIN CONTENT ===== */
+        .main-content {
+            margin-left: 220px;
+            margin-top: 60px;
+            padding: 30px;
+        }
+        
+        /* ===== FORM LAYOUT ===== */
+        .form-container {
+            display: grid;
+            grid-template-areas:
+                "customer doctor"
+                "meds pdf";
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .customer-card { grid-area: customer; }
+        .doctor-card { grid-area: doctor; }
+        .meds-card { grid-area: meds; }
+        .pdf-card { 
+            grid-area: pdf; 
+            height: 400px;
+            overflow: hidden;
+            border: 1px dashed #3498db;
+        }
+        
+        h3 {
+            color: #2c3e50;
+            margin-top: 0;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        
+        /* ===== FORM ELEMENTS ===== */
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #34495e;
+            font-size: 14px;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        
+        .search-container {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .search-container input {
+            flex: 1;
+        }
+        
+        .info-box {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+            border-left: 3px solid #3498db;
+        }
+        
+        .btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+        
+        .btn-add {
+            background: #27ae60;
+        }
+        
+        .btn-alert {
+            background: #e74c3c;
+        }
+        
+        /* ===== MEDICATION TABLE ===== */
+        .medication-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        .medication-table th {
+            background: #3498db;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+        
+        .medication-table td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+            vertical-align: top;
+        }
+        
+        .medication-table select, 
+        .medication-table input {
+            margin: 0;
+        }
+        
+        .med-details {
+            font-size: 12px;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+        
+        .remove-btn {
+            color: #e74c3c;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        /* ===== SEARCHABLE SELECT ===== */
+        .searchable-select {
+            position: relative;
+            width: 100%;
+        }
+        
+        .searchable-select input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        
+        .searchable-select datalist {
+            position: absolute;
+            background: white;
+            width: 100%;
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 0 0 5px 5px;
+            z-index: 100;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .searchable-select option {
+            padding: 8px 10px;
+            cursor: pointer;
+        }
+        
+        .searchable-select option:hover {
+            background-color: #f5f5f5;
+        }
+        
+        /* ===== PDF VIEWER ===== */
+        #pdfViewer {
+            height: 370px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .placeholder {
+            color: #95a5a6;
+            text-align: center;
+            font-style: italic;
+        }
+        
+        /* ===== MODALS ===== */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        /* New styles for repeat columns */
+        .medication-table th:nth-child(6),
+        .medication-table th:nth-child(7) {
+            text-align: center;
+        }
+        
+        .medication-table td:nth-child(6),
+        .medication-table td:nth-child(7) {
+            text-align: center;
+        }
+        
+        .repeats-input {
+            width: 50px;
+            text-align: center;
+        }
+        
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .form-container {
+                grid-template-areas:
+                    "customer"
+                    "doctor"
+                    "meds"
+                    "pdf";
+            }
+            
+            .sidebar {
+                width: 180px;
+            }
+            
+            .topbar {
+                left: 180px;
+            }
+            
+            .main-content {
+                margin-left: 180px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2><i class="fas fa-prescription-bottle-alt"></i> Pharmacist Panel</h2>
+            <small style="color: #bdc3c7;">Dedicated Dictionary</small>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="#"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+            <a href="LoadPrescription.html"><i class="fas fa-tachometer-alt"></i> Load Prescription</a>
+            <a href="PrescriptionReview.html"><i class="fas fa-clipboard-list"></i> Dispensary</a>
+            <a href="UnprocessesScripts.html"><i class="fas fa-file-prescription"></i> Prescriptions</a>
+            <a href="processedOrders.html"><i class="fas fa-boxes"></i> Processed Orders</a>
+            <a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </nav>
+        <div class="sidebar-footer">
+            <p>Ibhayi Pharmacy v2.1</p>
+        </div>
+    </div>
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+        <span>Load New Prescription</span>
+        <div>Welcome, <strong>Pharmacist</strong></div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <div class="form-container">
+            <!-- CUSTOMER CARD -->
+            <div class="card customer-card">
+                <h3><i class="fas fa-user-injured"></i> Customer Information</h3>
+                
+                <div class="search-container">
+                    <select id="customerSelect">
+                        <option value="">Select patient...</option>
+                        <option value="1">John Doe (ID: 9001011234081)</option>
+                        <option value="2">Amanda Johnson (ID: 8902021234082)</option>
+                        <option value="3">Lunga Dlamini (ID: 8803031234083)</option>
+                    </select>
+                    <button class="btn"><i class="fas fa-search"></i> Search</button>
+                </div>
+                
+                <div class="info-box" id="patientDetails">
+                    <p><strong>DOB:</strong> <span id="dob">15/06/1990</span></p>
+                    <p><strong>Allergies:</strong> <span id="allergies">Penicillin, Sulfa drugs</span></p>
+                    <p><strong>Chronic Conditions:</strong> <span id="conditions">Hypertension</span></p>
+                </div>
+                
+                <button class="btn btn-add" id="addPatientBtn"><i class="fas fa-user-plus"></i> Add New Patient</button>
+            </div>
+            
+            <!-- DOCTOR CARD -->
+            <div class="card doctor-card">
+                <h3><i class="fas fa-user-md"></i> Doctor Information</h3>
+                
+                <div class="form-group">
+                    <label for="doctorSelect">Select Doctor</label>
+                    <select id="doctorSelect">
+                        <option value="">Select doctor...</option>
+                        <option value="1">Dr. Sarah Smith (PR1234567)</option>
+                        <option value="2">Dr. Michael Brown (PR7654321)</option>
+                        <option value="3">Dr. Thando Nkosi (PR9876543)</option>
+                    </select>
+                    <button class="btn btn-add" id="addDoctorBtn" style="margin-top: 10px;"><i class="fas fa-user-md"></i> Add New Doctor</button>
+                </div>
+                
+                <div class="form-group">
+                    <label for="prescriptionDate">Prescription Date</label>
+                    <input type="date" id="prescriptionDate">
+                </div>
+                
+                <div class="form-group">
+                    <label for="existingPrescriptions">Existing Prescriptions</label>
+                    <select id="existingPrescriptions" onchange="loadExistingPrescription(this.value)">
+                        <option value="">Select existing prescription...</option>
+                        <option value="1">Prescription #1234 (15/06/2023)</option>
+                        <option value="2">Prescription #1235 (18/06/2023)</option>
+                        <option value="3">Prescription #1236 (20/06/2023)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="prescriptionUpload">Upload New Prescription</label>
+                    <input type="file" id="prescriptionUpload" accept=".pdf">
+                </div>
+            </div>
+            
+            <!-- MEDICATION CARD -->
+            <div class="card meds-card">
+                <h3><i class="fas fa-pills"></i> Medication</h3>
+                
+                <table class="medication-table">
+                    <thead>
+                        <tr>
+                            <th width="25%">Medication</th>
+                            <th width="15%">Dosage Form</th>
+                            <th width="10%">Qty</th>
+                            <th width="25%">Instructions</th>
+                            <th width="10%">Details</th>
+                            <th width="5%">Repeat</th>
+                            <th width="5%">Repeats Left</th>
+                            <th width="5%"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="medsTableBody">
+                        <!-- Rows will be added here -->
+                    </tbody>
+                </table>
+                
+                <button class="btn btn-add" id="addMedBtn"><i class="fas fa-plus"></i> Add Medication</button>
+                
+                <div class="form-footer" style="margin-top: 25px;">
+                    <button class="btn btn-alert"><i class="fas fa-exclamation-triangle"></i> Check Interactions</button>
+                    <button class="btn btn-add"><i class="fas fa-save"></i> Save Prescription</button>
+                </div>
+            </div>
+
+            <!-- PDF VIEWER CARD -->
+            <div class="card pdf-card">
+                <h3><i class="fas fa-file-pdf"></i> Prescription Preview</h3>
+                <div id="pdfViewer">
+                    <p class="placeholder">Upload a prescription to preview.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODALS -->
+    <div class="modal" id="patientModal">
+        <div class="modal-content">
+            <h3><i class="fas fa-user-plus"></i> Add New Patient</h3>
+            <!-- Patient form would go here -->
+            <div style="text-align: right; margin-top: 20px;">
+                <button class="btn" onclick="closeModal('patientModal')">Cancel</button>
+                <button class="btn btn-add">Save Patient</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="doctorModal">
+        <div class="modal-content">
+            <h3><i class="fas fa-user-md"></i> Add New Doctor</h3>
+            <!-- Doctor form would go here -->
+            <div class="form-group">
+                <label for="doctorName">Doctor Name</label>
+                <input type="text" id="doctorName" placeholder="Enter doctor's full name">
+            </div>
+            <div class="form-group">
+                <label for="practiceNumber">Practice Number</label>
+                <input type="text" id="practiceNumber" placeholder="Enter practice number">
+            </div>
+            <div class="form-group">
+                <label for="doctorContact">Contact Number</label>
+                <input type="tel" id="doctorContact" placeholder="Enter contact number">
+            </div>
+            <div style="text-align: right; margin-top: 20px;">
+                <button class="btn" onclick="closeModal('doctorModal')">Cancel</button>
+                <button class="btn btn-add" onclick="saveNewDoctor()">Save Doctor</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="instructionModal">
+        <div class="modal-content">
+            <h3><i class="fas fa-edit"></i> Custom Instructions</h3>
+            <textarea id="customInstructions" rows="4" style="width: 100%;"></textarea>
+            <div style="text-align: right; margin-top: 20px;">
+                <button class="btn" onclick="closeModal('instructionModal')">Cancel</button>
+                <button class="btn btn-add" onclick="saveCustomInstruction()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample data with more medications
+        const medications = [
+            {
+                id: 1,
+                name: "Panado Extra",
+                active: "Paracetamol 500mg + Caffeine 65mg",
+                stock: 256,
+                reorder: 100,
+                forms: ["Tablet", "Capsule"],
+                schedule: "S0"
+            },
+            {
+                id: 2,
+                name: "Amoxicillin 500mg",
+                active: "Amoxicillin",
+                stock: 142,
+                reorder: 50,
+                forms: ["Capsule"],
+                schedule: "S4"
+            },
+            {
+                id: 3,
+                name: "Lisinopril 10mg",
+                active: "Lisinopril",
+                stock: 89,
+                reorder: 30,
+                forms: ["Tablet"],
+                schedule: "S2"
+            },
+            {
+                id: 4,
+                name: "Ventolin Inhaler",
+                active: "Salbutamol 100mcg",
+                stock: 75,
+                reorder: 30,
+                forms: ["Inhaler"],
+                schedule: "S3"
+            },
+            {
+                id: 5,
+                name: "Augmentin 625mg",
+                active: "Amoxicillin 500mg + Clavulanic acid 125mg",
+                stock: 68,
+                reorder: 25,
+                forms: ["Tablet"],
+                schedule: "S4"
+            },
+            {
+                id: 6,
+                name: "Simvastatin 20mg",
+                active: "Simvastatin",
+                stock: 120,
+                reorder: 40,
+                forms: ["Tablet"],
+                schedule: "S3"
+            },
+            {
+                id: 7,
+                name: "Metformin 850mg",
+                active: "Metformin hydrochloride",
+                stock: 185,
+                reorder: 60,
+                forms: ["Tablet"],
+                schedule: "S1"
+            }
+        ];
+
+        const commonInstructions = [
+            "Take 1 tablet daily",
+            "Take 1 tablet twice daily",
+            "Take 2 tablets at bedtime",
+            "Take as needed for pain",
+            "Other (specify)"
+        ];
+
+        // Initialize with one medication row
+        document.addEventListener('DOMContentLoaded', function() {
+            addMedicationRow();
+            
+            // Patient modal
+            document.getElementById('addPatientBtn').addEventListener('click', function() {
+                document.getElementById('patientModal').style.display = 'flex';
+            });
+
+            // Doctor modal
+            document.getElementById('addDoctorBtn').addEventListener('click', function() {
+                document.getElementById('doctorModal').style.display = 'flex';
+            });
+
+            // PDF upload handler
+            document.getElementById('prescriptionUpload').addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                const pdfViewer = document.getElementById('pdfViewer');
+                
+                if (file && file.type === 'application/pdf') {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        pdfViewer.innerHTML = `
+                            <embed src="${e.target.result}" type="application/pdf" width="100%" height="100%">
+                        `;
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    pdfViewer.innerHTML = '<p class="placeholder">Please upload a valid PDF file.</p>';
+                }
+            });
+        });
+
+        // Function to load existing prescription
+        function loadExistingPrescription(prescriptionId) {
+            if (!prescriptionId) return;
+            
+            // In a real app, this would fetch prescription data from the server
+            console.log("Loading prescription:", prescriptionId);
+            
+            // For demo purposes, we'll just show a message
+            const pdfViewer = document.getElementById('pdfViewer');
+            pdfViewer.innerHTML = `
+                <div style="text-align: center; padding: 20px;">
+                    <i class="fas fa-file-prescription" style="font-size: 48px; color: #3498db;"></i>
+                    <p>Loading prescription #${prescriptionId}</p>
+                    <p>This would display the prescription PDF in a real application</p>
+                </div>
+            `;
+            
+            // Also populate the medications table (demo only)
+            const tbody = document.getElementById('medsTableBody');
+            tbody.innerHTML = ''; // Clear existing rows
+            
+            // Add sample medications based on prescription ID
+            if (prescriptionId === "1") {
+                // Sample data for prescription 1
+                const sampleMeds = [
+                    {id: 3, name: "Lisinopril 10mg", form: "Tablet", qty: 30, instructions: "Take 1 tablet daily", repeats: 2},
+                    {id: 6, name: "Simvastatin 20mg", form: "Tablet", qty: 30, instructions: "Take 1 tablet at bedtime", repeats: 2}
+                ];
+                
+                sampleMeds.forEach(med => {
+                    addMedicationRowWithData(med);
+                });
+            } else if (prescriptionId === "2") {
+                // Sample data for prescription 2
+                const sampleMeds = [
+                    {id: 2, name: "Amoxicillin 500mg", form: "Capsule", qty: 21, instructions: "Take 1 capsule three times daily", repeats: 0},
+                    {id: 4, name: "Ventolin Inhaler", form: "Inhaler", qty: 1, instructions: "Use as needed for wheezing", repeats: 0}
+                ];
+                
+                sampleMeds.forEach(med => {
+                    addMedicationRowWithData(med);
+                });
+            }
+        }
+        
+        // Helper function to add medication row with data
+        function addMedicationRowWithData(medData) {
+            const tbody = document.getElementById('medsTableBody');
+            const rowId = Date.now();
+            
+            const row = document.createElement('tr');
+            row.id = `row-${rowId}`;
+            row.innerHTML = `
+                <td>
+                    <div class="searchable-select">
+                        <input list="meds-list-${rowId}" id="med-input-${rowId}" 
+                               value="${medData.name}" 
+                               placeholder="Search or select medication..." 
+                               oninput="filterMeds(this, ${rowId})">
+                        <datalist id="meds-list-${rowId}">
+                            ${medications.map(med => 
+                                `<option value="${med.name} (${med.schedule})" data-id="${med.id}">${med.active}</option>`
+                            ).join('')}
+                        </datalist>
+                    </div>
+                </td>
+                <td>
+                    <select class="form-select" id="form-${rowId}">
+                        <option value="">Select form</option>
+                        ${medications.find(m => m.id === medData.id)?.forms.map(form => 
+                            `<option value="${form}" ${form === medData.form ? 'selected' : ''}>${form}</option>`
+                        ).join('')}
+                    </select>
+                </td>
+                <td><input type="number" min="1" value="${medData.qty}" class="qty-input"></td>
+                <td>
+                    <select class="inst-select" onchange="handleInstructionSelect(this, ${rowId})">
+                        ${commonInstructions.map(inst => 
+                            `<option value="${inst}" ${inst === medData.instructions ? 'selected' : ''}>${inst}</option>`
+                        ).join('')}
+                    </select>
+                    <div id="custom-inst-${rowId}" style="display:none; margin-top:5px;">
+                        <textarea placeholder="Enter custom instructions..." rows="2"></textarea>
+                    </div>
+                </td>
+                <td>
+                    <div class="med-details" id="details-${rowId}">
+                        <small><strong>Active:</strong> ${medications.find(m => m.id === medData.id)?.active || ''}</small><br>
+                        <small><strong>Stock:</strong> ${medications.find(m => m.id === medData.id)?.stock || ''}</small><br>
+                        <small><strong>Reorder:</strong> ${medications.find(m => m.id === medData.id)?.reorder || ''}</small>
+                    </div>
+                </td>
+                <td style="text-align: center;">
+                    <input type="checkbox" id="repeat-check-${rowId}" onchange="toggleRepeats(${rowId})" ${medData.repeats > 0 ? 'checked' : ''}>
+                </td>
+                <td>
+                    <input type="number" id="repeats-left-${rowId}" min="0" value="${medData.repeats}" ${medData.repeats > 0 ? '' : 'disabled'} style="width: 50px;">
+                </td>
+                <td><button class="remove-btn" onclick="removeRow(${rowId})"><i class="fas fa-trash"></i></button></td>
+            `;
+            
+            tbody.appendChild(row);
+        }
+
+        // Add medication row with searchable select
+        function addMedicationRow() {
+            const tbody = document.getElementById('medsTableBody');
+            const rowId = Date.now();
+            
+            // Create datalist options
+            let medOptions = '';
+            medications.forEach(med => {
+                medOptions += `<option value="${med.name} (${med.schedule})" data-id="${med.id}">${med.active}</option>`;
+            });
+            
+            // Instruction options
+            let instructionOptions = '';
+            commonInstructions.forEach(inst => {
+                instructionOptions += `<option value="${inst}">${inst}</option>`;
+            });
+            
+            const row = document.createElement('tr');
+            row.id = `row-${rowId}`;
+            row.innerHTML = `
+                <td>
+                    <div class="searchable-select">
+                        <input list="meds-list-${rowId}" id="med-input-${rowId}" 
+                               placeholder="Search or select medication..." 
+                               oninput="filterMeds(this, ${rowId})">
+                        <datalist id="meds-list-${rowId}">
+                            ${medOptions}
+                        </datalist>
+                    </div>
+                </td>
+                <td>
+                    <select class="form-select" id="form-${rowId}">
+                        <option value="">Select form</option>
+                    </select>
+                </td>
+                <td><input type="number" min="1" value="1" class="qty-input"></td>
+                <td>
+                    <select class="inst-select" onchange="handleInstructionSelect(this, ${rowId})">
+                        ${instructionOptions}
+                    </select>
+                    <div id="custom-inst-${rowId}" style="display:none; margin-top:5px;">
+                        <textarea placeholder="Enter custom instructions..." rows="2"></textarea>
+                    </div>
+                </td>
+                <td>
+                    <div class="med-details" id="details-${rowId}">
+                        <!-- Details will populate here -->
+                    </div>
+                </td>
+                <td style="text-align: center;">
+                    <input type="checkbox" id="repeat-check-${rowId}" onchange="toggleRepeats(${rowId})">
+                </td>
+                <td>
+                    <input type="number" id="repeats-left-${rowId}" min="0" value="0" disabled style="width: 50px;">
+                </td>
+                <td><button class="remove-btn" onclick="removeRow(${rowId})"><i class="fas fa-trash"></i></button></td>
+            `;
+            
+            tbody.appendChild(row);
+            
+            // Add event listener for when a medication is selected
+            document.getElementById(`med-input-${rowId}`).addEventListener('change', function() {
+                const selectedOption = document.querySelector(`#meds-list-${rowId} option[value="${this.value}"]`);
+                if (selectedOption) {
+                    updateMedDetails(selectedOption.getAttribute('data-id'), rowId);
+                }
+            });
+        }
+
+        // Toggle repeats input based on checkbox
+        function toggleRepeats(rowId) {
+            const checkbox = document.getElementById(`repeat-check-${rowId}`);
+            const repeatsInput = document.getElementById(`repeats-left-${rowId}`);
+            repeatsInput.disabled = !checkbox.checked;
+            if (!checkbox.checked) {
+                repeatsInput.value = 0;
+            }
+        }
+
+        // Filter medications as user types
+        function filterMeds(input, rowId) {
+            const searchTerm = input.value.toLowerCase();
+            const options = document.querySelectorAll(`#meds-list-${rowId} option`);
+            
+            options.forEach(option => {
+                const text = option.value.toLowerCase();
+                if (text.includes(searchTerm)) {
+                    option.style.display = 'block';
+                } else {
+                    option.style.display = 'none';
+                }
+            });
+        }
+
+        // Update medication details when selected
+        function updateMedDetails(medId, rowId) {
+            const detailsDiv = document.getElementById(`details-${rowId}`);
+            const formSelect = document.getElementById(`form-${rowId}`);
+            
+            if (medId) {
+                const med = medications.find(m => m.id == medId);
+                
+                if (med) {
+                    // Update details display
+                    detailsDiv.innerHTML = `
+                        <small><strong>Active:</strong> ${med.active}</small><br>
+                        <small><strong>Stock:</strong> ${med.stock}</small><br>
+                        <small><strong>Reorder:</strong> ${med.reorder}</small>
+                    `;
+                    
+                    // Update dosage forms
+                    formSelect.innerHTML = '<option value="">Select form</option>';
+                    med.forms.forEach(form => {
+                        formSelect.innerHTML += `<option value="${form}">${form}</option>`;
+                    });
+                    
+                    return;
+                }
+            }
+            
+            // Clear if no medication selected
+            detailsDiv.innerHTML = '';
+            formSelect.innerHTML = '<option value="">Select form</option>';
+        }
+
+        // Handle instruction selection
+        function handleInstructionSelect(select, rowId) {
+            const customDiv = document.getElementById(`custom-inst-${rowId}`);
+            if (select.value === "Other (specify)") {
+                customDiv.style.display = 'block';
+            } else {
+                customDiv.style.display = 'none';
+            }
+        }
+
+        // Remove row
+        function removeRow(rowId) {
+            document.getElementById(`row-${rowId}`).remove();
+        }
+
+        // Modal functions
+        function closeModal(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+
+        function saveCustomInstruction() {
+            // Implementation would save the custom instruction
+            closeModal('instructionModal');
+        }
+        
+        function saveNewDoctor() {
+            // In a real app, this would save the new doctor to the database
+            const name = document.getElementById('doctorName').value;
+            const practiceNumber = document.getElementById('practiceNumber').value;
+            
+            if (name && practiceNumber) {
+                // Add to the dropdown (in a real app, this would come from the server)
+                const select = document.getElementById('doctorSelect');
+                const newOption = document.createElement('option');
+                newOption.value = "new";
+                newOption.textContent = `${name} (${practiceNumber})`;
+                select.appendChild(newOption);
+                
+                // Select the new doctor
+                select.value = "new";
+                
+                closeModal('doctorModal');
+            } else {
+                alert("Please fill in all required fields");
+            }
+        }
+
+        // Add medication button
+        document.getElementById('addMedBtn').addEventListener('click', addMedicationRow);
+    </script>
+</body>
+</html>
