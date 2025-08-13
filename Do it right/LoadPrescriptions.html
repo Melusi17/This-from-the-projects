@@ -205,6 +205,10 @@
         .btn-alert {
             background: #e74c3c;
         }
+
+        .btn-done {
+            background: #9b59b6;
+        }
         
         /* ===== MEDICATION TABLE ===== */
         .medication-table {
@@ -334,6 +338,18 @@
             text-align: center;
         }
         
+        /* ===== FORM FOOTER BUTTONS ===== */
+        .form-footer {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+        }
+        
+        .form-footer-right {
+            display: flex;
+            gap: 10px;
+        }
+        
         /* ===== RESPONSIVE ===== */
         @media (max-width: 768px) {
             .form-container {
@@ -355,6 +371,15 @@
             .main-content {
                 margin-left: 180px;
             }
+
+            .form-footer {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .form-footer-right {
+                justify-content: flex-end;
+            }
         }
     </style>
 </head>
@@ -367,10 +392,10 @@
         </div>
         <nav class="sidebar-nav">
             <a href="#"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
-            <a href="LoadPrescription.html"><i class="fas fa-tachometer-alt"></i> Load Prescription</a>
+            <a href="LoadPrescriptions.html"><i class="fas fa-tachometer-alt"></i> Walk In Prescription</a>
             <a href="PrescriptionReview.html"><i class="fas fa-clipboard-list"></i> Dispensary</a>
-            <a href="UnprocessesScripts.html"><i class="fas fa-file-prescription"></i> Prescriptions</a>
-            <a href="processedOrders.html"><i class="fas fa-boxes"></i> Processed Orders</a>
+            <a href="unprocessedScripts.html"><i class="fas fa-file-prescription"></i> Unprocessed Scritps</a>
+            <a href="processedScripts.html"><i class="fas fa-boxes"></i> Processed Scripts</a>
             <a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
         </nav>
         <div class="sidebar-footer">
@@ -470,9 +495,12 @@
                 
                 <button class="btn btn-add" id="addMedBtn"><i class="fas fa-plus"></i> Add Medication</button>
                 
-                <div class="form-footer" style="margin-top: 25px;">
+                <div class="form-footer">
                     <button class="btn btn-alert"><i class="fas fa-exclamation-triangle"></i> Check Interactions</button>
-                    <button class="btn btn-add"><i class="fas fa-save"></i> Save Prescription</button>
+                    <div class="form-footer-right">
+                        <button class="btn btn-done"><i class="fas fa-check-circle"></i> Done</button>
+                        <button class="btn btn-add"><i class="fas fa-save"></i> Save Prescription</button>
+                    </div>
                 </div>
             </div>
 

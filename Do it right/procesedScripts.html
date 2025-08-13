@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Processed Scripts - Ibhayi Pharmacy</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ===== GLOBAL STYLES ===== */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f4f6f9;
+            color: #333;
+            transition: all 0.3s;
+        }
+        
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            width: 220px;
+            background: linear-gradient(to bottom, #22586A, #22586A);
+            height: 100vh;
+            padding: 20px 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+            transition: all 0.3s;
+        }
+        
+        .sidebar.collapsed {
+            width: 60px;
+            overflow: hidden;
+        }
+        
+        .sidebar.collapsed .sidebar-header h2,
+        .sidebar.collapsed .sidebar-nav a span,
+        .sidebar.collapsed .sidebar-footer p {
+            display: none;
+        }
+        
+        .sidebar.collapsed .sidebar-nav a {
+            justify-content: center;
+        }
+        
+        .sidebar-header {
+            padding: 0 20px 20px;
+            border-bottom: 1px solid #34495e;
+            margin-bottom: 15px;
+            position: relative;
+        }
+        
+        .sidebar h2 {
+            font-size: 22px;
+            margin: 0;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .sidebar h2 i {
+            color: #3498db;
+        }
+        
+        .sidebar-nav {
+            padding: 0 10px;
+        }
+        
+        .sidebar a {
+            color: #ecf0f1;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 8px 0;
+            padding: 10px 15px;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        
+        .sidebar a:hover, .sidebar a.active {
+            background-color: #34495e;
+            transform: translateX(5px);
+        }
+        
+        .sidebar-footer {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            padding: 0 20px;
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+        
+        .toggle-sidebar {
+            position: absolute;
+            right: -15px;
+            top: 20px;
+            background: #3498db;
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        /* ===== TOPBAR ===== */
+        .topbar {
+            background-color: #ffffff;
+            height: 60px;
+            padding: 0 20px;
+            position: fixed;
+            left: 220px;
+            right: 0;
+            top: 0;
+            border-bottom: 1px solid #ccc;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 999;
+            transition: all 0.3s;
+        }
+        
+        .sidebar.collapsed + .topbar {
+            left: 60px;
+        }
+        
+        .topbar span {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        /* ===== MAIN CONTENT ===== */
+        .main-content {
+            margin-left: 220px;
+            margin-top: 60px;
+            padding: 30px;
+            transition: all 0.3s;
+        }
+        
+        .sidebar.collapsed + .topbar + .main-content {
+            margin-left: 60px;
+        }
+        
+        /* ===== SEARCH SECTION ===== */
+        .search-section {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .search-container {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        
+        .search-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        
+        .search-btn:hover {
+            opacity: 0.9;
+        }
+        
+        /* ===== PATIENT CARDS ===== */
+        .patient-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .patient-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.2s;
+            border-left: 4px solid #3498db;
+        }
+        
+        .patient-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        
+        .patient-card.active {
+            background: #f0f7fc;
+            border-left: 4px solid #27ae60;
+        }
+        
+        .patient-name {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        
+        .patient-id {
+            font-size: 13px;
+            color: #7f8c8d;
+        }
+        
+        /* ===== PRESCRIPTION TABLE ===== */
+        .prescription-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+        
+        .prescription-table th {
+            background: #3498db;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+        
+        .prescription-table td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .prescription-file {
+            color: #3498db;
+            font-weight: 500;
+        }
+        
+        .prescription-file i {
+            margin-right: 8px;
+        }
+        
+        .process-status {
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        
+        .process-yes {
+            background: #d5f5e3;
+            color: #27ae60;
+        }
+        
+        .process-no {
+            background: #fadbd8;
+            color: #e74c3c;
+        }
+        
+        /* ===== NO RESULTS ===== */
+        .no-results {
+            text-align: center;
+            padding: 30px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            color: #95a5a6;
+            font-style: italic;
+        }
+        
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 60px;
+            }
+            
+            .sidebar:not(.collapsed) {
+                width: 220px;
+            }
+            
+            .topbar {
+                left: 60px;
+            }
+            
+            .sidebar:not(.collapsed) + .topbar {
+                left: 220px;
+            }
+            
+            .main-content {
+                margin-left: 60px;
+            }
+            
+            .sidebar:not(.collapsed) + .topbar + .main-content {
+                margin-left: 220px;
+            }
+            
+            .search-container {
+                flex-direction: column;
+            }
+            
+            .patient-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2><i class="fas fa-prescription-bottle-alt"></i> Pharmacist Panel</h2>
+            <button class="toggle-sidebar" onclick="toggleSidebar()">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <small style="color: #bdc3c7;">Dedicated Dictionary</small>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="#"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a>
+            <a href="LoadPrescription.html"><i class="fas fa-tachometer-alt"></i> <span>Load Prescription</span></a>
+            <a href="PrescriptionReview.html"><i class="fas fa-clipboard-list"></i> <span>Dispensary</span></a>
+            <a href="UnprocessesScripts.html"><i class="fas fa-file-prescription"></i> <span>Prescriptions</span></a>
+            <a href="processedOrders.html" class="active"><i class="fas fa-boxes"></i> <span>Processed Orders</span></a>
+            <a href="#"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a>
+        </nav>
+        <div class="sidebar-footer">
+            <p>Ibhayi Pharmacy v2.1</p>
+        </div>
+    </div>
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+        <span>Processed Scripts</span>
+        <div>Welcome, <strong>Pharmacist</strong></div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <!-- SEARCH SECTION -->
+        <div class="search-section">
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="Search by patient name or ID number..." id="patientSearch">
+                <button class="search-btn" onclick="searchPatients()"><i class="fas fa-search"></i> Search</button>
+            </div>
+        </div>
+        
+        <!-- PATIENT CARDS -->
+        <div class="patient-cards" id="patientCards">
+            <!-- Patient cards will be dynamically inserted here -->
+        </div>
+        
+        <!-- PRESCRIPTION TABLE (HIDDEN BY DEFAULT) -->
+        <div id="prescriptionTableContainer" style="display: none;">
+            <h3 id="selectedPatientName"></h3>
+            <table class="prescription-table">
+                <thead>
+                    <tr>
+                        <th width="20%">Date</th>
+                        <th width="40%">Script</th>
+                        <th width="20%">Processed Date</th>
+                        <th width="20%">Status</th>
+                    </tr>
+                </thead>
+                <tbody id="prescriptionTableBody">
+                    <!-- Prescription rows will be dynamically inserted here -->
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- NO RESULTS MESSAGE (HIDDEN BY DEFAULT) -->
+        <div class="no-results" id="noResults" style="display: none;">
+            <i class="fas fa-search" style="font-size: 24px; margin-bottom: 10px;"></i>
+            <p>No processed scripts found</p>
+        </div>
+    </div>
+
+    <script>
+        // Sample patient data - all prescriptions are processed in this version
+        const patients = [
+            {
+                id: "9001011234081",
+                name: "John Doe",
+                prescriptions: [
+                    { date: "2025-01-15", file: "prescription_001.pdf", processed: true, processedDate: "2025-01-16" },
+                    { date: "2025-02-22", file: "prescription_002.pdf", processed: true, processedDate: "2025-02-23" }
+                ]
+            },
+            {
+                id: "8902021234082",
+                name: "Jane Smith",
+                prescriptions: [
+                    { date: "2025-03-10", file: "prescription_003.pdf", processed: true, processedDate: "2025-03-11" }
+                ]
+            },
+            {
+                id: "9103031234083",
+                name: "Robert Johnson",
+                prescriptions: [
+                    { date: "2025-04-05", file: "prescription_004.pdf", processed: true, processedDate: "2025-04-06" },
+                    { date: "2025-05-12", file: "prescription_005.pdf", processed: true, processedDate: "2025-05-13" }
+                ]
+            },
+            {
+                id: "9204041234084",
+                name: "Sarah Williams",
+                prescriptions: []
+            }
+        ];
+
+        // Initialize with all patients
+        document.addEventListener('DOMContentLoaded', function() {
+            displayPatients(patients);
+        });
+
+        // Toggle sidebar
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            sidebar.classList.toggle('collapsed');
+            
+            const toggleBtn = document.querySelector('.toggle-sidebar i');
+            if (sidebar.classList.contains('collapsed')) {
+                toggleBtn.classList.remove('fa-chevron-left');
+                toggleBtn.classList.add('fa-chevron-right');
+            } else {
+                toggleBtn.classList.remove('fa-chevron-right');
+                toggleBtn.classList.add('fa-chevron-left');
+            }
+        }
+
+        // Search patients by name or ID
+        function searchPatients() {
+            const searchTerm = document.getElementById('patientSearch').value.toLowerCase();
+            if (searchTerm.trim() === '') {
+                displayPatients(patients);
+                return;
+            }
+            
+            const filteredPatients = patients.filter(patient => 
+                patient.name.toLowerCase().includes(searchTerm) || 
+                patient.id.includes(searchTerm)
+            );
+            
+            displayPatients(filteredPatients);
+        }
+
+        // Display patients in cards
+        function displayPatients(patientList) {
+            const container = document.getElementById('patientCards');
+            container.innerHTML = '';
+            
+            if (patientList.length === 0) {
+                document.getElementById('noResults').style.display = 'block';
+                document.getElementById('prescriptionTableContainer').style.display = 'none';
+                return;
+            }
+            
+            document.getElementById('noResults').style.display = 'none';
+            
+            patientList.forEach(patient => {
+                const card = document.createElement('div');
+                card.className = 'patient-card';
+                card.innerHTML = `
+                    <div class="patient-name">${patient.name}</div>
+                    <div class="patient-id">ID: ${patient.id}</div>
+                `;
+                
+                card.addEventListener('click', function() {
+                    // Remove active class from all cards
+                    document.querySelectorAll('.patient-card').forEach(c => {
+                        c.classList.remove('active');
+                    });
+                    
+                    // Add active class to clicked card
+                    this.classList.add('active');
+                    
+                    // Show prescriptions for this patient
+                    showPrescriptions(patient);
+                });
+                
+                container.appendChild(card);
+            });
+        }
+
+        // Show prescriptions for selected patient
+        function showPrescriptions(patient) {
+            document.getElementById('selectedPatientName').textContent = `Prescriptions for ${patient.name}`;
+            const tableBody = document.getElementById('prescriptionTableBody');
+            tableBody.innerHTML = '';
+            
+            if (patient.prescriptions.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="4" style="text-align: center; color: #95a5a6; font-style: italic;">
+                            No prescriptions found for this patient
+                        </td>
+                    </tr>
+                `;
+            } else {
+                patient.prescriptions.forEach(prescription => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${formatDate(prescription.date)}</td>
+                        <td class="prescription-file">
+                            <i class="fas fa-file-pdf"></i> ${prescription.file}
+                        </td>
+                        <td>${formatDate(prescription.processedDate)}</td>
+                        <td>
+                            <span class="process-status ${prescription.processed ? 'process-yes' : 'process-no'}">
+                                ${prescription.processed ? 'Processed' : 'Pending'}
+                            </span>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            }
+            
+            document.getElementById('prescriptionTableContainer').style.display = 'block';
+        }
+
+        // Format date as DD/MM/YYYY
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const day = date.getDate().toString().padStart(2, '0');
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            const year = date.getFullYear();
+            return `${day}/${month}/${year}`;
+        }
+    </script>
+</body>
+</html>

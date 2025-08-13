@@ -16,6 +16,7 @@
             font-family: 'Segoe UI', sans-serif;
             background-color: #f4f6f9;
             color: #333;
+            transition: all 0.3s;
         }
         
         /* ===== SIDEBAR ===== */
@@ -29,12 +30,29 @@
             left: 0;
             box-shadow: 2px 0 10px rgba(0,0,0,0.1);
             z-index: 1000;
+            transition: all 0.3s;
+        }
+        
+        .sidebar.collapsed {
+            width: 60px;
+            overflow: hidden;
+        }
+        
+        .sidebar.collapsed .sidebar-header h2,
+        .sidebar.collapsed .sidebar-nav a span,
+        .sidebar.collapsed .sidebar-footer p {
+            display: none;
+        }
+        
+        .sidebar.collapsed .sidebar-nav a {
+            justify-content: center;
         }
         
         .sidebar-header {
             padding: 0 20px 20px;
             border-bottom: 1px solid #34495e;
             margin-bottom: 15px;
+            position: relative;
         }
         
         .sidebar h2 {
@@ -80,6 +98,23 @@
             color: #7f8c8d;
         }
         
+        .toggle-sidebar {
+            position: absolute;
+            right: -15px;
+            top: 20px;
+            background: #3498db;
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
         /* ===== TOPBAR ===== */
         .topbar {
             background-color: #ffffff;
@@ -94,6 +129,11 @@
             justify-content: space-between;
             align-items: center;
             z-index: 999;
+            transition: all 0.3s;
+        }
+        
+        .sidebar.collapsed + .topbar {
+            left: 60px;
         }
         
         .topbar span {
@@ -106,6 +146,11 @@
             margin-left: 220px;
             margin-top: 60px;
             padding: 30px;
+            transition: all 0.3s;
+        }
+        
+        .sidebar.collapsed + .topbar + .main-content {
+            margin-left: 60px;
         }
         
         /* ===== FORM LAYOUT ===== */
@@ -117,6 +162,10 @@
             gap: 20px;
             max-width: 1200px;
             margin: 0 auto;
+        }
+        
+        .sidebar.collapsed + .topbar + .main-content .form-container {
+            max-width: 1400px;
         }
         
         .card {
@@ -165,21 +214,25 @@
             font-size: 14px;
         }
         
-        .search-container {
-            display: flex;
-            gap: 10px;
-        }
-        
-        .search-container input {
-            flex: 1;
-        }
-        
         .info-box {
             background: #f8f9fa;
             padding: 15px;
             border-radius: 5px;
             margin-top: 15px;
             border-left: 3px solid #3498db;
+        }
+        
+        .customer-info {
+            margin-bottom: 15px;
+        }
+        
+        .customer-info p {
+            margin-bottom: 5px;
+        }
+        
+        .customer-info strong {
+            display: inline-block;
+            width: 120px;
         }
         
         .btn {
@@ -217,6 +270,10 @@
             margin-top: 20px;
         }
         
+        .sidebar.collapsed + .topbar + .main-content .medication-table {
+            width: 100%;
+        }
+        
         .medication-table th {
             background: #3498db;
             color: white;
@@ -239,14 +296,6 @@
             font-size: 12px;
             color: #7f8c8d;
             margin-top: 5px;
-        }
-        
-        .remove-btn {
-            color: #e74c3c;
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 16px;
         }
         
         /* ===== SEARCHABLE SELECT ===== */
@@ -298,30 +347,6 @@
             font-style: italic;
         }
         
-        /* ===== MODALS ===== */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 2000;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .modal-content {
-            background: white;
-            padding: 25px;
-            border-radius: 10px;
-            width: 90%;
-            max-width: 500px;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-        
         /* Approval buttons */
         .approval-buttons {
             display: flex;
@@ -342,6 +367,19 @@
             border: none;
             cursor: pointer;
             font-size: 16px;
+        }
+
+        .delete-btn {
+            color: #95a5a6;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.2s;
+        }
+
+        .delete-btn:hover {
+            color: #e74c3c;
         }
         
         .status-indicator {
@@ -393,6 +431,30 @@
             margin-right: 5px;
         }
         
+        /* ===== MODALS ===== */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
         /* ===== RESPONSIVE ===== */
         @media (max-width: 768px) {
             .form-container {
@@ -404,15 +466,27 @@
             }
             
             .sidebar {
-                width: 180px;
+                width: 60px;
+            }
+            
+            .sidebar:not(.collapsed) {
+                width: 220px;
             }
             
             .topbar {
-                left: 180px;
+                left: 60px;
+            }
+            
+            .sidebar:not(.collapsed) + .topbar {
+                left: 220px;
             }
             
             .main-content {
-                margin-left: 180px;
+                margin-left: 60px;
+            }
+            
+            .sidebar:not(.collapsed) + .topbar + .main-content {
+                margin-left: 220px;
             }
 
             .form-footer {
@@ -431,15 +505,18 @@
     <div class="sidebar">
         <div class="sidebar-header">
             <h2><i class="fas fa-prescription-bottle-alt"></i> Pharmacist Panel</h2>
+            <button class="toggle-sidebar" onclick="toggleSidebar()">
+                <i class="fas fa-chevron-left"></i>
+            </button>
             <small style="color: #bdc3c7;">Dedicated Dictionary</small>
         </div>
         <nav class="sidebar-nav">
-            <a href="#"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
-            <a href="LoadPrescription.html"><i class="fas fa-tachometer-alt"></i> Load Prescription</a>
-            <a href="PrescriptionReview.html"><i class="fas fa-clipboard-list"></i> Dispensary</a>
-            <a href="UnprocessesScripts.html"><i class="fas fa-file-prescription"></i> Prescriptions</a>
-            <a href="processedOrders.html"><i class="fas fa-boxes"></i> Processed Orders</a>
-            <a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            <a href="#"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a>
+            <a href="LoadPrescription.html"><i class="fas fa-tachometer-alt"></i> <span>Load Prescription</span></a>
+            <a href="PrescriptionReview.html"><i class="fas fa-clipboard-list"></i> <span>Dispensary</span></a>
+            <a href="UnprocessesScripts.html"><i class="fas fa-file-prescription"></i> <span>Prescriptions</span></a>
+            <a href="processedOrders.html"><i class="fas fa-boxes"></i> <span>Processed Orders</span></a>
+            <a href="#"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a>
         </nav>
         <div class="sidebar-footer">
             <p>Ibhayi Pharmacy v2.1</p>
@@ -459,23 +536,13 @@
             <div class="card customer-card">
                 <h3><i class="fas fa-user-injured"></i> Customer Information</h3>
                 
-                <div class="search-container">
-                    <select id="customerSelect">
-                        <option value="">Select patient...</option>
-                        <option value="1">John Doe (ID: 9001011234081)</option>
-                        <option value="2">Amanda Johnson (ID: 8902021234082)</option>
-                        <option value="3">Lunga Dlamini (ID: 8803031234083)</option>
-                    </select>
-                    <button class="btn"><i class="fas fa-search"></i> Search</button>
+                <div class="customer-info">
+                    <p><strong>Name:</strong> John Doe</p>
+                    <p><strong>ID Number:</strong> 9001011234081</p>
+                    <p><strong>DOB:</strong> 15/06/1990</p>
+                    <p><strong>Allergies:</strong> Penicillin, Sulfa drugs</p>
+                    <p><strong>Conditions:</strong> Hypertension</p>
                 </div>
-                
-                <div class="info-box" id="patientDetails">
-                    <p><strong>DOB:</strong> <span id="dob">15/06/1990</span></p>
-                    <p><strong>Allergies:</strong> <span id="allergies">Penicillin, Sulfa drugs</span></p>
-                    <p><strong>Chronic Conditions:</strong> <span id="conditions">Hypertension</span></p>
-                </div>
-                
-                <button class="btn btn-add" id="addPatientBtn"><i class="fas fa-user-plus"></i> Add New Patient</button>
             </div>
             
             <!-- DOCTOR CARD -->
@@ -484,12 +551,14 @@
                 
                 <div class="form-group">
                     <label for="doctorSelect">Select Doctor</label>
-                    <select id="doctorSelect">
-                        <option value="">Select doctor...</option>
-                        <option value="1">Dr. Sarah Smith (PR1234567)</option>
-                        <option value="2">Dr. Michael Brown (PR7654321)</option>
-                        <option value="3">Dr. Thando Nkosi (PR9876543)</option>
-                    </select>
+                    <div class="searchable-select">
+                        <input list="doctors-list" id="doctorSelect" placeholder="Search or select doctor...">
+                        <datalist id="doctors-list">
+                            <option value="Dr. Sarah Smith (PR1234567)" data-id="1">General Practitioner</option>
+                            <option value="Dr. Michael Brown (PR7654321)" data-id="2">Cardiologist</option>
+                            <option value="Dr. Thando Nkosi (PR9876543)" data-id="3">Pediatrician</option>
+                        </datalist>
+                    </div>
                     <button class="btn btn-add" id="addDoctorBtn" style="margin-top: 10px;"><i class="fas fa-user-md"></i> Add New Doctor</button>
                 </div>
                 
@@ -550,21 +619,9 @@
     </div>
 
     <!-- MODALS -->
-    <div class="modal" id="patientModal">
-        <div class="modal-content">
-            <h3><i class="fas fa-user-plus"></i> Add New Patient</h3>
-            <!-- Patient form would go here -->
-            <div style="text-align: right; margin-top: 20px;">
-                <button class="btn" onclick="closeModal('patientModal')">Cancel</button>
-                <button class="btn btn-add">Save Patient</button>
-            </div>
-        </div>
-    </div>
-
     <div class="modal" id="doctorModal">
         <div class="modal-content">
             <h3><i class="fas fa-user-md"></i> Add New Doctor</h3>
-            <!-- Doctor form would go here -->
             <div class="form-group">
                 <label for="doctorName">Doctor Name</label>
                 <input type="text" id="doctorName" placeholder="Enter doctor's full name">
@@ -675,16 +732,41 @@
         document.addEventListener('DOMContentLoaded', function() {
             addMedicationRow();
             
-            // Patient modal
-            document.getElementById('addPatientBtn').addEventListener('click', function() {
-                document.getElementById('patientModal').style.display = 'flex';
-            });
-
             // Doctor modal
             document.getElementById('addDoctorBtn').addEventListener('click', function() {
                 document.getElementById('doctorModal').style.display = 'flex';
             });
+
+            // Filter doctors as user types
+            document.getElementById('doctorSelect').addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                const options = document.querySelectorAll('#doctors-list option');
+                
+                options.forEach(option => {
+                    const text = option.value.toLowerCase();
+                    if (text.includes(searchTerm)) {
+                        option.style.display = 'block';
+                    } else {
+                        option.style.display = 'none';
+                    }
+                });
+            });
         });
+
+        // Toggle sidebar
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            sidebar.classList.toggle('collapsed');
+            
+            const toggleBtn = document.querySelector('.toggle-sidebar i');
+            if (sidebar.classList.contains('collapsed')) {
+                toggleBtn.classList.remove('fa-chevron-left');
+                toggleBtn.classList.add('fa-chevron-right');
+            } else {
+                toggleBtn.classList.remove('fa-chevron-right');
+                toggleBtn.classList.add('fa-chevron-left');
+            }
+        }
 
         // Add medication row with searchable select
         function addMedicationRow() {
@@ -748,6 +830,7 @@
                     <div class="approval-buttons">
                         <button class="approve-btn" onclick="approveMedication(${rowId})"><i class="fas fa-check-circle"></i></button>
                         <button class="decline-btn" onclick="declineMedication(${rowId})"><i class="fas fa-times-circle"></i></button>
+                        <button class="delete-btn" onclick="deleteMedicationRow(${rowId})"><i class="fas fa-trash-alt"></i></button>
                     </div>
                 </td>
             `;
@@ -761,6 +844,14 @@
                     updateMedDetails(selectedOption.getAttribute('data-id'), rowId);
                 }
             });
+        }
+
+        // Delete medication row
+        function deleteMedicationRow(rowId) {
+            const row = document.getElementById(`row-${rowId}`);
+            if (row) {
+                row.remove();
+            }
         }
 
         // Toggle repeats input based on checkbox
@@ -857,19 +948,28 @@
             // In a real app, this would save the new doctor to the database
             const name = document.getElementById('doctorName').value;
             const practiceNumber = document.getElementById('practiceNumber').value;
+            const contact = document.getElementById('doctorContact').value;
             
-            if (name && practiceNumber) {
+            if (name && practiceNumber && contact) {
                 // Add to the dropdown (in a real app, this would come from the server)
                 const select = document.getElementById('doctorSelect');
+                const datalist = document.getElementById('doctors-list');
+                
                 const newOption = document.createElement('option');
-                newOption.value = "new";
+                newOption.value = `${name} (${practiceNumber})`;
                 newOption.textContent = `${name} (${practiceNumber})`;
-                select.appendChild(newOption);
+                newOption.setAttribute('data-id', 'new');
+                datalist.appendChild(newOption);
                 
                 // Select the new doctor
-                select.value = "new";
+                select.value = `${name} (${practiceNumber})`;
                 
                 closeModal('doctorModal');
+                
+                // Clear form
+                document.getElementById('doctorName').value = '';
+                document.getElementById('practiceNumber').value = '';
+                document.getElementById('doctorContact').value = '';
             } else {
                 alert("Please fill in all required fields");
             }
