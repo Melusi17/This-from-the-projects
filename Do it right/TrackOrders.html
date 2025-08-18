@@ -26,33 +26,11 @@
             color: white;
             position: fixed;
             box-shadow: 2px 0 10px rgba(0,0,0,0.1);
-            transition: all 0.3s;
-            z-index: 1001;
-        }
-        
-        .sidebar.collapsed {
-            width: 70px;
-            overflow: hidden;
-        }
-        
-        .sidebar.collapsed .sidebar-header h2 span,
-        .sidebar.collapsed .sidebar-nav a span,
-        .sidebar.collapsed .sidebar-footer {
-            display: none;
-        }
-        
-        .sidebar.collapsed .sidebar-header h2 {
-            justify-content: center;
-        }
-        
-        .sidebar.collapsed .sidebar-nav a {
-            justify-content: center;
-            padding: 10px 0;
         }
         
         .sidebar-header {
             padding: 0 20px 20px;
-            border-bottom: 1px solid #334155;
+            border-bottom: 1px solid #34495e;
             margin-bottom: 15px;
         }
         
@@ -65,7 +43,7 @@
         }
         
         .sidebar h2 i {
-            color: #38bdf8;
+            color: #3498db;
         }
         
         .sidebar-nav {
@@ -73,7 +51,7 @@
         }
         
         .sidebar a {
-            color: #e2e8f0;
+            color: #ecf0f1;
             text-decoration: none;
             display: flex;
             align-items: center;
@@ -86,7 +64,7 @@
         }
         
         .sidebar a:hover, .sidebar a.active {
-            background-color: #334155;
+            background-color: #34495e;
             transform: translateX(5px);
         }
         
@@ -101,29 +79,7 @@
             width: 100%;
             padding: 0 20px;
             font-size: 12px;
-            color: #94a3b8;
-        }
-
-        /* Toggle button */
-        .toggle-sidebar {
-            position: absolute;
-            top: 10px;
-            right: -15px;
-            background: #1e293b;
-            color: white;
-            border: 2px solid #334155;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 1002;
-        }
-        
-        .toggle-sidebar:hover {
-            background: #334155;
+            color: #7f8c8d;
         }
 
         /* Top Nav */
@@ -136,21 +92,16 @@
             left: 220px;
             right: 0;
             top: 0;
-            border-bottom: 1px solid #e2e8f0;
+            border-bottom: 1px solid #ccc;
             display: flex;
             justify-content: space-between;
             align-items: center;
             z-index: 1000;
-            transition: all 0.3s;
-        }
-        
-        body.sidebar-collapsed .topnav {
-            left: 70px;
         }
 
         .topnav span {
             font-weight: bold;
-            color: #1e293b;
+            color: #2c3e50;
         }
 
         /* Main Content */
@@ -159,12 +110,6 @@
             margin-top: 60px;
             padding: 30px;
             width: calc(100% - 220px);
-            transition: all 0.3s;
-        }
-        
-        body.sidebar-collapsed .main-content {
-            margin-left: 70px;
-            width: calc(100% - 70px);
         }
 
         /* Orders Page Styles */
@@ -190,7 +135,7 @@
         }
 
         .search-bar button {
-            background-color: #38bdf8;
+            background-color: #3498db;
             color: white;
             border: none;
             padding: 0 20px;
@@ -200,7 +145,7 @@
         }
 
         .search-bar button:hover {
-            background-color: #0ea5e9;
+            background-color: #2980b9;
         }
 
         .orders-list {
@@ -222,7 +167,7 @@
         }
 
         .order-card.expanded {
-            background-color: #f0f9ff;
+            background-color: #f0f7ff;
         }
 
         .order-header {
@@ -244,8 +189,28 @@
             margin-bottom: 10px;
         }
 
+        .order-status {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            background: #e0e0e0;
+            color: #333;
+        }
+        
+        .status-ready {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-collected {
+            background: #bee5eb;
+            color: #0c5460;
+        }
+
         .order-repeat {
-            color: #ea580c;
+            color: #d35400;
             font-weight: 600;
         }
 
@@ -263,16 +228,14 @@
             cursor: pointer;
             transition: all 0.2s;
             font-size: 14px;
-            text-decoration: none;
-            display: inline-block;
+        }
+
+        .collect-btn {
+            background-color: #2ecc71;
         }
 
         .email-btn {
-            background-color: #38bdf8;
-        }
-
-        .dispensary-btn {
-            background-color: #10b981;
+            background-color: #3498db;
         }
 
         .action-btn:hover {
@@ -295,7 +258,7 @@
         }
 
         .order-details th {
-            background: #38bdf8;
+            background: #3498db;
             color: white;
             padding: 10px;
             text-align: left;
@@ -314,14 +277,35 @@
             font-weight: 600;
         }
 
-        .badge-s0 { background: #bbf7d0; color: #166534; }
-        .badge-s1 { background: #fef08a; color: #854d0e; }
-        .badge-s2 { background: #fef08a; color: #854d0e; }
-        .badge-s3 { background: #bae6fd; color: #075985; }
-        .badge-s4 { background: #fecaca; color: #991b1b; }
-        .badge-s5 { background: #e2e8f0; color: #1e293b; }
-        .badge-s6 { background: #fecaca; color: #991b1b; }
-        .badge-s7 { background: #1e293b; color: white; }
+        .badge-s0 { background: #d4edda; color: #155724; }
+        .badge-s1 { background: #fff3cd; color: #856404; }
+        .badge-s2 { background: #ffeeba; color: #856404; }
+        .badge-s3 { background: #bee5eb; color: #0c5460; }
+        .badge-s4 { background: #f5c6cb; color: #721c24; }
+        .badge-s5 { background: #c6c8ca; color: #1b1e21; }
+        .badge-s6 { background: #f8d7da; color: #721c24; }
+        .badge-s7 { background: #343a40; color: white; }
+
+        .filter-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .filter-btn {
+            padding: 8px 15px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .filter-btn:hover, .filter-btn.active {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
 
         /* Animation for expanding */
         @keyframes fadeIn {
@@ -338,12 +322,8 @@
 <body>
     <!-- SIDEBAR -->
     <div class="sidebar">
-        <div class="toggle-sidebar" onclick="toggleSidebar()">
-            <i class="fas fa-angle-left"></i>
-        </div>
-        
         <div class="sidebar-header">
-            <h2><i class="fas fa-prescription-bottle-alt"></i> <span>Pharmacist Panel</span></h2>
+            <h2><i class="fas fa-prescription-bottle-alt"></i> Pharmacist Panel</h2>
         </div>
         
         <nav class="sidebar-nav">
@@ -369,7 +349,13 @@
 
     <!-- Main Content -->
     <div class="main-content">
-        <h2>Processed Orders</h2>
+        <h2>Order Status Tracking</h2>
+        
+        <div class="filter-container">
+            <button class="filter-btn active" onclick="filterOrders('all')">All Orders</button>
+            <button class="filter-btn" onclick="filterOrders('ready')">Ready for Collection</button>
+            <button class="filter-btn" onclick="filterOrders('collected')">Collected</button>
+        </div>
         
         <div class="search-container">
             <div class="search-bar">
@@ -379,12 +365,13 @@
         </div>
 
         <div class="orders-list" id="ordersList">
-            <!-- Order 1 -->
-            <div class="order-card">
+            <!-- Order 1 - Ready for Collection -->
+            <div class="order-card" data-status="ready">
                 <div class="order-header">
                     <div>
                         <span class="order-patient">Patient: John Doe (ID: 9001011234081)</span>
                     </div>
+                    <span class="order-status status-ready">Ready for Collection</span>
                 </div>
                 <div class="order-meta">
                     <span>Doctor: Dr. Sarah Smith (PR1234567)</span>
@@ -395,9 +382,9 @@
                     <button class="action-btn email-btn" onclick="emailOrder(this)">
                         <i class="fas fa-envelope"></i> Email
                     </button>
-                    <a href="NewDispensary.html" class="action-btn dispensary-btn">
-                        <i class="fas fa-clipboard-list"></i> Go To Dispensary
-                    </a>
+                    <button class="action-btn collect-btn" onclick="markAsCollected(this)">
+                        <i class="fas fa-check"></i> Mark as Collected
+                    </button>
                 </div>
                 <div class="order-details">
                     <table>
@@ -431,12 +418,13 @@
                 <div style="clear:both"></div>
             </div>
 
-            <!-- Order 2 -->
-            <div class="order-card">
+            <!-- Order 2 - Ready for Collection -->
+            <div class="order-card" data-status="ready">
                 <div class="order-header">
                     <div>
                         <span class="order-patient">Patient: Amanda Johnson (ID: 8902021234082)</span>
                     </div>
+                    <span class="order-status status-ready">Ready for Collection</span>
                 </div>
                 <div class="order-meta">
                     <span>Doctor: Dr. Michael Brown (PR7654321)</span>
@@ -446,9 +434,9 @@
                     <button class="action-btn email-btn" onclick="emailOrder(this)">
                         <i class="fas fa-envelope"></i> Email
                     </button>
-                    <a href="NewDispensary.html" class="action-btn dispensary-btn">
-                        <i class="fas fa-clipboard-list"></i> Go To Dispensary
-                    </a>
+                    <button class="action-btn collect-btn" onclick="markAsCollected(this)">
+                        <i class="fas fa-check"></i> Mark as Collected
+                    </button>
                 </div>
                 <div class="order-details">
                     <table>
@@ -482,12 +470,13 @@
                 <div style="clear:both"></div>
             </div>
 
-            <!-- Order 3 -->
-            <div class="order-card">
+            <!-- Order 3 - Collected -->
+            <div class="order-card" data-status="collected">
                 <div class="order-header">
                     <div>
                         <span class="order-patient">Patient: Lunga Dlamini (ID: 8803031234083)</span>
                     </div>
+                    <span class="order-status status-collected">Collected</span>
                 </div>
                 <div class="order-meta">
                     <span>Doctor: Dr. Thando Nkosi (PR9876543)</span>
@@ -497,9 +486,6 @@
                     <button class="action-btn email-btn" onclick="emailOrder(this)">
                         <i class="fas fa-envelope"></i> Email
                     </button>
-                    <a href="NewDispensary.html" class="action-btn dispensary-btn">
-                        <i class="fas fa-clipboard-list"></i> Go To Dispensary
-                    </a>
                 </div>
                 <div class="order-details">
                     <table>
@@ -529,24 +515,45 @@
     </div>
 
     <script>
-        // Toggle sidebar
-        function toggleSidebar() {
-            document.body.classList.toggle('sidebar-collapsed');
-            document.querySelector('.sidebar').classList.toggle('collapsed');
-            const icon = document.querySelector('.toggle-sidebar i');
-            icon.classList.toggle('fa-angle-left');
-            icon.classList.toggle('fa-angle-right');
-        }
-
         // Toggle order details on card click
         document.querySelectorAll('.order-card').forEach(card => {
             card.addEventListener('click', function(e) {
-                // Don't toggle if clicking on buttons or links
-                if (!e.target.classList.contains('action-btn') && e.target.tagName !== 'A') {
+                // Don't toggle if clicking on buttons
+                if (!e.target.classList.contains('action-btn')) {
                     this.classList.toggle('expanded');
                 }
             });
         });
+
+        // Filter orders by status
+        function filterOrders(status) {
+            // Update active filter button
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            const cards = document.querySelectorAll('.order-card');
+            
+            cards.forEach(card => {
+                if (status === 'all') {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = card.dataset.status === status ? 'block' : 'none';
+                }
+            });
+        }
+        
+        // Mark order as collected
+        function markAsCollected(button) {
+            const card = button.closest('.order-card');
+            card.dataset.status = 'collected';
+            card.querySelector('.order-status').className = 'order-status status-collected';
+            card.querySelector('.order-status').textContent = 'Collected';
+            
+            // Remove the "Mark as Collected" button after collection
+            button.remove();
+        }
 
         // Email order function
         function emailOrder(button) {

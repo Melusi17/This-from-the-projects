@@ -229,6 +229,12 @@
             color: #7f8c8d;
         }
         
+        .script-date {
+            font-size: 12px;
+            color: #3498db;
+            margin-top: 5px;
+        }
+        
         /* ===== PRESCRIPTION TABLE ===== */
         .prescription-table {
             width: 100%;
@@ -292,13 +298,13 @@
             transition: all 0.2s;
         }
         
-        .btn-dispense {
-            background: #27ae60;
+        .btn-process {
+            background: #3498db;
             color: white;
         }
         
-        .btn-process {
-            background: #3498db;
+        .btn-process-dispense {
+            background: #27ae60;
             color: white;
         }
         
@@ -364,12 +370,13 @@
             <small style="color: #bdc3c7;">Dedicated Dictionary</small>
         </div>
         <nav class="sidebar-nav">
-            <a href="#"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a>
-            <a href="LoadPrescription.html"><i class="fas fa-tachometer-alt"></i> <span>Load Prescription</span></a>
-            <a href="PrescriptionReview.html"><i class="fas fa-clipboard-list"></i> <span>Dispensary</span></a>
-            <a href="UnprocessesScripts.html" class="active"><i class="fas fa-file-prescription"></i> <span>Prescriptions</span></a>
-            <a href="processedOrders.html"><i class="fas fa-boxes"></i> <span>Processed Orders</span></a>
-            <a href="#"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a>
+            <a href="#"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+            <a href="LoadPrescriptions.html"><i class="fas fa-tachometer-alt"></i> Walk In Prescription</a>
+            <a href="Orders.html"><i class="fas fa-clipboard-list"></i> Orders</a>
+            <a href="unprocessedScripts.html"><i class="fas fa-file-prescription"></i> Unprocessed Scritps</a>
+            <a href="processedScripts.html"><i class="fas fa-boxes"></i> Processed Scripts</a>
+            <a href="TrackOrders.html"><i class="fas fa-boxes"></i> Track Orders</a>
+            <a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
         </nav>
         <div class="sidebar-footer">
             <p>Ibhayi Pharmacy v2.1</p>
@@ -423,41 +430,39 @@
     </div>
 
     <script>
-        // Sample patient data
+        // Sample patient data with 2025 dates and sorted with older dates first
         const patients = [
             {
                 id: "9001011234081",
                 name: "John Doe",
                 prescriptions: [
-                    { date: "2023-05-15", file: "prescription_001.pdf", dispensed: false },
-                    { date: "2023-06-22", file: "prescription_002.pdf", dispensed: true }
+                    { date: "2025-01-15", file: "prescription_001.pdf", dispensed: false },
+                    { date: "2025-03-22", file: "prescription_002.pdf", dispensed: true }
                 ]
             },
             {
                 id: "8902021234082",
                 name: "Jane Smith",
                 prescriptions: [
-                    { date: "2023-07-10", file: "prescription_003.pdf", dispensed: false }
+                    { date: "2025-02-10", file: "prescription_003.pdf", dispensed: false }
                 ]
             },
             {
                 id: "9103031234083",
                 name: "Robert Johnson",
                 prescriptions: [
-                    { date: "2023-08-05", file: "prescription_004.pdf", dispensed: false },
-                    { date: "2023-08-12", file: "prescription_005.pdf", dispensed: false }
+                    { date: "2025-01-05", file: "prescription_004.pdf", dispensed: false },
+                    { date: "2025-04-12", file: "prescription_005.pdf", dispensed: false }
                 ]
-            },
-            {
-                id: "9204041234084",
-                name: "Sarah Williams",
-                prescriptions: []
             }
         ];
 
-        // Initialize with all patients
+        // Filter out patients with no prescriptions
+        const patientsWithPrescriptions = patients.filter(patient => patient.prescriptions.length > 0);
+
+        // Initialize with patients that have prescriptions
         document.addEventListener('DOMContentLoaded', function() {
-            displayPatients(patients);
+            displayPatients(patientsWithPrescriptions);
         });
 
         // Toggle sidebar
@@ -479,11 +484,11 @@
         function searchPatients() {
             const searchTerm = document.getElementById('patientSearch').value.toLowerCase();
             if (searchTerm.trim() === '') {
-                displayPatients(patients);
+                displayPatients(patientsWithPrescriptions);
                 return;
             }
             
-            const filteredPatients = patients.filter(patient => 
+            const filteredPatients = patientsWithPrescriptions.filter(patient => 
                 patient.name.toLowerCase().includes(searchTerm) || 
                 patient.id.includes(searchTerm)
             );
@@ -505,11 +510,20 @@
             document.getElementById('noResults').style.display = 'none';
             
             patientList.forEach(patient => {
+                // Sort prescriptions by date (oldest first)
+                const sortedPrescriptions = [...patient.prescriptions].sort((a, b) => 
+                    new Date(a.date) - new Date(b.date)
+                );
+                
+                // Get the most recent prescription date
+                const latestPrescription = sortedPrescriptions[sortedPrescriptions.length - 1];
+                
                 const card = document.createElement('div');
                 card.className = 'patient-card';
                 card.innerHTML = `
                     <div class="patient-name">${patient.name}</div>
                     <div class="patient-id">ID: ${patient.id}</div>
+                    <div class="script-date">Latest script: ${formatDate(latestPrescription.date)}</div>
                 `;
                 
                 card.addEventListener('click', function() {
@@ -535,7 +549,12 @@
             const tableBody = document.getElementById('prescriptionTableBody');
             tableBody.innerHTML = '';
             
-            if (patient.prescriptions.length === 0) {
+            // Sort prescriptions by date (oldest first)
+            const sortedPrescriptions = [...patient.prescriptions].sort((a, b) => 
+                new Date(a.date) - new Date(b.date)
+            );
+            
+            if (sortedPrescriptions.length === 0) {
                 tableBody.innerHTML = `
                     <tr>
                         <td colspan="4" style="text-align: center; color: #95a5a6; font-style: italic;">
@@ -544,8 +563,18 @@
                     </tr>
                 `;
             } else {
-                patient.prescriptions.forEach(prescription => {
+                sortedPrescriptions.forEach(prescription => {
                     const row = document.createElement('tr');
+                    
+                    // Determine which button to show based on dispense status
+                    const buttonHtml = prescription.dispensed ? 
+                        `<button class="btn btn-process-dispense" onclick="processAndDispense()">
+                            <i class="fas fa-check-circle"></i> Process And Dispense
+                        </button>` :
+                        `<button class="btn btn-process" onclick="processPrescription()">
+                            <i class="fas fa-check-circle"></i> Process
+                        </button>`;
+                    
                     row.innerHTML = `
                         <td>${formatDate(prescription.date)}</td>
                         <td class="prescription-file">
@@ -558,12 +587,7 @@
                         </td>
                         <td>
                             <div class="action-buttons">
-                                <button class="btn btn-dispense" onclick="dispensePrescription()">
-                                    <i class="fas fa-pills"></i> Dispense
-                                </button>
-                                <button class="btn btn-process" onclick="processPrescription()">
-                                    <i  class="fas fa-check-circle"></i> Process
-                                </button>
+                                ${buttonHtml}
                             </div>
                         </td>
                     `;
@@ -583,12 +607,12 @@
             return `${day}/${month}/${year}`;
         }
 
-        // Dispense prescription - redirect to NewDispensary.html
-        function dispensePrescription() {
-            window.location.href = "NewDispensary.html";
+        // Process And Dispense - redirect to ProcessAndDispense.html
+        function processAndDispense() {
+            window.location.href = "ProcessAndDispense.html";
         }
 
-        // Process prescription - redirect to load2.html
+        // Process - redirect to load2.html
         function processPrescription() {
             window.location.href = "load2.html";
         }
