@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+    <Style>
+        /* General Styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f1f1f1;
+    margin: 0;
+    padding: 0;
+}
+
+/* Center the form */
+.register-container {
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 30px;
+    background-color: #fff;
+    border-radius: 12px; /* Rounded border */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Form Elements */
+h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-top: 15px;
+    font-weight: 600;
+}
+
+input[type="text"],
+input[type="password"],
+select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 6px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-sizing: border-box;
+    font-size: 14px;
+}
+
+button {
+    width: 100%;
+    margin-top: 25px;
+    padding: 12px;
+    background-color: #1f9f77;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+    button:hover {
+        background-color: #28bf96;
+    }
+
+/* Toggle password visibility button (optional inline or icon-based) */
+.toggle-password {
+    margin-top: 5px;
+    font-size: 12px;
+    cursor: pointer;
+    color: #007bff;
+    background: none;
+    border: none;
+}
+
+/* Confirmation message */
+.confirmation-message {
+    display: none;
+    text-align: center;
+    padding: 30px;
+    background-color: #e0fce4;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+    .confirmation-message h3 {
+        color: #2e7d32;
+        margin-bottom: 20px;
+    }
+
+.continue-link {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 15px;
+    background-color: #1f9f77;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: background-color 0.3s ease;
+}
+
+    .continue-link:hover {
+        background-color: #28bf96;
+    }
+
+/* Utility */
+.hidden {
+    display: none;
+}
+
+.password-wrapper {
+    position: relative;
+}
+
+    .password-wrapper input {
+        padding-right: 35px; /* space for the icon */
+    }
+
+.toggle-icon {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 24px;
+}
+
+.feather-eye {
+    width: 24px;
+    height: 24px;
+    fill: none;
+    stroke: #888;
+    stroke-width: 2;
+    transition: all 0.3s ease;
+}
+
+/* When the password is visible (changed to eye-slash) */
+.feather-eye-open {
+    fill: #28bf96;
+}
+
+input, select {
+    padding: 10px;
+    margin-bottom: 15px;
+    width: 100%;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+}
+/* === Allergy picker === */
+.allergy-section {
+    margin-top: 10px;
+}
+
+.add-allergy-btn {
+    margin-top: 8px;
+    background-color: #1f9f77;
+    color: #fff;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color .25s;
+}
+
+    .add-allergy-btn:hover {
+        background-color: #28bf96;
+    }
+
+.allergy-cart {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 0;
+    margin-top: 12px;
+    list-style: none;
+}
+
+    .allergy-cart li {
+        background: #eef3f7;
+        border-radius: 20px;
+        padding: 4px 10px;
+        display: flex;
+        align-items: center;
+        font-size: 13px;
+        color: #333;
+    }
+
+    .allergy-cart .remove-btn {
+        background: none;
+        border: none;
+        color: #d22;
+        font-size: 16px;
+        margin-left: 6px;
+        cursor: pointer;
+        line-height: 1;
+    }
+
+.error-message {
+    color: red;
+    font-size: 12px;
+    margin-top: 2px;
+    display: block;
+}
+
+.password-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+    .password-wrapper input {
+        width: 100%;
+        padding-right: 30px; /* space for the eye icon */
+    }
+
+.toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.error-message {
+    color: red;
+    font-size: 12px;
+    margin-top: 2px;
+    display: block;
+}
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+}
+
+.modal-content {
+    background: white;
+    padding: 30px 40px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+}
+
+.login-link {
+    display: inline-block;
+    margin-top: 20px;
+    background-color: #1f9f77;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+    .login-link:hover {
+        background-color: #28bf96;
+    }
+
+.hidden {
+    display: none;
+}
+
+    </Style>
+
+
+
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register</title>
+   
+</head>
+<body>
+    <div class="register-container">
+        <h2>Registration</h2>
+        <form asp-action="Register" asp-controller="Customer" method="post" id="registerForm">
+            <input type="text" id="name" name="name" placeholder="Name" />
+            <span class="error-message" id="nameError"></span>
+
+            <input type="text" id="surname" name="surname" placeholder="Surname" />
+            <span class="error-message" id="surnameError"></span>
+
+            <input type="text" id="idNumber" name="idNumber" placeholder="ID Number" />
+            <span class="error-message" id="idError"></span>
+
+            <input type="tel" id="cellphone" name="cellphone" placeholder="Cellphone Number" />
+            <span class="error-message" id="cellphoneError"></span>
+
+            <input type="email" id="email" name="email" placeholder="Email Address" />
+            <span class="error-message" id="emailError"></span>
+
+            <div class="password-wrapper">
+                <input type="password" id="password" name="password" placeholder="Password" />
+                <span class="toggle-icon" onclick="togglePassword('password', this)">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="feather feather-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </span>
+            </div>
+            <span class="error-message" id="passwordError"></span>
+
+            <div class="password-wrapper">
+                <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password" />
+                <span class="toggle-icon" onclick="togglePassword('confirmPassword', this)">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="feather feather-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </span>
+            </div>
+            <span class="error-message" id="confirmPasswordError"></span>
+
+            <!-- Allergy picker -->
+            <div class="allergy-section">
+                <select id="allergySelect">
+                    <option value="" disabled selected hidden>Select an allergy</option>
+                    <option value="Penicillin">Penicillin</option>
+                    <option value="Aspirin">Aspirin</option>
+                    <option value="Latex">Latex</option>
+                    <option value="Peanuts">Peanuts</option>
+                    <option value="Shellfish">Shellfish</option>
+                    <option value="None">None</option>
+                </select>
+
+                <button type="button" id="addAllergyBtn" class="add-allergy-btn">Add Allergy</button>
+
+                <!-- live “cart” list -->
+                <ul id="allergyCart" class="allergy-cart"></ul>
+            </div>
+
+            <button type="submit">Submit</button>
+        </form>
+
+        <div id="confirmationModal" class="modal hidden">
+            <div class="modal-content">
+                <h2>Registration Successful!</h2>
+                <p>Your information has been saved.</p>
+                <a asp-controller="Customer" asp-action="Login" class="login-link">Proceed to Login</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    // Clear previous errors
+    document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
+
+    const name = document.getElementById('name').value.trim();
+    const surname = document.getElementById('surname').value.trim();
+    const idNumber = document.getElementById('idNumber').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const cellphone = document.getElementById('cellphone').value.trim();
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+
+    let hasError = false;
+
+    if (!name) {
+        document.getElementById('nameError').textContent = 'Name is required.';
+        hasError = true;
+    }
+
+    if (!surname) {
+        document.getElementById('surnameError').textContent = 'Surname is required.';
+        hasError = true;
+    }
+
+    if (!idNumber) {
+        document.getElementById('idError').textContent = 'ID Number is required.';
+        hasError = true;
+    } else if (!/^\d{13}$/.test(idNumber)) {
+        document.getElementById('idError').textContent = 'ID must be 13 digits.';
+        hasError = true;
+    } else {
+        const yy = idNumber.substring(0, 2);
+        const mm = idNumber.substring(2, 4);
+        const dd = idNumber.substring(4, 6);
+        const date = new Date(`20${yy}-${mm}-${dd}`);
+        if (
+            !(date.getFullYear() === parseInt(`20${yy}`) &&
+                date.getMonth() + 1 === parseInt(mm) &&
+                date.getDate() === parseInt(dd))
+        ) {
+            document.getElementById('idError').textContent = 'Invalid birthdate format in ID.';
+            hasError = true;
+        }
+    }
+
+    if (!email) {
+        document.getElementById('emailError').textContent = 'Email is required.';
+        hasError = true;
+    } else if (!/^\S+@\S+\.\S+$/.test(email)) {
+        document.getElementById('emailError').textContent = 'Enter a valid email address.';
+        hasError = true;
+    }
+
+    if (!cellphone) {
+        document.getElementById('cellphoneError').textContent = 'Cellphone is required.';
+        hasError = true;
+    } else if (!/^\d{10}$/.test(cellphone)) {
+        document.getElementById('cellphoneError').textContent = 'Enter a 10-digit cellphone number.';
+        hasError = true;
+    }
+
+    if (!password) {
+        document.getElementById('passwordError').textContent = 'Password is required.';
+        hasError = true;
+    }
+
+    if (!confirmPassword) {
+        document.getElementById('confirmPasswordError').textContent = 'Please confirm password.';
+        hasError = true;
+    } else if (password !== confirmPassword) {
+        document.getElementById('confirmPasswordError').textContent = 'Passwords do not match.';
+        hasError = true;
+    }
+
+    if (hasError) return;
+
+    // Save to localStorage
+    const customer = {
+        name,
+        surname,
+        idNumber,
+        email,
+        cellphone,
+        password,
+        allergies
+    };
+
+    const customers = JSON.parse(localStorage.getItem('customers') || '[]');
+    customers.push(customer);
+    localStorage.setItem('customers', JSON.stringify(customers));
+    4
+    // Show confirmation modal
+    document.getElementById('confirmationModal').classList.remove('hidden');
+
+});
+
+/***** core data *****/
+let allergies = [];          // current allergy cart
+const allergySelect = document.getElementById('allergySelect');
+const allergyCart = document.getElementById('allergyCart');
+
+/***** add selected allergy *****/
+document.getElementById('addAllergyBtn').addEventListener('click', () => {
+    const chosen = allergySelect.value;
+    if (!chosen || allergies.includes(chosen)) return;
+
+    allergies.push(chosen);
+    updateAllergyCart();
+});
+
+/***** remove allergy by index *****/
+function removeAllergy(i) {
+    allergies.splice(i, 1);
+    updateAllergyCart();
+}
+
+/***** render allergy cart UI *****/
+function updateAllergyCart() {
+    allergyCart.innerHTML = '';
+    allergies.forEach((a, i) => {
+        const li = document.createElement('li');
+        li.textContent = a;
+
+        const btn = document.createElement('button');
+        btn.textContent = '×';
+        btn.className = 'remove-btn';
+        btn.onclick = () => removeAllergy(i);
+
+        li.appendChild(btn);
+        allergyCart.appendChild(li);
+    });
+}
+
+/***** Toggle password visibility *****/
+function togglePassword(fieldId, icon) {
+    const field = document.getElementById(fieldId);
+    const iconSvg = icon.querySelector('svg');
+    const isPass = field.type === 'password';
+
+    field.type = isPass ? 'text' : 'password';
+    iconSvg.classList.toggle('feather-eye-open', isPass);
+}
+
+    </script>
+</body>
+</html>
+
+
+</html>

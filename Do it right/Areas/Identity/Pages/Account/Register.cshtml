@@ -1,0 +1,234 @@
+﻿@page
+@model RegisterModel
+
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+
+    .card {
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+
+    .card-header {
+        background: linear-gradient(135deg, #00aaff 0%, #0088cc 100%);
+        border: none;
+    }
+
+    .form-control, .form-select {
+        border-radius: 5px;
+        padding: 12px;
+        border: 1px solid #ced4da;
+        transition: all 0.3s;
+    }
+
+        .form-control:focus, .form-select:focus {
+            box-shadow: 0 0 0 3px rgba(0, 170, 255, 0.2);
+            border-color: #00aaff;
+        }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #00aaff 0%, #0088cc 100%);
+        border: none;
+        padding: 12px;
+        border-radius: 5px;
+        font-weight: 600;
+        transition: all 0.3s;
+        width: 100%;
+    }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 170, 255, 0.3);
+        }
+
+    .allergy-section {
+        background-color: #f8f9fa;
+        border-radius: 5px;
+        padding: 15px;
+        border: 1px solid #e9ecef;
+    }
+
+    .allergy-checkboxes {
+        max-height: 150px;
+        overflow-y: auto;
+        padding: 10px;
+        background: white;
+        border-radius: 5px;
+        border: 1px solid #ced4da;
+    }
+
+    .form-check-input:checked {
+        background-color: #00aaff;
+        border-color: #00aaff;
+    }
+
+    .section-title {
+        color: #495057;
+        font-weight: 600;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #00aaff;
+    }
+</style>
+
+<body>
+    <div class="container my-5">
+        <div class="card shadow border-0">
+            <div class="card-header w-100 py-3">
+                <div class="row">
+                    <div class="col-12 text-center">
+                        <h2 class="text-white py-2 pb-1">@ViewData["Title"]</h2>
+                        <p class="text-white mb-0">Create a new account to get started</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-body p-4">
+                <form id="registerForm" class="row" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+                    <h3 class="section-title text-center">Account Information</h3>
+
+                    <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input asp-for="Input.Name" class="form-control" aria-required="true" placeholder="John" />
+                                <label asp-for="Input.Name" class="ms-2 text-muted">First Name</label>
+                                <span asp-validation-for="Input.Name" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input asp-for="Input.Surname" class="form-control" aria-required="true" placeholder="Doe" />
+                                <label asp-for="Input.Surname" class="ms-2 text-muted">Last Name</label>
+                                <span asp-validation-for="Input.Surname" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
+                                <label asp-for="Input.Email" class="ms-2 text-muted">Email Address</label>
+                                <span asp-validation-for="Input.Email" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input asp-for="Input.IDNumber" class="form-control" placeholder="123456789" />
+                                <label asp-for="Input.IDNumber" class="ms-2 text-muted">Identity Number</label>
+                                <span asp-validation-for="Input.IDNumber" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input asp-for="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
+                                <label asp-for="Input.Password" class="ms-2 text-muted">Password</label>
+                                <span asp-validation-for="Input.Password" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
+                                <label asp-for="Input.ConfirmPassword" class="ms-2 text-muted">Confirm Password</label>
+                                <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input asp-for="Input.CellphoneNumber" class="form-control" placeholder="+1234567890" />
+                                <label asp-for="Input.CellphoneNumber" class="ms-2 text-muted">Cell Phone Number</label>
+                                <span asp-validation-for="Input.CellphoneNumber" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3 class="section-title text-center mt-4">Additional Information</h3>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <select asp-for="Input.Role" asp-items="@Model.Input.Rolelist" class="form-select">
+                                    <option disabled selected>-Select Role-</option>
+                                </select>
+                                <label asp-for="Input.Role" class="ms-2 text-muted">User Role</label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6" id="allergySection">
+                            <div class="allergy-section">
+                                <label class="form-label mb-2 fw-semibold">Allergies (Select all that apply)</label>
+                                <div class="allergy-checkboxes">
+                                    @if (Model.Input.AllergyList != null && Model.Input.AllergyList.Any())
+                                    {
+                                        @foreach (var allergy in Model.Input.AllergyList)
+                                        {
+                                            <div class="form-check">
+                                                <input class="form-check-input"
+                                                       type="checkbox"
+                                                       value="@allergy.Value"
+                                                       id="allergy_@allergy.Value"
+                                                       name="Input.SelectedAllergyIds"
+                                                       @(Model.Input.SelectedAllergyIds != null && Model.Input.SelectedAllergyIds.Contains(int.Parse(allergy.Value)) ? "checked" : "")>
+                                                <label class="form-check-label" for="allergy_@allergy.Value">
+                                                    @allergy.Text
+                                                </label>
+                                            </div>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <p class="text-muted">No allergies available</p>
+                                    }
+                                </div>
+                                <span asp-validation-for="Input.SelectedAllergyIds" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 mt-4">
+                        <button id="registerSubmit" type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-person-plus me-2"></i>Register Account
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const roleSelect = document.querySelector('#Input_Role');
+            const allergySection = document.querySelector('#allergySection');
+
+            if (roleSelect && allergySection) {
+                // Initially hide allergy section if not customer
+                toggleAllergySection();
+
+                roleSelect.addEventListener('change', function() {
+                    toggleAllergySection();
+                });
+
+                function toggleAllergySection() {
+                    const selectedRole = roleSelect.options[roleSelect.selectedIndex].text;
+                    if (selectedRole === 'Customer') {
+                        allergySection.style.display = 'block';
+                    } else {
+                        allergySection.style.display = 'none';
+                        // Clear selected allergies when role changes from Customer
+                        document.querySelectorAll('input[name="Input.SelectedAllergyIds"]:checked').forEach(checkbox => {
+                            checkbox.checked = false;
+                        });
+                    }
+                }
+            }
+        });
+    </script>
+</body>

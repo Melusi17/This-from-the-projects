@@ -1,0 +1,75 @@
+﻿@*
+    File: Views/Shared/_CustomerLayout.cshtml
+*@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>@ViewData["Title"] - Customer Dashboard</title>
+    <link rel="stylesheet" href="~/css/Customer/CustomerDashboard.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+    <div class="dashboard-wrapper">
+
+        <!-- Left Sidebar -->
+        <aside class="sidebar sidebar-left">
+            <div class="sidebar-header">
+                <img style="height:160px;width:220px;" src="~/css/img/ibhayi2.png" />
+            </div>
+            <div class="sidebar-content">
+                <nav>
+                    <div class="sidebar-button-container">
+                        <a asp-controller="Customer" asp-action="uploadPrescription" class="sidebar-button">📥 Upload Prescription</a>
+                        <a asp-controller="Customer" asp-action="placeOrder" class="sidebar-button">🛒 Place Orders</a>
+                        <a asp-controller="Customer" asp-action="trackOrder" class="sidebar-button">📦 Track Orders</a>
+                        <a asp-controller="Customer" asp-action="manageRepeats" class="sidebar-button">🔁 Manage Repeats</a>
+                        <a asp-controller="Customer" asp-action="viewReports" class="sidebar-button">📄 View Reports</a>
+                        <a asp-controller="Home" asp-action="Index"
+                           class="sidebar-button"
+                           onclick="return confirm('Are you sure you want to log out?');">
+                            &#10145; Logout
+                        </a>
+
+                    </div>
+                </nav>
+            </div>
+
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content" id="mainContent">
+            @RenderBody()
+        </main>
+
+        <!-- Right Sidebar -->
+        <aside class="sidebar sidebar-right">
+            <div class="profile-container">
+                <div class="profile-icon" onclick="toggleProfileMenu()">
+                    <img src="~/css/img/Customer_img/Profile.png" alt="Profile" />
+                </div>
+                <div id="profileMenu" class="profile-menu hidden">
+                    <a asp-controller="Customer" asp-action="profile" class="sidebar-button">👤 Account</a>
+
+                   <a asp-controller="Home" asp-action="Index" class="sidebar-button">🚪 Logout</a>
+                </div>
+            </div>
+
+            <div class="notifications" style="background-color: #ffffff; border: 1px solid #dcdcdc; padding: 20px; border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.05); margin: 20px 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+                <h4 style="font-size: 18px; margin-bottom: 15px; color: #333;">🔔 Notifications</h4>
+                <ul style="list-style-type: none; padding: 0; margin: 0;">
+                    <li style="padding: 12px 0; border-bottom: 1px solid #eee; font-size: 15px; color: #555;">
+                        🏥 Your <strong>Amoxicillin</strong> prescription is due for a refill.
+                    </li>
+                    <li style="padding: 12px 0; font-size: 15px; color: #555;">
+                        📧 IBhayi Pharmacy order <strong>[ORD202505341]</strong> is ready for collection.
+                    </li>
+                </ul>
+            </div>
+
+        </aside>
+    </div>
+
+    <script src="~/js/Customer/CustomerDashboard.js"></script>
+</body>
+</html>

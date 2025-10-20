@@ -1,0 +1,55 @@
+﻿@{
+    ViewData["Title"] = "Manage Pharmacists";
+    Layout = "~/Views/Shared/_ManagerLayout.cshtml";
+}
+
+<div class="container mt-4">
+   
+
+    <!-- Pharmacists Table -->
+    <div class="card p-3">
+        <h5 class="title-underline">Existing Pharmacists</h5>
+        <div class="card-body">
+            <table class="table table-hover table-borderless">
+                <thead class="table-light" style=" color: #2c3e50;">
+                    <tr>
+                        
+                        <th>Name</th>
+                        <th>ID Number</th>
+                        <th>Phone</th>
+                        <th>Email</th>
+                        <th>HCR No.</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+ 
+                    <tr>
+                       
+                        <td>Thuli Mthembu</td>
+                        <td>9001234567890</td>
+                        <td>082 123 4567</td>
+                        <td>thuli.m@pharmacy.co.za</td>
+                        <td>HCR-000123</td>
+                        <td>
+                            <button class="btn btn-sm btn-warning me-2">Edit</button>
+                            <button class="btn btn-sm btn-danger">Delete</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        
+                        <td>Peter Ndlovu</td>
+                        <td>8511225678901</td>
+                        <td>083 456 7890</td>
+                        <td>peter.n@pharmacy.co.za</td>
+                        <td>HCR-000456</td>
+                        <td>
+                            <button class="btn btn-sm btn-warning me-2">Edit</button>
+                            <button class="btn btn-sm btn-danger">Delete</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

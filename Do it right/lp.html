@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IbhayiPharmacy - Your Trusted Pharmacy in Port Elizabeth</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            scroll-behavior: smooth;
+        }
+        
+        .hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://images.unsplash.com/photo-1587854692152-cbe660dbde88?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1469&q=80');
+            background-size: cover;
+            background-position: center;
+            height: 80vh;
+        }
+        
+        .medicine-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        .floating-button {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 50;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        
+        .service-card:hover .service-icon {
+            transform: scale(1.2);
+        }
+        
+        .pharmacist-image {
+            transition: all 0.3s ease;
+        }
+        
+        .pharmacist-card:hover .pharmacist-image {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Bar -->
+    <div class="bg-blue-800 text-white py-2 px-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-4">
+                <div class="flex items-center">
+                    <i class="fas fa-phone-alt mr-2"></i>
+                    <span>041 123 4567</span>
+                </div>
+                <div class="flex items-center">
+                    <i class="fas fa-envelope mr-2"></i>
+                    <span>info@ibhayipharmacy.co.za</span>
+                </div>
+            </div>
+            <div class="flex items-center space-x-4">
+                <a href="#" class="hover:text-blue-200"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="hover:text-blue-200"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="hover:text-blue-200"><i class="fab fa-instagram"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-md sticky top-0 z-40">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center">
+                <div class="mr-2 text-blue-800">
+                    <i class="fas fa-prescription-bottle-alt text-3xl"></i>
+                </div>
+                <a href="#" class="text-2xl font-bold text-blue-800">Ibhayi<span class="text-blue-600">Pharmacy</span></a>
+            </div>
+            
+            <div class="hidden md:flex space-x-8">
+                <a href="#home" class="text-blue-800 font-medium hover:text-blue-600">Home</a>
+                <a href="#services" class="text-gray-700 font-medium hover:text-blue-600">Services</a>
+                <a href="#products" class="text-gray-700 font-medium hover:text-blue-600">Products</a>
+                <a href="#about" class="text-gray-700 font-medium hover:text-blue-600">About Us</a>
+                <a href="#contact" class="text-gray-700 font-medium hover:text-blue-600">Contact</a>
+            </div>
+            
+            <div class="flex items-center space-x-4">
+                <a href="#" class="text-blue-800 hover:text-blue-600">
+                    <i class="fas fa-search"></i>
+                </a>
+                <a href="#" class="text-blue-800 hover:text-blue-600">
+                    <i class="fas fa-user"></i>
+                </a>
+                <a href="#" class="text-blue-800 hover:text-blue-600 relative">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
+                </a>
+                <button class="md:hidden text-blue-800">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero flex items-center justify-center text-white">
+        <div class="container mx-auto px-4 text-center">
+            <h1 class="text-4xl md:text-6xl font-bold mb-4">Your Health Is Our Priority</h1>
+            <p class="text-xl md:text-2xl mb-8 max-w-2xl mx-auto">Trusted pharmacy services in Port Elizabeth with personalized care and professional advice.</p>
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <a href="#services" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-full transition duration-300">Our Services</a>
+                <a href="#contact" class="bg-white hover:bg-gray-100 text-blue-800 font-bold py-3 px-6 rounded-full transition duration-300">Contact Us</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-white p-6 rounded-lg shadow-md flex items-start">
+                    <div class="text-blue-600 mr-4 text-3xl">
+                        <i class="fas fa-truck"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold mb-2">Free Delivery</h3>
+                        <p class="text-gray-600">Free delivery for orders over R500 within Port Elizabeth.</p>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-6 rounded-lg shadow-md flex items-start">
+                    <div class="text-blue-600 mr-4 text-3xl">
+                        <i class="fas fa-user-md"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold mb-2">Expert Pharmacists</h3>
+                        <p class="text-gray-600">Our qualified pharmacists are always ready to help.</p>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-6 rounded-lg shadow-md flex items-start">
+                    <div class="text-blue-600 mr-4 text-3xl">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold mb-2">Extended Hours</h3>
+                        <p class="text-gray-600">Open 7 days a week for your convenience.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-blue-800 mb-4">Our Pharmacy Services</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">Comprehensive pharmaceutical care tailored to your needs in Port Elizabeth.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="service-card bg-gray-50 p-8 rounded-lg shadow-md text-center transition duration-300 hover:bg-blue-50">
+                    <div class="service-icon text-blue-600 text-5xl mb-6 transition duration-300">
+                        <i class="fas fa-prescription-bottle-alt"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Prescription Dispensing</h3>
+                    <p class="text-gray-600">Accurate and timely dispensing of your medications with professional counseling.</p>
+                </div>
+                
+                <div class="service-card bg-gray-50 p-8 rounded-lg shadow-md text-center transition duration-300 hover:bg-blue-50">
+                    <div class="service-icon text-blue-600 text-5xl mb-6 transition duration-300">
+                        <i class="fas fa-syringe"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Immunizations</h3>
+                    <p class="text-gray-600">Flu shots, travel vaccines, and other immunizations administered by our trained staff.</p>
+                </div>
+                
+                <div class="service-card bg-gray-50 p-8 rounded-lg shadow-md text-center transition duration-300 hover:bg-blue-50">
+                    <div class="service-icon text-blue-600 text-5xl mb-6 transition duration-300">
+                        <i class="fas fa-heartbeat"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Chronic Medication</h3>
+                    <p class="text-gray-600">Specialized programs for managing chronic conditions like diabetes and hypertension.</p>
+                </div>
+                
+                <div class="service-card bg-gray-50 p-8 rounded-lg shadow-md text-center transition duration-300 hover:bg-blue-50">
+                    <div class="service-icon text-blue-600 text-5xl mb-6 transition duration-300">
+                        <i class="fas fa-baby"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Baby & Mom Care</h3>
+                    <p class="text-gray-600">Essential products and advice for expecting mothers and newborns.</p>
+                </div>
+                
+                <div class="service-card bg-gray-50 p-8 rounded-lg shadow-md text-center transition duration-300 hover:bg-blue-50">
+                    <div class="service-icon text-blue-600 text-5xl mb-6 transition duration-300">
+                        <i class="fas fa-weight"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Weight Management</h3>
+                    <p class="text-gray-600">Personalized programs and products to support your weight loss journey.</p>
+                </div>
+                
+                <div class="service-card bg-gray-50 p-8 rounded-lg shadow-md text-center transition duration-300 hover:bg-blue-50">
+                    <div class="service-icon text-blue-600 text-5xl mb-6 transition duration-300">
+                        <i class="fas fa-flask"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Compounding</h3>
+                    <p class="text-gray-600">Custom medication formulations for patients with unique needs.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section id="products" class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-blue-800 mb-4">Featured Products</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">Quality healthcare products for your wellness needs.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <!-- Product 1 -->
+                <div class="medicine-card bg-white rounded-lg overflow-hidden shadow-md transition duration-300">
+                    <div class="relative overflow-hidden h-48 bg-gray-100 flex items-center justify-center">
+                        <img src="https://m.media-amazon.com/images/I/61tL7rKHNVL._AC_UF1000,1000_QL80_.jpg" alt="Vitamin C" class="h-full object-contain p-4">
+                        <div class="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">-15%</div>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-bold text-lg mb-1">Vitamin C 1000mg</h3>
+                        <p class="text-gray-600 text-sm mb-2">Immune system support</p>
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <span class="text-blue-600 font-bold">R89.99</span>
+                                <span class="text-gray-400 text-sm line-through ml-2">R105.99</span>
+                            </div>
+                            <button class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-full text-sm">
+                                <i class="fas fa-cart-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Product 2 -->
+                <div class="medicine-card bg-white rounded-lg overflow-hidden shadow-md transition duration-300">
+                    <div class="relative overflow-hidden h-48 bg-gray-100 flex items-center justify-center">
+                        <img src="https://5.imimg.com/data5/SELLER/Default/2021/12/VA/YC/JA/3033603/paracetamol-tablets-500x500.jpg" alt="Paracetamol" class="h-full object-contain p-4">
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-bold text-lg mb-1">Paracetamol 500mg</h3>
+                        <p class="text-gray-600 text-sm mb-2">Pain & fever relief</p>
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <span class="text-blue-600 font-bold">R24.99</span>
+                            </div>
+                            <button class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-full text-sm">
+                                <i class="fas fa-cart-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Product 3 -->
+                <div class="medicine-card bg-white rounded-lg overflow-hidden shadow-md transition duration-300">
+                    <div class="relative overflow-hidden h-48 bg-gray-100 flex items-center justify-center">
+                        <img src="https://www.netmeds.com/images/product-v1/600x600/909012/accu_check_active_test_strips_50s_0.jpg" alt="Diabetes Test Strips" class="h-full object-contain p-4">
+                        <div class="absolute top-2 right-2 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded">New</div>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-bold text-lg mb-1">Glucose Test Strips</h3>
+                        <p class="text-gray-600 text-sm mb-2">For diabetes monitoring</p>
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <span class="text-blue-600 font-bold">R299.99</span>
+                            </div>
+                            <button class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-full text-sm">
+                                <i class="fas fa-cart-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Product 4 -->
+                <div class="medicine-card bg-white rounded-lg overflow-hidden shadow-md transition duration-300">
+                    <div class="relative overflow-hidden h-48 bg-gray-100 flex items-center justify-center">
+                        <img src="https://www.chemistwarehouse.co.nz/Uploads/Product/ExtraLarge/31805.jpg" alt="Antihistamine" class="h-full object-contain p-4">
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-bold text-lg mb-1">Allergy Relief</h3>
+                        <p class="text-gray-600 text-sm mb-2">Antihistamine tablets</p>
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <span class="text-blue-600 font-bold">R65.50</span>
+                            </div>
+                            <button class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-full text-sm">
+                                <i class="fas fa-cart-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-10">
+                <a href="#" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full transition duration-300">
+                    View All Products
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col lg:flex-row items-center">
+                <div class="lg:w-1/2 mb-8 lg:mb-0 lg:pr-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-blue-800 mb-6">About IbhayiPharmacy</h2>
+                    <p class="text-gray-600 mb-4">Founded in 2010, IbhayiPharmacy has been serving the Port Elizabeth community with dedication and care. Our mission is to provide accessible, high-quality pharmaceutical services to all our patients.</p>
+                    <p class="text-gray-600 mb-6">Our team of experienced pharmacists and healthcare professionals are committed to your well-being, offering personalized advice and comprehensive medication management.</p>
+                    <div class="space-y-4">
+                        <div class="flex items-start">
+                            <div class="text-blue-600 mr-3 mt-1">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-800">Patient-Centered Care</h4>
+                                <p class="text-gray-600">We prioritize your health needs and concerns.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="text-blue-600 mr-3 mt-1">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-800">Community Focused</h4>
+                                <p class="text-gray-600">Actively involved in local health initiatives.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="text-blue-600 mr-3 mt-1">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-800">Continuous Education</h4>
+                                <p class="text-gray-600">Our staff regularly updates their knowledge.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="lg:w-1/2">
+                    <div class="relative rounded-xl overflow-hidden shadow-lg">
+                        <img src="https://images.unsplash.com/photo-1581093450021-4a7360e9a9e1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Pharmacy interior" class="w-full h-auto">
+                        <div class="absolute inset-0 bg-blue-800 opacity-20"></div>
+                        <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-6">
+                            <h3 class="text-white text-xl font-bold">Our Modern Facility in Port Elizabeth</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Team Section -->
+            <div class="mt-16">
+                <h2 class="text-3xl font-bold text-center text-blue-800 mb-12">Meet Our Pharmacists</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="pharmacist-card bg-white rounded-lg overflow-hidden shadow-md transition duration-300">
+                        <div class="pharmacist-image overflow-hidden h-64">
+                            <img src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Pharmacist" class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold mb-1">Dr. Nomsa Dlamini</h3>
+                            <p class="text-blue-600 mb-3">Chief Pharmacist</p>
+                            <p class="text-gray-600 mb-4">With over 15 years of experience, Dr. Dlamini specializes in chronic disease management.</p>
+                            <div class="flex space-x-3">
+                                <a href="#" class="text-blue-600 hover:text-blue-800"><i class="fab fa-linkedin-in"></i></a>
+                                <a href="#" class="text-blue-600 hover:text-blue-800"><i class="fas fa-envelope"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="pharmacist-card bg-white rounded-lg overflow-hidden shadow-md transition duration-300">
+                        <div class="pharmacist-image overflow-hidden h-64">
+                            <img src="https://images.unsplash.com/photo-1594824476967-48c8b964273f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80" alt="Pharmacist" class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold mb-1">Thando Mbeki</h3>
+                            <p class="text-blue-600 mb-3">Clinical Pharmacist</p>
+                            <p class="text-gray-600 mb-4">Specializes in pediatric care and immunization programs for children.</p>
+                            <div class="flex space-x-3">
+                                <a href="#" class="text-blue-600 hover:text-blue-800"><i class="fab fa-linkedin-in"></i></a>
+                                <a href="#" class="text-blue-600 hover:text-blue-800"><i class="fas fa-envelope"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="pharmacist-card bg-white rounded-lg overflow-hidden shadow-md transition duration-300">
+                        <div class="pharmacist-image overflow-hidden h-64">
+                            <img src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1528&q=80" alt="Pharmacist" class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold mb-1">Sipho Jacobs</h3>
+                            <p class="text-blue-600 mb-3">Compounding Specialist</p>
+                            <p class="text-gray-600 mb-4">Expert in creating customized medication formulations for unique patient needs.</p>
+                            <div class="flex space-x-3">
+                                <a href="#" class="text-blue-600 hover:text-blue-800"><i class="fab fa-linkedin-in"></i></a>
+                                <a href="#" class="text-blue-600 hover:text-blue-800"><i class="fas fa-envelope"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="py-16 bg-blue-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-blue-800 mb-4">What Our Patients Say</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">Hear from our valued customers in Port Elizabeth.</p>
+           
+</html>

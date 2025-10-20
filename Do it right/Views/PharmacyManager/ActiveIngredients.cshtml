@@ -1,0 +1,51 @@
+﻿@{
+    ViewData["Title"] = "Active Ingredients";
+    Layout = "~/Views/Shared/_ManagerLayout.cshtml";
+}
+
+<div class="container mt-4">
+  
+
+    <!-- Active Ingredients Table -->
+    <div class="card  p-3 ">
+        <h5 class="title-underline">Existing Ingredients</h5>
+        <div class="card-body">
+            <table class="table table-hover table-borderless" >
+                <thead class="table-light" style=" color: #2c3e50;">
+                    <tr>
+                       
+                        <th>Ingredient Name</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                   
+                    <tr>
+                        
+                        <td>Paracetamol</td>
+                        <td>
+                            <button class="btn btn-sm btn-warning me-2">Edit</button>
+                            <button class="btn btn-sm btn-danger">Delete</button>
+                        </td>
+                    </tr>
+                    <tr>
+                       
+                        <td>Ibuprofen</td>
+                        <td>
+                            <button class="btn btn-sm btn-warning me-2">Edit</button>
+                            <button class="btn btn-sm btn-danger">Delete</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        
+                        <td>Amoxicillin</td>
+                        <td>
+                            <button class="btn btn-sm btn-warning me-2">Edit</button>
+                            <button class="btn btn-sm btn-danger">Delete</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

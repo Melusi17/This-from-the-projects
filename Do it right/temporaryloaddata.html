@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prescription System - Doctor & Medication</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f4f6f9;
+            color: #333;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(to right, #22586A, #3498db);
+            border-radius: 10px;
+            color: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            margin-bottom: 10px;
+            font-size: 2.2rem;
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .form-container {
+            display: grid;
+            grid-template-areas:
+                "doctor doctor"
+                "meds pdf";
+            gap: 25px;
+            grid-template-columns: 1fr 1fr;
+        }
+        
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            height: fit-content;
+        }
+        
+        .doctor-card { 
+            grid-area: doctor; 
+        }
+        
+        .meds-card { 
+            grid-area: meds; 
+        }
+        
+        .pdf-card { 
+            grid-area: pdf; 
+        }
+        
+        h3 {
+            color: #2c3e50;
+            margin-top: 0;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 12px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #34495e;
+            font-size: 14px;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 15px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+        
+        .btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 18px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 15px;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .btn-add {
+            background: #27ae60;
+        }
+        
+        .btn-alert {
+            background: #e74c3c;
+        }
+
+        .btn-done {
+            background: #9b59b6;
+        }
+        
+        .btn-pdf {
+            background: #e74c3c;
+        }
+        
+        .medication-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        
+        .medication-table th {
+            background: #3498db;
+            color: white;
+            padding: 14px;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        .medication-table td {
+            padding: 14px;
+            border-bottom: 1px solid #eee;
+            vertical-align: top;
+        }
+        
+        .medication-table select, 
+        .medication-table input {
+            margin: 0;
+        }
+        
+        .med-details {
+            font-size: 13px;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+        
+        .searchable-select {
+            position: relative;
+            width: 100%;
+        }
+        
+        .searchable-select input {
+            width: 100%;
+        }
+        
+        .approval-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .approve-btn {
+            color: #27ae60;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            transition: transform 0.2s;
+        }
+        
+        .approve-btn:hover {
+            transform: scale(1.2);
+        }
+        
+        .decline-btn {
+            color: #e74c3c;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            transition: transform 0.2s;
+        }
+        
+        .decline-btn:hover {
+            transform: scale(1.2);
+        }
+
+        .delete-btn {
+            color: #95a5a6;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.2s;
+        }
+
+        .delete-btn:hover {
+            color: #e74c3c;
+        }
+        
+        .status-indicator {
+            font-size: 13px;
+            margin-top: 5px;
+            padding: 5px 10px;
+            border-radius: 4px;
+            display: inline-block;
+            font-weight: 600;
+        }
+        
+        .approved {
+            background-color: #d5f5e3;
+            color: #27ae60;
+        }
+        
+        .declined {
+            background-color: #fadbd8;
+            color: #e74c3c;
+        }
+        
+        .repeats-input {
+            width: 60px;
+            text-align: center;
+        }
+        
+        .form-footer {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        
+        .form-footer-right {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .approval-legend {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            font-size: 14px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .approval-legend i {
+            margin-right: 5px;
+        }
+        
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #333;
+            color: white;
+            padding: 16px 20px;
+            border-radius: 6px;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .toast.show {
+            opacity: 1;
+        }
+        
+        /* PDF Preview Styles */
+        .pdf-preview {
+            width: 100%;
+            height: 400px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            background-color: #f9f9f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .pdf-placeholder {
+            text-align: center;
+            color: #7f8c8d;
+        }
+        
+        .pdf-placeholder i {
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: #e74c3c;
+        }
+        
+        .pdf-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+        
+        .pdf-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
+        }
+        
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            width: 90%;
+            max-width: 600px;
+            animation: modalFade 0.3s;
+        }
+        
+        @keyframes modalFade {
+            from {opacity: 0; transform: translateY(-30px);}
+            to {opacity: 1; transform: translateY(0);}
+        }
+        
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        
+        .close:hover {
+            color: #333;
+        }
+        
+        .modal-header {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #3498db;
+        }
+        
+        .modal-title {
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .form-col {
+            flex: 1;
+        }
+        
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        
+        .btn-cancel {
+            background: #95a5a6;
+        }
+        
+        .btn-confirm {
+            background: #27ae60;
+        }
+        
+        .specialty-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        
+        .specialty-tag {
+            background: #e8f4fc;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .specialty-tag:hover {
+            background: #3498db;
+            color: white;
+        }
+        
+        .specialty-tag.selected {
+            background: #3498db;
+            color: white;
+        }
+        
+        @media (max-width: 1200px) {
+            .form-container {
+                grid-template-areas:
+                    "doctor doctor"
+                    "meds meds"
+                    "pdf pdf";
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .form-footer {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .form-footer-right {
+                justify-content: flex-end;
+            }
+            
+            .medication-table {
+                display: block;
+                overflow-x: auto;
+            }
+            
+            .pdf-actions {
+                flex-direction: column;
+            }
+            
+            .approval-buttons {
+                flex-wrap: wrap;
+            }
+            
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-prescription-bottle-alt"></i> Pharmacy Prescription System</h1>
+            <p>Doctor information and medication management</p>
+        </div>
+        
+        <div class="form-container">
+            <!-- DOCTOR CARD -->
+            <div class="card doctor-card">
+                <h3><i class="fas fa-user-md"></i> Doctor Information</h3>
+                
+                <div class="form-group">
+                    <label for="doctorSelect">Select Doctor</label>
+                    <div class="searchable-select">
+                        <input list="doctors-list" id="doctorSelect" placeholder="Search or select doctor...">
+                        <datalist id="doctors-list">
+                            <option value="Dr. Sarah Smith (PR1234567)" data-id="1">General Practitioner</option>
+                            <option value="Dr. Michael Brown (PR7654321)" data-id="2">Cardiologist</option>
+                            <option value="Dr. Thando Nkosi (PR9876543)" data-id="3">Pediatrician</option>
+                        </datalist>
+                    </div>
+                    <button class="btn btn-add" id="addDoctorBtn" style="margin-top: 12px;">
+                        <i class="fas fa-user-md"></i> Add New Doctor
+                    </button>
+                </div>
+                
+                <div class="form-group">
+                    <label for="prescriptionDate">Prescription Date</label>
+                    <input type="date" id="prescriptionDate">
+                </div>
+            </div>
+            
+            <!-- MEDICATION CARD -->
+            <div class="card meds-card">
+                <h3><i class="fas fa-pills"></i> Medication</h3>
+                
+                <table class="medication-table">
+                    <thead>
+                        <tr>
+                            <th width="30%">Medication (Dosage Form)</th>
+                            <th width="8%">Qty</th>
+                            <th width="25%">Instructions</th>
+                            <th width="12%">Details</th>
+                            <th width="5%">Repeat</th>
+                            <th width="8%">Repeats Left</th>
+                            <th width="5%">Status</th>
+                            <th width="7%">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="medsTableBody">
+                        <!-- Rows will be added here -->
+                    </tbody>
+                </table>
+                
+                <button class="btn btn-add" id="addMedBtn" style="margin-top: 20px;">
+                    <i class="fas fa-plus"></i> Add Medication
+                </button>
+                
+                <div class="approval-legend">
+                    <p><strong>Status Legend:</strong></p>
+                    <p><i class="fas fa-check-circle" style="color: #27ae60;"></i> Green check = Approved medication</p>
+                    <p><i class="fas fa-times-circle" style="color: #e74c3c;"></i> Red X = Declined medication</p>
+                </div>
+                
+                <div class="form-footer">
+                    <button class="btn btn-alert" id="checkInteractionsBtn">
+                        <i class="fas fa-exclamation-triangle"></i> Check Interactions
+                    </button>
+                    <div class="form-footer-right">
+                        <button class="btn btn-add" id="generatePdfBtn">
+                            <i class="fas fa-file-pdf"></i> Generate PDF
+                        </button>
+                        <button class="btn btn-add" id="savePrescriptionBtn">
+                            <i class="fas fa-save"></i> Save Prescription
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- PDF PREVIEW CARD -->
+            <div class="card pdf-card">
+                <h3><i class="fas fa-file-pdf"></i> Prescription PDF</h3>
+                
+                <div class="pdf-preview" id="pdfPreview">
+                    <div class="pdf-placeholder">
+                        <i class="fas fa-file-pdf"></i>
+                        <p>No PDF generated yet</p>
+                        <p>Click "Generate PDF" to create your prescription</p>
+                    </div>
+                </div>
+                
+                <div class="pdf-actions">
+                    <button class="btn btn-pdf" id="downloadPdfBtn" disabled>
+                        <i class="fas fa-download"></i> Download PDF
+                    </button>
+                    <button class="btn btn-pdf" id="printPdfBtn" disabled>
+                        <i class="fas fa-print"></i> Print Prescription
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Doctor Modal -->
+    <div id="addDoctorModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fas fa-user-md"></i> Add New Doctor</h3>
+                <span class="close">&times;</span>
+            </div>
+            
+            <form id="doctorForm">
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label for="doctorFirstName">First Name *</label>
+                            <input type="text" id="doctorFirstName" required>
+                        </div>
+                    </div>
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label for="doctorLastName">Last Name *</label>
+                            <input type="text" id="doctorLastName" required>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label for="doctorPracticeNumber">Practice Number *</label>
+                            <input type="text" id="doctorPracticeNumber" placeholder="PR1234567" required>
+                        </div>
+                    </div>
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label for="doctorContact">Contact Number</label>
+                            <input type="tel" id="doctorContact" placeholder="+27 12 345 6789">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="doctorEmail">Email Address</label>
+                    <input type="email" id="doctorEmail" placeholder="doctor@example.com">
+                </div>
+                
+                <div class="form-group">
+                    <label>Specialty *</label>
+                    <div class="specialty-tags">
+                        <span class="specialty-tag" data-specialty="General Practitioner">General Practitioner</span>
+                        <span class="specialty-tag" data-specialty="Cardiologist">Cardiologist</span>
+                        <span class="specialty-tag" data-specialty="Pediatrician">Pediatrician</span>
+                        <span class="specialty-tag" data-specialty="Dermatologist">Dermatologist</span>
+                        <span class="specialty-tag" data-specialty="Neurologist">Neurologist</span>
+                        <span class="specialty-tag" data-specialty="Oncologist">Oncologist</span>
+                        <span class="specialty-tag" data-specialty="Psychiatrist">Psychiatrist</span>
+                        <span class="specialty-tag" data-specialty="Other">Other</span>
+                    </div>
+                    <input type="hidden" id="doctorSpecialty" required>
+                </div>
+                
+                <div class="form-group" id="customSpecialtyGroup" style="display: none;">
+                    <label for="customSpecialty">Specify Specialty</label>
+                    <input type="text" id="customSpecialty">
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-cancel" id="cancelDoctorBtn">Cancel</button>
+                    <button type="submit" class="btn btn-confirm">Add Doctor</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // Sample data
+        const medications = [
+            {
+                id: 1,
+                name: "CardioVex",
+                active: "Aterolazine 18mg",
+                stock: 90,
+                reorder: 100,
+                forms: ["Tablet"],
+                schedule: "S6",
+                price: 150
+            },
+            {
+                id: 2,
+                name: "Neurocalm",
+                active: "Vaspril 2mg, Zentropine 50mg",
+                stock: 100,
+                reorder: 110,
+                forms: ["Tablet"],
+                schedule: "S2",
+                price: 200
+            },
+            {
+                id: 3,
+                name: "Allerfree Duo",
+                active: "Histarelin 325mg, Lorvexamine 453.6g",
+                stock: 100,
+                reorder: 150,
+                forms: ["Powder"],
+                schedule: "S0",
+                price: 180
+            },
+            {
+                id: 4,
+                name: "GastroEase",
+                active: "Pylorazine",
+                stock: 470,
+                reorder: 400,
+                forms: ["Tablet"],
+                schedule: "S3",
+                price: 95
+            },
+            {
+                id: 5,
+                name: "Respivent",
+                active: "Bronchomid, Alveclear",
+                stock: 490,
+                reorder: 300,
+                forms: ["Tablet"],
+                schedule: "S3",
+                price: 120
+            }
+        ];
+
+        const commonInstructions = [
+            "Take 1 tablet daily",
+            "Take 1 tablet twice daily",
+            "Take 2 tablets at bedtime",
+            "Take as needed for pain",
+            "Other (specify)"
+        ];
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set today's date as default
+            document.getElementById('prescriptionDate').valueAsDate = new Date();
+            
+            // Initialize with one medication row
+            addMedicationRow();
+            
+            // Set up event listeners
+            document.getElementById('addDoctorBtn').addEventListener('click', openAddDoctorModal);
+            
+            document.getElementById('addMedBtn').addEventListener('click', addMedicationRow);
+            
+            document.getElementById('checkInteractionsBtn').addEventListener('click', checkInteractions);
+            
+            document.getElementById('savePrescriptionBtn').addEventListener('click', savePrescription);
+            
+            document.getElementById('generatePdfBtn').addEventListener('click', generatePdf);
+            
+            document.getElementById('downloadPdfBtn').addEventListener('click', downloadPdf);
+            
+            document.getElementById('printPdfBtn').addEventListener('click', printPdf);
+            
+            // Modal event listeners
+            const modal = document.getElementById('addDoctorModal');
+            const closeBtn = document.getElementsByClassName('close')[0];
+            const cancelBtn = document.getElementById('cancelDoctorBtn');
+            
+            closeBtn.addEventListener('click', closeAddDoctorModal);
+            cancelBtn.addEventListener('click', closeAddDoctorModal);
+            
+            window.addEventListener('click', function(event) {
+                if (event.target == modal) {
+                    closeAddDoctorModal();
+                }
+            });
+            
+            // Specialty tag selection
+            const specialtyTags = document.querySelectorAll('.specialty-tag');
+            specialtyTags.forEach(tag => {
+                tag.addEventListener('click', function() {
+                    specialtyTags.forEach(t => t.classList.remove('selected'));
+                    this.classList.add('selected');
+                    
+                    const specialty = this.getAttribute('data-specialty');
+                    document.getElementById('doctorSpecialty').value = specialty;
+                    
+                    // Show custom specialty input if "Other" is selected
+                    if (specialty === 'Other') {
+                        document.getElementById('customSpecialtyGroup').style.display = 'block';
+                    } else {
+                        document.getElementById('customSpecialtyGroup').style.display = 'none';
+                    }
+                });
+            });
+            
+            // Form submission
+            document.getElementById('doctorForm').addEventListener('submit', addNewDoctor);
+        });
+
+        // Open Add Doctor Modal
+        function openAddDoctorModal() {
+            document.getElementById('addDoctorModal').style.display = 'block';
+            document.getElementById('doctorForm').reset();
+            document.querySelectorAll('.specialty-tag').forEach(tag => {
+                tag.classList.remove('selected');
+            });
+            document.getElementById('customSpecialtyGroup').style.display = 'none';
+        }
+
+        // Close Add Doctor Modal
+        function closeAddDoctorModal() {
+            document.getElementById('addDoctorModal').style.display = 'none';
+        }
+
+        // Add New Doctor
+        function addNewDoctor(e) {
+            e.preventDefault();
+            
+            const firstName = document.getElementById('doctorFirstName').value.trim();
+            const lastName = document.getElementById('doctorLastName').value.trim();
+            const practiceNumber = document.getElementById('doctorPracticeNumber').value.trim();
+            const contact = document.getElementById('doctorContact').value.trim();
+            const email = document.getElementById('doctorEmail').value.trim();
+            let specialty = document.getElementById('doctorSpecialty').value;
+            
+            // Validate required fields
+            if (!firstName || !lastName || !practiceNumber || !specialty) {
+                showToast('Please fill in all required fields', 'error');
+                return;
+            }
+            
+            // If specialty is "Other", use the custom value
+            if (specialty === 'Other') {
+                specialty = document.getElementById('customSpecialty').value.trim();
+                if (!specialty) {
+                    showToast('Please specify the doctor\'s specialty', 'error');
+                    return;
+                }
+            }
+            
+            // Validate practice number format (PR followed by 7 digits)
+            const practiceNumberPattern = /^PR\d{7}$/;
+            if (!practiceNumberPattern.test(practiceNumber)) {
+                showToast('Practice number must be in the format PR1234567', 'error');
+                return;
+            }
+            
+            // Create the new doctor option
+            const doctorName = `Dr. ${firstName} ${lastName} (${practiceNumber})`;
+            const doctorsList = document.getElementById('doctors-list');
+            const newOption = document.createElement('option');
+            newOption.value = doctorName;
+            newOption.textContent = specialty;
+            newOption.setAttribute('data-id', Date.now()); // Generate a unique ID
+            
+            doctorsList.appendChild(newOption);
+            
+            // Auto-select the new doctor
+            document.getElementById('doctorSelect').value = doctorName;
+            
+            // Close the modal
+            closeAddDoctorModal();
+            
+            // Show success message
+            showToast(`Dr. ${firstName} ${lastName} has been added successfully`, 'success');
+        }
+
+        // Add medication row with searchable select
+        function addMedicationRow() {
+            const tbody = document.getElementById('medsTableBody');
+            const rowId = Date.now();
+            
+            // Create datalist options
+            let medOptions = '';
+            medications.forEach(med => {
+                med.forms.forEach(form => {
+                    medOptions += `<option value="${med.name} (${form}) (${med.schedule})" data-id="${med.id}" data-form="${form}">${med.active}</option>`;
+                });
+            });
+            
+            // Instruction options
+            let instructionOptions = '';
+            commonInstructions.forEach(inst => {
+                instructionOptions += `<option value="${inst}">${inst}</option>`;
+            });
+            
+            const row = document.createElement('tr');
+            row.id = `row-${rowId}`;
+            row.innerHTML = `
+                <td>
+                    <div class="searchable-select">
+                        <input list="meds-list-${rowId}" id="med-input-${rowId}" 
+                               placeholder="Search or select medication...">
+                        <datalist id="meds-list-${rowId}">
+                            ${medOptions}
+                        </datalist>
+                    </div>
+                </td>
+                <td><input type="number" min="1" value="1" class="qty-input"></td>
+                <td>
+                    <select class="inst-select">
+                        ${instructionOptions}
+                    </select>
+                </td>
+                <td>
+                    <div class="med-details" id="details-${rowId}">
+                        <!-- Details will populate here -->
+                    </div>
+                </td>
+                <td style="text-align: center;">
+                    <input type="checkbox" id="repeat-check-${rowId}" onchange="toggleRepeats(${rowId})">
+                </td>
+                <td>
+                    <input type="number" id="repeats-left-${rowId}" min="0" value="0" disabled class="repeats-input">
+                </td>
+                <td>
+                    <span id="status-${rowId}" class="status-indicator">Pending</span>
+                </td>
+                <td>
+                    <div class="approval-buttons">
+                        <button class="approve-btn" onclick="approveMedication(${rowId})"><i class="fas fa-check-circle"></i></button>
+                        <button class="decline-btn" onclick="declineMedication(${rowId})"><i class="fas fa-times-circle"></i></button>
+                        <button class="delete-btn" onclick="deleteMedicationRow(${rowId})"><i class="fas fa-trash-alt"></i></button>
+                    </div>
+                </td>
+            `;
+            
+            tbody.appendChild(row);
+            
+            // Add event listener for when a medication is selected
+            document.getElementById(`med-input-${rowId}`).addEventListener('change', function() {
+                const selectedOption = document.querySelector(`#meds-list-${rowId} option[value="${this.value}"]`);
+                if (selectedOption) {
+                    updateMedDetails(selectedOption.getAttribute('data-id'), rowId);
+                }
+            });
+        }
+
+        // Delete medication row
+        function deleteMedicationRow(rowId) {
+            const row = document.getElementById(`row-${rowId}`);
+            if (row) {
+                row.remove();
+                showToast('Medication removed', 'success');
+            }
+        }
+
+        // Toggle repeats input based on checkbox
+        function toggleRepeats(rowId) {
+            const checkbox = document.getElementById(`repeat-check-${rowId}`);
+            const repeatsInput = document.getElementById(`repeats-left-${rowId}`);
+            repeatsInput.disabled = !checkbox.checked;
+            if (!checkbox.checked) {
+                repeatsInput.value = 0;
+            }
+        }
+
+        // Approve medication
+        function approveMedication(rowId) {
+            const statusElement = document.getElementById(`status-${rowId}`);
+            statusElement.textContent = "Approved";
+            statusElement.className = "status-indicator approved";
+            showToast('Medication approved', 'success');
+        }
+
+        // Decline medication
+        function declineMedication(rowId) {
+            const statusElement = document.getElementById(`status-${rowId}`);
+            statusElement.textContent = "Declined";
+            statusElement.className = "status-indicator declined";
+            showToast('Medication declined', 'warning');
+        }
+
+        // Update medication details when selected
+        function updateMedDetails(medId, rowId) {
+            const detailsDiv = document.getElementById(`details-${rowId}`);
+            
+            if (medId) {
+                const med = medications.find(m => m.id == medId);
+                
+                if (med) {
+                    // Update details display
+                    detailsDiv.innerHTML = `
+                        <small><strong>Active:</strong> ${med.active}</small><br>
+                        <small><strong>Stock:</strong> ${med.stock}</small><br>
+                        <small><strong>Reorder:</strong> ${med.reorder}</small>
+                    `;
+                    return;
+                }
+            }
+            
+            // Clear if no medication selected
+            detailsDiv.innerHTML = '';
+        }
+
+        // Check for medication interactions
+        function checkInteractions() {
+            showToast('Interaction check completed. No issues found.', 'success');
+        }
+
+        // Save prescription
+        function savePrescription() {
+            const doctorValue = document.getElementById('doctorSelect').value;
+            const prescriptionDate = document.getElementById('prescriptionDate').value;
+            
+            if (!doctorValue) {
+                showToast('Please select a doctor', 'error');
+                return;
+            }
+            
+            if (!prescriptionDate) {
+                showToast('Please select a prescription date', 'error');
+                return;
+            }
+            
+            showToast('Prescription saved successfully!', 'success');
+        }
+        
+        // Generate PDF
+        function generatePdf() {
+            const doctorValue = document.getElementById('doctorSelect').value;
+            
+            if (!doctorValue) {
+                showToast('Please select a doctor before generating PDF', 'error');
+                return;
+            }
+            
+            // In a real application, this would generate an actual PDF
+            // For this example, we'll create a simple HTML representation
+            const pdfPreview = document.getElementById('pdfPreview');
+            pdfPreview.innerHTML = `
+                <div style="padding: 20px; text-align: center;">
+                    <h2 style="color: #22586A;">Prescription</h2>
+                    <p><strong>Doctor:</strong> ${doctorValue}</p>
+                    <p><strong>Date:</strong> ${document.getElementById('prescriptionDate').value}</p>
+                    <hr style="margin: 15px 0;">
+                    <h3 style="color: #22586A; margin-top: 20px;">Medications</h3>
+                    <div style="text-align: left; margin-top: 15px;">
+                        <p>This is a preview of how the PDF would look with your prescription details.</p>
+                        <p>In a real application, this would show the actual PDF document.</p>
+                    </div>
+                    <div style="margin-top: 30px; color: #7f8c8d;">
+                        <p>Generated on: ${new Date().toLocaleString()}</p>
+                    </div>
+                </div>
+            `;
+            
+            // Enable download and print buttons
+            document.getElementById('downloadPdfBtn').disabled = false;
+            document.getElementById('printPdfBtn').disabled = false;
+            
+            showToast('PDF generated successfully', 'success');
+        }
+        
+        // Download PDF
+        function downloadPdf() {
+            showToast('In a real application, this would download the PDF file', 'info');
+        }
+        
+        // Print PDF
+        function printPdf() {
+            showToast('In a real application, this would print the prescription', 'info');
+        }
+
+        // Show toast notification
+        function showToast(message, type = 'info') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = 'toast show';
+            
+            // Set background color based on type
+            if (type === 'error') {
+                toast.style.backgroundColor = '#e74c3c';
+            } else if (type === 'success') {
+                toast.style.backgroundColor = '#27ae60';
+            } else if (type === 'warning') {
+                toast.style.backgroundColor = '#f39c12';
+            } else {
+                toast.style.backgroundColor = '#3498db';
+            }
+            
+            // Hide after 3 seconds
+            setTimeout(() => {
+                toast.className = 'toast';
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

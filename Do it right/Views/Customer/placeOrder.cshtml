@@ -1,0 +1,284 @@
+﻿@{
+    ViewData["Title"] = "Place Order";
+    Layout = "~/Views/Shared/CustomerLayout/_CustomerLayout.cshtml";
+}
+<style>
+    /* Modal Styling */
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        display: none;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .modal-content {
+        background: #fff;
+        padding: 30px;
+        border-radius: 10px;
+        width: 600px;
+        max-height: 80vh;
+        overflow-y: auto;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    }
+
+        .modal-content h3 {
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+
+    .modal-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+    }
+
+        .modal-table th,
+        .modal-table td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .modal-table th {
+            background-color: #f5f5f5;
+        }
+
+    .modal-buttons {
+        text-align: right;
+    }
+
+    .btn-upload {
+        background-color: #1f9f77;
+        color: white;
+        border: none;
+        padding: 10px 18px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 600;
+        transition: background-color 0.3s ease;
+        margin-left: 10px;
+    }
+
+        .btn-upload:hover {
+            background-color: #28bf96;
+        }
+
+        .btn-upload.cancel {
+            background-color: #999;
+        }
+
+            .btn-upload.cancel:hover {
+                background-color: #777;
+            }
+
+    .total-summary {
+        font-size: 16px;
+        margin-bottom: 10px;
+    }
+
+    .styled-medication-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 0 auto 30px auto;
+        font-size: 14px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+        .styled-medication-table th,
+        .styled-medication-table td {
+            border: 1px solid #ccc;
+            padding: 10px 12px;
+            text-align: center;
+        }
+
+        .styled-medication-table thead {
+            background-color: #1f9f77;
+            color: white;
+        }
+
+        .styled-medication-table tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .styled-medication-table tbody tr:hover {
+            background-color: #e3f5f0;
+        }
+</style>
+
+<div class="track-order-panel upload-prescription-panel">
+<h2>📦 Place Medication Order</h2>
+
+    <table id="medicationTable" class="styled-medication-table">
+    <thead>
+        <tr>
+            <th>Select</th>
+            <th>Doctor</th>
+            <th>Medication</th>
+            <th>Qty</th>
+            <th>Repeats</th>
+            <th>Instructions</th>
+            <th>Price (R)</th>
+        </tr>
+    </thead>
+    <tbody id="medicationBody"></tbody>
+</table>
+
+<div class="order-summary-container">
+    <div class="summary">
+        <p>Subtotal: R<span id="subtotal">0.00</span></p>
+        <p>Tax (15%): R<span id="tax">0.00</span></p>
+        <p><strong>Total Due: R</strong><span id="total">0.00</span></p>
+    </div>
+
+    <div class="form-group">
+        <button class="btn-upload" onclick="showOrderSummary()">Place Order</button>
+    </div>
+</div>
+
+<!-- ✅ Styled Confirmation Modal -->
+<div id="confirmationModal" class="modal-overlay">
+    <div class="modal-content">
+        <h3>✅ Confirm Medication Order</h3>
+
+            <p><strong>Order Number:</strong> <span id="orderNumber"></span></p>
+        <table class="modal-table">
+            <thead>
+                <tr>
+                    <th>Doctor</th>
+                    <th>Medication</th>
+                    <th>Qty</th>
+                    <th>Repeats</th>
+                    <th>Price (R)</th>
+                </tr>
+            </thead>
+            <tbody id="confirmationBody"></tbody>
+        </table>
+        <p class="total-summary"><strong>Total Due (incl. VAT): R<span id="modalTotal">0.00</span></strong></p>
+        <div class="modal-buttons">
+            <button class="btn-upload" onclick="confirmFinalOrder()">Confirm</button>
+            <button class="btn-upload cancel" onclick="closeConfirmation()">Cancel</button>
+        </div>
+    </div>
+</div>
+</div>
+
+
+    <script>
+        const medications = [
+            { doctor: 'Dr. Smith', name: 'Amoxicillin', qty: 2, repeats: 1, instructions: 'Twice a day', price: 120 },
+            { doctor: 'Dr. Smith', name: 'Ibuprofen', qty: 1, repeats: 0, instructions: 'After meals', price: 60 },
+            { doctor: 'Dr. Johnson', name: 'Metformin', qty: 3, repeats: 2, instructions: 'Morning and evening', price: 150 },
+            { doctor: 'Dr. Johnson', name: 'Paracetamol', qty: 1, repeats: 1, instructions: 'When needed', price: 80 }
+        ];
+
+        function loadMedications() {
+            const tbody = document.getElementById('medicationBody');
+            tbody.innerHTML = '';
+
+            medications.forEach((med, index) => {
+                if (med.repeats > 0) {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td><input type="checkbox" class="med-check" data-index="${index}" data-price="${med.price}" onchange="updateTotals()"></td>
+                        <td>${med.doctor}</td>
+                        <td>${med.name}</td>
+                        <td>${med.qty}</td>
+                        <td>${med.repeats}</td>
+                        <td>${med.instructions}</td>
+                        <td>${med.price}</td>
+                    `;
+                    tbody.appendChild(row);
+                }
+            });
+        }
+
+        function updateTotals() {
+            const checkboxes = document.querySelectorAll('.med-check');
+            let subtotal = 0;
+
+            checkboxes.forEach(cb => {
+                if (cb.checked) {
+                    subtotal += parseFloat(cb.dataset.price || 0);
+                }
+            });
+
+            const tax = subtotal * 0.15;
+            const total = subtotal + tax;
+
+            document.getElementById('subtotal').textContent = subtotal.toFixed(2);
+            document.getElementById('tax').textContent = tax.toFixed(2);
+            document.getElementById('total').textContent = total.toFixed(2);
+        }
+
+        function showOrderSummary() {
+            const checkboxes = document.querySelectorAll('.med-check:checked');
+            if (checkboxes.length === 0) {
+                alert('⚠️ Please select at least one medication.');
+                return;
+            }
+
+            const tbody = document.getElementById('confirmationBody');
+            tbody.innerHTML = '';
+
+            checkboxes.forEach(cb => {
+                const index = parseInt(cb.dataset.index);
+                const med = medications[index];
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${med.doctor}</td>
+                    <td>${med.name}</td>
+                    <td>${med.qty}</td>
+                    <td>${med.repeats}</td>
+                    <td>${med.price.toFixed(2)}</td>
+                `;
+                tbody.appendChild(row);
+
+            });
+
+            // Show total in modal
+            document.getElementById('modalTotal').textContent = document.getElementById('total').textContent;
+
+            // Show modal
+            document.getElementById('confirmationModal').style.display = 'flex';
+
+             const now = new Date();
+             const orderNum = 'ORD' +
+             now.getFullYear().toString() +
+              (now.getMonth() + 1).toString().padStart(2, '0') +
+              now.getDate().toString().padStart(2, '0') +
+              now.getHours().toString().padStart(2, '0') +
+              now.getMinutes().toString().padStart(2, '0') +
+              now.getSeconds().toString().padStart(2, '0');
+  
+           // Set the order number in the modal
+             document.getElementById("orderNumber").textContent = orderNum;
+
+           // Proceed with the rest of the modal logic...
+           // Populate summary table, calculate total, etc.
+
+           document.getElementById("orderModal").style.display = "flex";
+        }
+
+        function confirmFinalOrder() {
+            alert('✅ Medication order placed successfully!');
+            document.getElementById('confirmationModal').style.display = 'none';
+
+            
+        }
+
+        function closeConfirmation() {
+            document.getElementById('confirmationModal').style.display = 'none';
+        }
+
+        window.onload = loadMedications;
+    </script>
+
+
+

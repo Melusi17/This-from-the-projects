@@ -1,0 +1,266 @@
+﻿/* General Styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f1f1f1;
+    margin: 0;
+    padding: 0;
+}
+
+/* Center the form */
+.register-container {
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 30px;
+    background-color: #fff;
+    border-radius: 12px; /* Rounded border */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Form Elements */
+h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-top: 15px;
+    font-weight: 600;
+}
+
+input[type="text"],
+input[type="password"],
+select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 6px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-sizing: border-box;
+    font-size: 14px;
+}
+
+button {
+    width: 100%;
+    margin-top: 25px;
+    padding: 12px;
+    background-color: #1f9f77;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+    button:hover {
+        background-color: #28bf96;
+    }
+
+/* Toggle password visibility button (optional inline or icon-based) */
+.toggle-password {
+    margin-top: 5px;
+    font-size: 12px;
+    cursor: pointer;
+    color: #007bff;
+    background: none;
+    border: none;
+}
+
+/* Confirmation message */
+.confirmation-message {
+    display: none;
+    text-align: center;
+    padding: 30px;
+    background-color: #e0fce4;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+    .confirmation-message h3 {
+        color: #2e7d32;
+        margin-bottom: 20px;
+    }
+
+.continue-link {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 15px;
+    background-color: #1f9f77;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: background-color 0.3s ease;
+}
+
+    .continue-link:hover {
+        background-color: #28bf96;
+    }
+
+/* Utility */
+.hidden {
+    display: none;
+}
+
+.password-wrapper {
+    position: relative;
+}
+
+    .password-wrapper input {
+        padding-right: 35px; /* space for the icon */
+    }
+
+.toggle-icon {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 24px;
+}
+
+.feather-eye {
+    width: 24px;
+    height: 24px;
+    fill: none;
+    stroke: #888;
+    stroke-width: 2;
+    transition: all 0.3s ease;
+}
+
+/* When the password is visible (changed to eye-slash) */
+.feather-eye-open {
+    fill: #28bf96;
+}
+
+input, select {
+    padding: 10px;
+    margin-bottom: 15px;
+    width: 100%;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+}
+/* === Allergy picker === */
+.allergy-section {
+    margin-top: 10px;
+}
+
+.add-allergy-btn {
+    margin-top: 8px;
+    background-color: #1f9f77;
+    color: #fff;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color .25s;
+}
+
+    .add-allergy-btn:hover {
+        background-color: #28bf96;
+    }
+
+.allergy-cart {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 0;
+    margin-top: 12px;
+    list-style: none;
+}
+
+    .allergy-cart li {
+        background: #eef3f7;
+        border-radius: 20px;
+        padding: 4px 10px;
+        display: flex;
+        align-items: center;
+        font-size: 13px;
+        color: #333;
+    }
+
+    .allergy-cart .remove-btn {
+        background: none;
+        border: none;
+        color: #d22;
+        font-size: 16px;
+        margin-left: 6px;
+        cursor: pointer;
+        line-height: 1;
+    }
+
+.error-message {
+    color: red;
+    font-size: 12px;
+    margin-top: 2px;
+    display: block;
+}
+
+.password-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+    .password-wrapper input {
+        width: 100%;
+        padding-right: 30px; /* space for the eye icon */
+    }
+
+.toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.error-message {
+    color: red;
+    font-size: 12px;
+    margin-top: 2px;
+    display: block;
+}
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+}
+
+.modal-content {
+    background: white;
+    padding: 30px 40px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+}
+
+.login-link {
+    display: inline-block;
+    margin-top: 20px;
+    background-color: #1f9f77;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+    .login-link:hover {
+        background-color: #28bf96;
+    }
+
+.hidden {
+    display: none;
+}

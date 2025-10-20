@@ -1,0 +1,163 @@
+﻿@model IbhayiPharmacy.Models.PharmacistVM.PrescriptionViewModel
+
+@{
+    ViewData["Title"] = "Create Prescription";
+}
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #f4f6f9;
+        margin: 20px;
+    }
+
+    .form-container {
+        background: white;
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        max-width: 1000px;
+        margin: auto;
+    }
+
+    h2 {
+        text-align: center;
+        color: #444;
+        margin-bottom: 25px;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    label {
+        font-weight: bold;
+        display: block;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        margin-top: 5px;
+    }
+
+    .script-lines {
+        margin-top: 25px;
+    }
+
+    .line-card {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 15px;
+        background: #fafafa;
+    }
+
+    .btn {
+        display: inline-block;
+        padding: 8px 15px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: bold;
+        border: none;
+    }
+
+    .btn-primary {
+        background: #007bff;
+        color: white;
+    }
+
+    .btn-danger {
+        background: #dc3545;
+        color: white;
+    }
+
+    .btn-success {
+        background: #28a745;
+        color: white;
+    }
+</style>
+
+<div class="form-container">
+    <h2>Create Prescription</h2>
+
+    <form asp-action="Create" method="post" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="PrescriptionDate">Prescription Date</label>
+            <input asp-for="PrescriptionDate" class="form-control" type="date" />
+        </div>
+
+        <div class="form-group">
+            <label for="Doctor">Doctor</label>
+            <select name="SelectedDoctorID" class="form-control">
+                <option value="">-- Select Doctor --</option>
+                @foreach (var doctor in Model.AvailableDoctors)
+                {
+                    <option value="@doctor.DoctorID">@doctor.Name @doctor.Surname</option>
+                }
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="Script">Upload Prescription PDF</label>
+            <input type="file" name="Script" class="form-control" accept="application/pdf" />
+        </div>
+
+        <div class="script-lines">
+            <h3>Prescription Medications</h3>
+            <div id="scriptLinesContainer">
+                <!-- JS will inject new medication lines -->
+            </div>
+            <button type="button" id="addLineBtn" class="btn btn-success">+ Add Medication</button>
+        </div>
+
+        <div style="margin-top: 25px;">
+            <button type="submit" class="btn btn-primary">Save Prescription</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const container = document.getElementById("scriptLinesContainer");
+        const addBtn = document.getElementById("addLineBtn");
+
+        addBtn.addEventListener("click", function () {
+            const index = container.children.length;
+            const newLine = document.createElement("div");
+            newLine.classList.add("line-card");
+
+            newLine.innerHTML = `
+                <div class="form-group">
+                    <label>Medication</label>
+                    <select name="ScriptLines[${index}].MedicationID" class="form-control">
+                        <option value="">-- Select Medication --</option>
+                        ${`@Html.Raw(string.Join("", Model.AvailableMedications.Select(m => $"<option value='{m.MedcationID}'>{m.MedicationName} (Stock: {m.QuantityOnHand})</option>")))`}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Quantity</label>
+                    <input name="ScriptLines[${index}].Quantity" class="form-control" type="number" min="1" />
+                </div>
+                <div class="form-group">
+                    <label>Instructions</label>
+                    <input name="ScriptLines[${index}].Instructions" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label>Repeats</label>
+                    <input name="ScriptLines[${index}].Repeats" class="form-control" type="number" min="0" />
+                </div>
+                <button type="button" class="btn btn-danger remove-line">Remove</button>
+            `;
+            container.appendChild(newLine);
+        });
+
+        container.addEventListener("click", function (e) {
+            if (e.target.classList.contains("remove-line")) {
+                e.target.closest(".line-card").remove();
+            }
+        });
+    });
+</script>

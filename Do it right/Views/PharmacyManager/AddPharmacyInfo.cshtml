@@ -1,0 +1,55 @@
+﻿
+@{
+    ViewData["Title"] = "AddPharmacyInfo";
+    Layout = "~/Views/Shared/_ManagerLayout.cshtml";
+
+}
+
+
+<div class=" card p-3">
+    <h5 class="mb-4 title-underline">Manage Pharmacy Information</h5>
+
+    <form>
+        <div class="mb-3">
+            <label for="pharmacyName" class="form-label">Pharmacy Name</label>
+            <input type="text" class="form-control" id="pharmacyName" placeholder="Ibhayi Pharmacy">
+        </div>
+
+        <div class="mb-3">
+            <label for="registrationNumber" class="form-label">Health Council Registration Number</label>
+            <input type="text" class="form-control" id="registrationNumber" placeholder="HCR-123456">
+        </div>
+
+        <div class="mb-3">
+            <label for="physicalAddress" class="form-label">Physical Address</label>
+            <textarea class="form-control" id="physicalAddress" rows="2" placeholder="123 Main Street, Nelson Mandela Bay"></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label for="contactNumber" class="form-label">Contact Number</label>
+            <input type="tel" class="form-control" id="contactNumber" placeholder="+27 41 123 4567">
+        </div>
+
+        <div class="mb-3">
+            <label for="emailAddress" class="form-label">Email Address</label>
+            <input type="email" class="form-control" id="emailAddress" placeholder="info@ibhayipharmacy.co.za">
+        </div>
+
+        <div class="mb-3">
+            <label for="websiteUrl" class="form-label">Website URL</label>
+            <input type="url" class="form-control" id="websiteUrl" placeholder="https://www.ibhayipharmacy.co.za">
+        </div>
+
+        <div class="mb-3">
+            <label for="responsiblePharmacist" class="form-label">Responsible Pharmacist</label>
+            <select class="form-select" id="responsiblePharmacist">
+                <option selected disabled>Select a pharmacist</option>
+                <option value="1">Pharmacist A</option>
+                <option value="2">Pharmacist B</option>
+                <option value="3">Pharmacist C</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-success">Save Changes</button>
+    </form>
+</div>

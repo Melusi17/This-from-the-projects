@@ -1,0 +1,47 @@
+﻿@{
+    ViewData["Title"] = "Manage Pharmacy Info";
+    Layout = "~/Views/Shared/_ManagerLayout.cshtml";
+}
+<style>
+    .body{
+        background-color: #f4f6f9;
+    }
+    .card{
+        background:white;
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+</style>
+<br/>
+<div class="  mt-4">
+    
+    <div class="card">
+        <h5 class="title-underline">Pharmacy Information</h5>
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-4">Pharmacy Name</dt>
+                <dd class="col-sm-8">Ibhayi Pharmacy</dd>
+
+                <dt class="col-sm-4">Health Council Reg. Number</dt>
+                <dd class="col-sm-8">HCR-456789</dd>
+
+                <dt class="col-sm-4">Physical Address</dt>
+                <dd class="col-sm-8">123 Main Street, Nelson Mandela Bay</dd>
+
+                <dt class="col-sm-4">Contact Number</dt>
+                <dd class="col-sm-8">041 123 4567</dd>
+
+                <dt class="col-sm-4">Email Address</dt>
+                <dd class="col-sm-8">info@ibhayipharmacy.co.za</dd>
+
+                <dt class="col-sm-4">Website URL</dt>
+                <dd class="col-sm-8"><a href="https://www.ibhayipharmacy.co.za" target="_blank">www.ibhayipharmacy.co.za</a></dd>
+
+                <dt class="col-sm-4">Responsible Pharmacist</dt>
+                <dd class="col-sm-8">Thuli Mthembu</dd>
+            </dl>
+            <a href="/PharmacyManager/PharmacyInfo" class="btn btn-primary mt-3">Edit Information</a>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,513 @@
+﻿/* ===== GLOBAL STYLES ===== */
+
+
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #f4f6f9;
+    color: #333;
+    transition: all 0.3s;
+}
+
+/* ===== SIDEBAR ===== */
+.sidebar {
+    width: 220px;
+    background: linear-gradient(to bottom, #22586A, #22586A);
+    height: 100vh;
+    padding: 20px 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    z-index: 1000;
+    transition: all 0.3s;
+}
+
+    .sidebar.collapsed {
+        width: 60px;
+        overflow: hidden;
+    }
+
+        .sidebar.collapsed .sidebar-header h2,
+        .sidebar.collapsed .sidebar-nav a span,
+        .sidebar.collapsed .sidebar-footer p {
+            display: none;
+        }
+
+        .sidebar.collapsed .sidebar-nav a {
+            justify-content: center;
+        }
+
+.sidebar-header {
+    padding: 0 20px 20px;
+    border-bottom: 1px solid #34495e;
+    margin-bottom: 15px;
+    position: relative;
+}
+
+.sidebar h2 {
+    font-size: 22px;
+    margin: 0;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+    .sidebar h2 i {
+        color: #3498db;
+    }
+
+.sidebar-nav {
+    padding: 0 10px;
+}
+
+.sidebar a {
+    color: #ecf0f1;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 8px 0;
+    padding: 10px 15px;
+    border-radius: 5px;
+    transition: all 0.3s;
+}
+
+    .sidebar a:hover, .sidebar a.active {
+        background-color: #34495e;
+        transform: translateX(5px);
+    }
+
+.sidebar-footer {
+    position: absolute;
+    bottom: 20px;
+    width: 100%;
+    padding: 0 20px;
+    font-size: 12px;
+    color: #7f8c8d;
+}
+
+.toggle-sidebar {
+    position: absolute;
+    right: -15px;
+    top: 20px;
+    background: #3498db;
+    color: white;
+    border: none;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+/* ===== TOPBAR ===== */
+.topbar {
+    background-color: #ffffff;
+    height: 60px;
+    padding: 0 20px;
+    position: fixed;
+    left: 220px;
+    right: 0;
+    top: 0;
+    border-bottom: 1px solid #ccc;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 999;
+    transition: all 0.3s;
+}
+
+.sidebar.collapsed + .topbar {
+    left: 60px;
+}
+
+.topbar span {
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+/* ===== MAIN CONTENT ===== */
+.main-content {
+    margin-left: 220px;
+    margin-top: 60px;
+    padding: 30px;
+    transition: all 0.3s;
+}
+
+.sidebar.collapsed + .topbar + .main-content {
+    margin-left: 60px;
+}
+
+/* ===== FORM LAYOUT ===== */
+.form-container {
+    display: grid;
+    grid-template-areas:
+        "customer doctor"
+        "meds pdf";
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.sidebar.collapsed + .topbar + .main-content .form-container {
+    max-width: 1400px;
+}
+
+.card {
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.customer-card {
+    grid-area: customer;
+}
+
+.doctor-card {
+    grid-area: doctor;
+}
+
+.meds-card {
+    grid-area: meds;
+}
+
+.pdf-card {
+    grid-area: pdf;
+    height: 400px;
+    overflow: hidden;
+    border: 1px dashed #3498db;
+}
+
+h3 {
+    color: #2c3e50;
+    margin-top: 0;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+/* ===== FORM ELEMENTS ===== */
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #34495e;
+    font-size: 14px;
+}
+
+input, select, textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.info-box {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 5px;
+    margin-top: 15px;
+    border-left: 3px solid #3498db;
+}
+
+.customer-info {
+    margin-bottom: 15px;
+}
+
+    .customer-info p {
+        margin-bottom: 5px;
+    }
+
+    .customer-info strong {
+        display: inline-block;
+        width: 120px;
+    }
+
+.btn {
+    background: #3498db;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+    .btn:hover {
+        opacity: 0.9;
+        transform: translateY(-2px);
+    }
+
+.btn-add {
+    background: #27ae60;
+}
+
+.btn-alert {
+    background: #e74c3c;
+}
+
+.btn-done {
+    background: #9b59b6;
+}
+
+/* ===== MEDICATION TABLE ===== */
+.medication-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.sidebar.collapsed + .topbar + .main-content .medication-table {
+    width: 100%;
+}
+
+.medication-table th {
+    background: #3498db;
+    color: white;
+    padding: 12px;
+    text-align: left;
+}
+
+.medication-table td {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+    vertical-align: top;
+}
+
+.medication-table select,
+.medication-table input {
+    margin: 0;
+}
+
+.med-details {
+    font-size: 12px;
+    color: #7f8c8d;
+    margin-top: 5px;
+}
+
+/* ===== SEARCHABLE SELECT ===== */
+.searchable-select {
+    position: relative;
+    width: 100%;
+}
+
+    .searchable-select input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 14px;
+    }
+
+    .searchable-select datalist {
+        position: absolute;
+        background: white;
+        width: 100%;
+        max-height: 200px;
+        overflow-y: auto;
+        border: 1px solid #ddd;
+        border-radius: 0 0 5px 5px;
+        z-index: 100;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .searchable-select option {
+        padding: 8px 10px;
+        cursor: pointer;
+    }
+
+        .searchable-select option:hover {
+            background-color: #f5f5f5;
+        }
+
+/* ===== PDF VIEWER ===== */
+#pdfViewer {
+    height: 370px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.placeholder {
+    color: #95a5a6;
+    text-align: center;
+    font-style: italic;
+}
+
+/* Approval buttons */
+.approval-buttons {
+    display: flex;
+    gap: 5px;
+}
+
+.approve-btn {
+    color: #27ae60;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.decline-btn {
+    color: #e74c3c;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.delete-btn {
+    color: #95a5a6;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.2s;
+}
+
+    .delete-btn:hover {
+        color: #e74c3c;
+    }
+
+.status-indicator {
+    font-size: 12px;
+    margin-top: 5px;
+    padding: 3px 8px;
+    border-radius: 3px;
+    display: inline-block;
+}
+
+.approved {
+    background-color: #d5f5e3;
+    color: #27ae60;
+}
+
+.declined {
+    background-color: #fadbd8;
+    color: #e74c3c;
+}
+
+/* Repeat columns */
+.repeats-input {
+    width: 50px;
+    text-align: center;
+}
+
+/* ===== FORM FOOTER BUTTONS ===== */
+.form-footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 25px;
+}
+
+.form-footer-right {
+    display: flex;
+    gap: 10px;
+}
+
+/* Approval legend */
+.approval-legend {
+    margin-top: 15px;
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: 5px;
+    font-size: 13px;
+}
+
+    .approval-legend i {
+        margin-right: 5px;
+    }
+
+/* ===== MODALS ===== */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 2000;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+/* Rejection reason styles */
+.rejection-reason {
+    margin-top: 15px;
+    padding: 10px;
+    background-color: #fadbd8;
+    border-radius: 5px;
+    font-size: 13px;
+    display: none;
+}
+
+    .rejection-reason p {
+        margin: 5px 0;
+        color: #e74c3c;
+    }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .form-container {
+        grid-template-areas:
+            "customer"
+            "doctor"
+            "meds"
+            "pdf";
+    }
+
+    .sidebar {
+        width: 60px;
+    }
+
+        .sidebar:not(.collapsed) {
+            width: 220px;
+        }
+
+    .topbar {
+        left: 60px;
+    }
+
+    .sidebar:not(.collapsed) + .topbar {
+        left: 220px;
+    }
+
+    .main-content {
+        margin-left: 60px;
+    }
+
+    .sidebar:not(.collapsed) + .topbar + .main-content {
+        margin-left: 220px;
+    }
+
+    .form-footer {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .form-footer-right {
+        justify-content: flex-end;
+    }
+}

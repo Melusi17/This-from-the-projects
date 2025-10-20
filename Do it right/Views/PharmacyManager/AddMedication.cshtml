@@ -1,0 +1,75 @@
+﻿
+@{
+    ViewData["Title"] = "AddMedication";
+    Layout = "~/Views/Shared/_ManagerLayout.cshtml";
+
+}
+
+ 
+
+<div class="card p-3">
+    <h5 class="title-underline">New Medications</h5>
+
+   
+   
+    <div class="card-body">
+        <form>
+            <div class="mb-3">
+                <label for="medName" class="form-label">Medication Name</label>
+                <input type="text" class="form-control" id="medName" placeholder="e.g. Myprodol">
+            </div>
+
+            <div class="mb-3">
+                <label for="schedule" class="form-label">Schedule</label>
+                <select class="form-select" id="schedule">
+                    <option selected disabled>Choose schedule (0–6)</option>
+                    @for (int i = 0; i <= 6; i++)
+                    {
+                        <option value="@i">Schedule @i</option>
+                    }
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="dosageForm" class="form-label">Dosage Form</label>
+                <select class="form-select" id="dosageForm">
+                    <option selected disabled>Select dosage form</option>
+                    <option value="1">Tablet</option>
+                    <option value="2">Syrup</option>
+                    <option value="3">Capsule</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Active Ingredients</label>
+                <div class="input-group mb-2">
+                    <input type="text" class="form-control" placeholder="e.g. Ibuprofen">
+                    <input type="text" class="form-control" placeholder="Strength (e.g. 200mg)">
+                    <button class="btn btn-outline-secondary" type="button">+</button>
+                </div>
+              
+            </div>
+
+           @*  <div class="mb-3">
+                <label for="salesPrice" class="form-label">Sales Price (per unit)</label>
+                <input type="number" class="form-control" id="salesPrice" placeholder="e.g. 29.99">
+            </div> *@
+
+            <div class="mb-3">
+                <label for="supplier" class="form-label">Supplier</label>
+                <input type="email" class="form-control" placeholder="email">
+
+            </div>
+
+            <div class="mb-3">
+                <label for="reorderLevel" class="form-label">Re-order Level</label>
+                <input type="number" class="form-control" id="reorderLevel" placeholder="e.g. 20">
+            </div>
+
+    
+
+            <button type="submit" class="btn btn-primary">Add Medication</button>
+        </form>
+       
+    </div>
+</div>

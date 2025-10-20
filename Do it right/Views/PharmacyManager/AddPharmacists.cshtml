@@ -1,0 +1,54 @@
+﻿
+@{
+    ViewData["Title"] = "AddPharmacists";
+    Layout = "~/Views/Shared/_ManagerLayout.cshtml";
+
+}
+
+ 
+
+<!-- Add New Pharmacist -->
+<div class="card p-3">
+    <h5 class="title-underline">Add New Pharmacist</h5>
+    <div class="card-body">
+        <form>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="pharmName" class="form-label">First Name</label>
+                    <input type="text" class="form-control" id="pharmName" placeholder="e.g. Thuli">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="pharmSurname" class="form-label">Surname</label>
+                    <input type="text" class="form-control" id="pharmSurname" placeholder="e.g. Mthembu">
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="pharmId" class="form-label">ID Number</label>
+                <input type="text" class="form-control" id="pharmId" placeholder="e.g. 9001234567890">
+            </div>
+
+            <div class="mb-3">
+                <label for="cellNumber" class="form-label">Cellphone Number</label>
+                <input type="tel" class="form-control" id="cellNumber" placeholder="e.g. 082 123 4567">
+            </div>
+
+            <div class="mb-3">
+                <label for="hcrNumber" class="form-label">Health Council Reg. Number</label>
+                <input type="text" class="form-control" id="hcrNumber" placeholder="e.g. HCR-000123">
+            </div>
+
+            <div class="mb-3">
+                <label for="email" class="form-label">Email Address</label>
+                <input type="email" class="form-control" id="email" placeholder="e.g. thuli.m@pharmacy.co.za">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Initial Password</label>
+                <input type="text" class="form-control" value="Auto-generated & emailed" disabled>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Add Pharmacist</button>
+        </form>
+    </div>
+</div>

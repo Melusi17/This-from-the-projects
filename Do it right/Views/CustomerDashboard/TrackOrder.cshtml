@@ -1,0 +1,349 @@
+﻿@model List<IbhayiPharmacy.Models.Order>
+@{
+    ViewData["Title"] = "Track Order";
+    Layout = "~/Views/Shared/CustomerLayout/_CustomerLayout.cshtml";
+}
+
+<style>
+    body {
+        background-color: #ffffff;
+        color: #333;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    .track-order-panel {
+        padding: 30px;
+        margin: 30px auto;
+        max-width: 1200px;
+        background-color: #fdfdfd;
+        border: 2px solid #e0e0e0;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+        border-radius: 10px;
+    }
+
+    h2 {
+        font-size: 26px;
+        color: #1f9f77;
+        margin-bottom: 20px;
+    }
+
+    .prescription-table {
+        width: 100%;
+        border-collapse: collapse;
+        background-color: #ffffff;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+        .prescription-table th,
+        .prescription-table td {
+            padding: 14px 16px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .prescription-table th {
+            background-color: #1f9f77;
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+    .order-summary-row {
+        cursor: pointer;
+        background-color: #e3f5f0;
+        font-weight: bold;
+        transition: background-color 0.3s ease;
+    }
+
+        .order-summary-row:hover {
+            background-color: #c1e8dd;
+        }
+
+    .status {
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 14px;
+        display: inline-block;
+    }
+
+    .status-ordered {
+        background-color: #fff3cd;
+        color: #856404;
+    }
+
+    .status-ready {
+        background-color: #d1ecf1;
+        color: #0c5460;
+    }
+
+    .status-collected {
+        background-color: #e6f5f1;
+        color: #1f9f77;
+    }
+
+    .status-processing {
+        background-color: #d1ecf1;
+        color: #0c5460;
+    }
+
+    .details-row {
+        display: none;
+        background-color: #f9f9f9;
+    }
+
+    .details-table {
+        width: 100%;
+        border-collapse: collapse;
+        background-color: #ffffff;
+        border: 1px solid #ccc;
+        margin-top: 10px;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+        .details-table th,
+        .details-table td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+            color: #333;
+        }
+
+        .details-table thead {
+            background-color: #1f9f77;
+            color: #ffffff;
+            font-weight: bold;
+        }
+
+    /* Order line status badges */
+    .line-status {
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: bold;
+    }
+
+    .line-status-dispensed {
+        background-color: #e6f5f1;
+        color: #1f9f77;
+    }
+
+    .line-status-rejected {
+        background-color: #ffeaea;
+        color: #e74c3c;
+    }
+
+    .line-status-pending {
+        background-color: #fff3cd;
+        color: #856404;
+    }
+
+    .rejection-reason {
+        color: #e74c3c;
+        font-style: italic;
+        max-width: 200px;
+        word-wrap: break-word;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 40px 20px;
+        color: #666;
+    }
+
+    .empty-icon {
+        font-size: 48px;
+        margin-bottom: 15px;
+    }
+
+    .empty-title {
+        font-size: 20px;
+        color: #333;
+        margin-bottom: 10px;
+    }
+
+    .empty-subtitle {
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 20px;
+    }
+
+    .action-button {
+        background-color: #1f9f77;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 6px;
+        text-decoration: none;
+        display: inline-block;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+        .action-button:hover {
+            background-color: #28bf96;
+            color: white;
+            text-decoration: none;
+        }
+</style>
+
+<div class="track-order-panel">
+    <h2>📦 Track Your Orders</h2>
+
+    @if (!Model.Any())
+    {
+        <div class="empty-state">
+            <div class="empty-icon">📭</div>
+            <div class="empty-title">No Orders Found</div>
+            <div class="empty-subtitle">
+                You haven't placed any orders yet.<br>
+                Orders will appear here once you submit them.
+            </div>
+            <a href="@Url.Action("UploadPrescription", "CustomerDashboard")" class="action-button">
+                📥 Upload Prescription to Get Started
+            </a>
+        </div>
+    }
+    else
+    {
+        <table class="prescription-table">
+            <thead>
+                <tr>
+                    <th>Order No.</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Total Due (R)</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.Count; i++)
+                {
+                    var order = Model[i];
+                    <tr class="order-summary-row" onclick="toggleDetails(@i)">
+                        <td>ORD@(order.OrderID.ToString("D4"))</td>
+                        <td>@order.OrderDate.ToString("yyyy-MM-dd")</td>
+                        <td>
+                            @{
+                                var statusClass = "status-ordered";
+                                var statusText = order.Status;
+
+                                if (order.Status == "Ready for Collection")
+                                {
+                                    statusClass = "status-ready";
+                                }
+                                else if (order.Status == "Collected")
+                                {
+                                    statusClass = "status-collected";
+                                }
+                                else if (order.Status == "Processing")
+                                {
+                                    statusClass = "status-processing";
+                                }
+                            }
+                            <span class="status @statusClass">@statusText</span>
+                        </td>
+                        <td>R @order.TotalDue</td>
+                    </tr>
+                    <tr class="details-row" id="details-@i">
+                        <td colspan="4">
+                            @if (order.OrderLines.Any())
+                            {
+                                <table class="details-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Doctor</th>
+                                            <th>Medication</th>
+                                            <th>Qty</th>
+                                            <th>Instruction</th>
+                                            <th>Repeats</th>
+                                            <th>Price (R)</th>
+                                            <th>Line Status</th>
+                                            <th>Rejection Reason</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var orderLine in order.OrderLines)
+                                        {
+                                            var doctorName = "Not Assigned";
+                                            var instructions = "Take as directed";
+                                            var repeats = 0;
+
+                                            if (orderLine.ScriptLine?.Prescriptions?.Doctors != null)
+                                            {
+                                                doctorName = $"Dr. {orderLine.ScriptLine.Prescriptions.Doctors.Name} {orderLine.ScriptLine.Prescriptions.Doctors.Surname}";
+                                            }
+
+                                            if (!string.IsNullOrEmpty(orderLine.ScriptLine?.Instructions))
+                                            {
+                                                instructions = orderLine.ScriptLine.Instructions;
+                                            }
+
+                                            repeats = orderLine.ScriptLine?.Repeats ?? 0;
+
+                                            var lineStatusClass = "line-status-pending";
+                                            var lineStatusText = orderLine.Status ?? "Pending";
+
+                                            if (orderLine.Status == "Dispensed")
+                                            {
+                                                lineStatusClass = "line-status-dispensed";
+                                            }
+                                            else if (orderLine.Status == "Rejected")
+                                            {
+                                                lineStatusClass = "line-status-rejected";
+                                            }
+
+                                            <tr>
+                                                <td>@doctorName</td>
+                                                <td>@(orderLine.Medications?.MedicationName ?? "Unknown Medication")</td>
+                                                <td>@orderLine.Quantity</td>
+                                                <td>@instructions</td>
+                                                <td>@repeats</td>
+                                                <td>R @orderLine.ItemPrice.ToString("F2")</td>
+                                                <td><span class="line-status @lineStatusClass">@lineStatusText</span></td>
+                                                <td class="rejection-reason">@(orderLine.RejectionReason ?? "-")</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            }
+                            else
+                            {
+                                <div style="text-align: center; color: #666; padding: 20px;">
+                                    No medication details available for this order
+                                </div>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+
+<script>
+    function toggleDetails(index) {
+        const row = document.getElementById('details-' + index);
+        if (row.style.display === 'table-row') {
+            row.style.display = 'none';
+        } else {
+            // Hide any other open details rows
+            document.querySelectorAll('.details-row').forEach(r => {
+                r.style.display = 'none';
+            });
+            row.style.display = 'table-row';
+        }
+    }
+
+    // Close details when clicking outside
+    document.addEventListener('click', function(event) {
+        if (!event.target.closest('.order-summary-row') && !event.target.closest('.details-row')) {
+            document.querySelectorAll('.details-row').forEach(r => {
+                r.style.display = 'none';
+            });
+        }
+    });
+</script>

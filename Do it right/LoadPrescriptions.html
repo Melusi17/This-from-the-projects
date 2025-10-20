@@ -350,6 +350,117 @@
             gap: 10px;
         }
         
+        /* ===== PATIENT REGISTRATION FORM STYLES ===== */
+        .register-container {
+            max-width: 100%;
+            margin: 0;
+            padding: 0;
+            background-color: #fff;
+            border-radius: 12px;
+        }
+        
+        .register-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+        
+        .register-container input,
+        .register-container select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 6px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+        
+        .password-wrapper {
+            position: relative;
+            width: 100%;
+        }
+        
+        .password-wrapper input {
+            padding-right: 35px;
+        }
+        
+        .toggle-icon {
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%);
+            cursor: pointer;
+            font-size: 16px;
+            color: #888;
+        }
+        
+        .error-message {
+            color: red;
+            font-size: 12px;
+            margin-top: -10px;
+            margin-bottom: 10px;
+            display: block;
+        }
+        
+        .allergy-section {
+            margin-top: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .add-allergy-btn {
+            margin-top: 8px;
+            background-color: #1f9f77;
+            color: #fff;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color .25s;
+        }
+        
+        .add-allergy-btn:hover {
+            background-color: #28bf96;
+        }
+        
+        .allergy-cart {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 0;
+            margin-top: 12px;
+            list-style: none;
+        }
+        
+        .allergy-cart li {
+            background: #eef3f7;
+            border-radius: 20px;
+            padding: 4px 10px;
+            display: flex;
+            align-items: center;
+            font-size: 13px;
+            color: #333;
+        }
+        
+        .allergy-cart .remove-btn {
+            background: none;
+            border: none;
+            color: #d22;
+            font-size: 16px;
+            margin-left: 6px;
+            cursor: pointer;
+            line-height: 1;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
         /* ===== RESPONSIVE ===== */
         @media (max-width: 768px) {
             .form-container {
@@ -379,6 +490,11 @@
 
             .form-footer-right {
                 justify-content: flex-end;
+            }
+            
+            .modal-content {
+                width: 95%;
+                padding: 15px;
             }
         }
     </style>
@@ -515,18 +631,72 @@
         </div>
     </div>
 
-    <!-- MODALS -->
+    <!-- PATIENT REGISTRATION MODAL -->
     <div class="modal" id="patientModal">
         <div class="modal-content">
-            <h3><i class="fas fa-user-plus"></i> Add New Patient</h3>
-            <!-- Patient form would go here -->
-            <div style="text-align: right; margin-top: 20px;">
-                <button class="btn" onclick="closeModal('patientModal')">Cancel</button>
-                <button class="btn btn-add">Save Patient</button>
+            <div class="register-container">
+                <h2>Register New Patient</h2>
+                <form id="registerForm">
+                    <input type="text" id="name" name="name" placeholder="Name" />
+                    <span class="error-message" id="nameError"></span>
+
+                    <input type="text" id="surname" name="surname" placeholder="Surname" />
+                    <span class="error-message" id="surnameError"></span>
+
+                    <input type="text" id="idNumber" name="idNumber" placeholder="ID Number" />
+                    <span class="error-message" id="idError"></span>
+
+                    <input type="tel" id="cellphone" name="cellphone" placeholder="Cellphone Number" />
+                    <span class="error-message" id="cellphoneError"></span>
+
+                    <input type="email" id="email" name="email" placeholder="Email Address" />
+                    <span class="error-message" id="emailError"></span>
+
+                    <div class="password-wrapper">
+                        <input type="password" id="password" name="password" placeholder="Password" />
+                        <span class="toggle-icon" onclick="togglePassword('password', this)">
+                            <i class="fas fa-eye"></i>
+                        </span>
+                    </div>
+                    <span class="error-message" id="passwordError"></span>
+
+                    <div class="password-wrapper">
+                        <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password" />
+                        <span class="toggle-icon" onclick="togglePassword('confirmPassword', this)">
+                            <i class="fas fa-eye"></i>
+                        </span>
+                    </div>
+                    <span class="error-message" id="confirmPasswordError"></span>
+
+                    <!-- Allergy picker -->
+                    <div class="allergy-section">
+                        <label>Allergies</label>
+                        <select id="allergySelect">
+                            <option value="" disabled selected hidden>Select an allergy</option>
+                            <option value="Penicillin">Penicillin</option>
+                            <option value="Aspirin">Aspirin</option>
+                            <option value="Latex">Latex</option>
+                            <option value="Peanuts">Peanuts</option>
+                            <option value="Shellfish">Shellfish</option>
+                            <option value="None">None</option>
+                        </select>
+
+                        <button type="button" id="addAllergyBtn" class="add-allergy-btn">Add Allergy</button>
+
+                        <!-- live "cart" list -->
+                        <ul id="allergyCart" class="allergy-cart"></ul>
+                    </div>
+
+                    <div class="modal-buttons">
+                        <button type="button" class="btn" onclick="closeModal('patientModal')">Cancel</button>
+                        <button type="submit" class="btn btn-add">Register Patient</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 
+    <!-- DOCTOR MODAL -->
     <div class="modal" id="doctorModal">
         <div class="modal-content">
             <h3><i class="fas fa-user-md"></i> Add New Doctor</h3>
@@ -546,17 +716,6 @@
             <div style="text-align: right; margin-top: 20px;">
                 <button class="btn" onclick="closeModal('doctorModal')">Cancel</button>
                 <button class="btn btn-add" onclick="saveNewDoctor()">Save Doctor</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal" id="instructionModal">
-        <div class="modal-content">
-            <h3><i class="fas fa-edit"></i> Custom Instructions</h3>
-            <textarea id="customInstructions" rows="4" style="width: 100%;"></textarea>
-            <div style="text-align: right; margin-top: 20px;">
-                <button class="btn" onclick="closeModal('instructionModal')">Cancel</button>
-                <button class="btn btn-add" onclick="saveCustomInstruction()">Save</button>
             </div>
         </div>
     </div>
@@ -668,6 +827,12 @@
                     pdfViewer.innerHTML = '<p class="placeholder">Please upload a valid PDF file.</p>';
                 }
             });
+
+            // Initialize allergy functionality
+            initAllergySystem();
+            
+            // Initialize form validation
+            initRegistrationForm();
         });
 
         // Function to load existing prescription
@@ -919,11 +1084,7 @@
             document.getElementById(id).style.display = 'none';
         }
 
-        function saveCustomInstruction() {
-            // Implementation would save the custom instruction
-            closeModal('instructionModal');
-        }
-        
+        // Save new doctor
         function saveNewDoctor() {
             // In a real app, this would save the new doctor to the database
             const name = document.getElementById('doctorName').value;
@@ -948,6 +1109,180 @@
 
         // Add medication button
         document.getElementById('addMedBtn').addEventListener('click', addMedicationRow);
+
+        // Allergy system
+        let allergies = [];
+
+        function initAllergySystem() {
+            const addAllergyBtn = document.getElementById('addAllergyBtn');
+            const allergySelect = document.getElementById('allergySelect');
+            
+            addAllergyBtn.addEventListener('click', () => {
+                const chosen = allergySelect.value;
+                if (!chosen || chosen === "None" || allergies.includes(chosen)) return;
+                
+                if (chosen === "None") {
+                    allergies = ["None"];
+                } else {
+                    // Remove "None" if it was previously selected
+                    allergies = allergies.filter(a => a !== "None");
+                    allergies.push(chosen);
+                }
+                
+                updateAllergyCart();
+            });
+        }
+
+        function removeAllergy(index) {
+            allergies.splice(index, 1);
+            updateAllergyCart();
+        }
+
+        function updateAllergyCart() {
+            const allergyCart = document.getElementById('allergyCart');
+            allergyCart.innerHTML = '';
+            
+            allergies.forEach((a, i) => {
+                const li = document.createElement('li');
+                li.textContent = a;
+
+                const btn = document.createElement('button');
+                btn.textContent = '×';
+                btn.className = 'remove-btn';
+                btn.onclick = () => removeAllergy(i);
+
+                li.appendChild(btn);
+                allergyCart.appendChild(li);
+            });
+        }
+
+        // Toggle password visibility
+        function togglePassword(fieldId, icon) {
+            const field = document.getElementById(fieldId);
+            const isPass = field.type === 'password';
+            
+            field.type = isPass ? 'text' : 'password';
+            icon.innerHTML = isPass ? '<i class="fas fa-eye-slash"></i>' : '<i class="fas fa-eye"></i>';
+        }
+
+        // Form validation and submission
+        function initRegistrationForm() {
+            const form = document.getElementById('registerForm');
+            
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Clear previous errors
+                document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
+                
+                const name = document.getElementById('name').value.trim();
+                const surname = document.getElementById('surname').value.trim();
+                const idNumber = document.getElementById('idNumber').value.trim();
+                const email = document.getElementById('email').value.trim();
+                const cellphone = document.getElementById('cellphone').value.trim();
+                const password = document.getElementById('password').value;
+                const confirmPassword = document.getElementById('confirmPassword').value;
+                
+                let hasError = false;
+                
+                if (!name) {
+                    document.getElementById('nameError').textContent = 'Name is required.';
+                    hasError = true;
+                }
+                
+                if (!surname) {
+                    document.getElementById('surnameError').textContent = 'Surname is required.';
+                    hasError = true;
+                }
+                
+                if (!idNumber) {
+                    document.getElementById('idError').textContent = 'ID Number is required.';
+                    hasError = true;
+                } else if (!/^\d{13}$/.test(idNumber)) {
+                    document.getElementById('idError').textContent = 'ID must be 13 digits.';
+                    hasError = true;
+                } else {
+                    const yy = idNumber.substring(0, 2);
+                    const mm = idNumber.substring(2, 4);
+                    const dd = idNumber.substring(4, 6);
+                    const date = new Date(`20${yy}-${mm}-${dd}`);
+                    if (
+                        !(date.getFullYear() === parseInt(`20${yy}`) &&
+                            date.getMonth() + 1 === parseInt(mm) &&
+                            date.getDate() === parseInt(dd))
+                    ) {
+                        document.getElementById('idError').textContent = 'Invalid birthdate format in ID.';
+                        hasError = true;
+                    }
+                }
+                
+                if (!email) {
+                    document.getElementById('emailError').textContent = 'Email is required.';
+                    hasError = true;
+                } else if (!/^\S+@\S+\.\S+$/.test(email)) {
+                    document.getElementById('emailError').textContent = 'Enter a valid email address.';
+                    hasError = true;
+                }
+                
+                if (!cellphone) {
+                    document.getElementById('cellphoneError').textContent = 'Cellphone is required.';
+                    hasError = true;
+                } else if (!/^\d{10}$/.test(cellphone)) {
+                    document.getElementById('cellphoneError').textContent = 'Enter a 10-digit cellphone number.';
+                    hasError = true;
+                }
+                
+                if (!password) {
+                    document.getElementById('passwordError').textContent = 'Password is required.';
+                    hasError = true;
+                }
+                
+                if (!confirmPassword) {
+                    document.getElementById('confirmPasswordError').textContent = 'Please confirm password.';
+                    hasError = true;
+                } else if (password !== confirmPassword) {
+                    document.getElementById('confirmPasswordError').textContent = 'Passwords do not match.';
+                    hasError = true;
+                }
+                
+                if (hasError) return;
+                
+                // Save to localStorage
+                const patient = {
+                    name,
+                    surname,
+                    idNumber,
+                    email,
+                    cellphone,
+                    allergies: allergies.length ? allergies : ["None"]
+                };
+                
+                const patients = JSON.parse(localStorage.getItem('patients') || '[]');
+                patients.push(patient);
+                localStorage.setItem('patients', JSON.stringify(patients));
+                
+                // Add to the patient dropdown
+                const select = document.getElementById('customerSelect');
+                const newOption = document.createElement('option');
+                newOption.value = patients.length;
+                newOption.textContent = `${name} ${surname} (ID: ${idNumber})`;
+                select.appendChild(newOption);
+                
+                // Select the new patient
+                select.value = patients.length;
+                
+                // Update patient details
+                document.getElementById('dob').textContent = `${dd}/${mm}/20${yy}`;
+                document.getElementById('allergies').textContent = patient.allergies.join(', ');
+                document.getElementById('conditions').textContent = 'None known';
+                
+                // Close the modal
+                closeModal('patientModal');
+                
+                // Show success message
+                alert('Patient registered successfully!');
+            });
+        }
     </script>
 </body>
 </html>

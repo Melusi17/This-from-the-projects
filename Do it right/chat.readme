@@ -1,0 +1,38 @@
+Ah, I see what you're thinking! You want to mirror the prescription processing workflow for orders. That's actually a really elegant pattern. Let me think through this with you:
+
+## The Order Processing Parallel:
+
+**Current Prescription Flow:**
+Upload → Unprocessed → Pharmacist processes → ScriptLines get Approved/Rejected → Prescription status updates
+
+**Proposed Order Flow:**
+Place Order → Ordered → Pharmacist processes → OrderLines get Dispensed/Rejected → Order status updates to Ready for Collection → Collected
+
+## This makes perfect sense because:
+
+1. **Same Mental Model** - Pharmacists already understand the prescription processing workflow
+2. **Granular Control** - Just like with medications, you might want to dispense some items but reject others (out of stock, etc.)
+3. **Clear Status Transitions** - Each step has a clear business meaning and required action
+4. **Audit Trail** - You can track exactly what was dispensed vs rejected and why
+
+## The Status Journey Would Be:
+
+**Order Level:** Ordered → Ready for Collection → Collected
+**OrderLine Level:** Pending → Dispensed/Rejected (with reason)
+
+## Key Benefits I'm Seeing:
+
+- **Better Inventory Management** - You can reject specific items while still fulfilling the rest
+- **Customer Communication** - Clear reasons why certain items weren't dispensed
+- **Workflow Clarity** - Pharmacists know exactly what action to take at each stage
+- **Reporting** - Easy to see dispensation rates, common rejection reasons, etc.
+
+## Questions to Consider:
+
+- Would you want the same "partial fulfillment" concept like prescriptions have?
+- How would payment work if some items get rejected?
+- Should there be automatic notifications when order status changes?
+
+This is actually a much cleaner approach than having a single order status. It gives you the same fine-grained control over orders that you have over prescriptions. The pattern is proven to work in your system already!
+
+What do you think - does this align with how you see the order workflow functioning?

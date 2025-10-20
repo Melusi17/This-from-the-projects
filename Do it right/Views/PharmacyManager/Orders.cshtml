@@ -1,0 +1,319 @@
+﻿@{
+    ViewData["Title"] = "Medication Orders";
+    Layout = "~/Views/Shared/_ManagerLayout.cshtml";
+}
+
+<div class="container mt-2">
+
+    <div class="alert alert-warning " style="display: block;">
+        <i class="fas fa-box-open"></i> <strong>LOW STOCK:</strong> This medication is near reorder level!
+    </div>
+    <!-- Medication Table -->
+    <div class="card p-3">
+        <h5 class="title-underline">Order Medication</h5>
+
+        <div class="card-body">
+            <table class="table table-borderless table-hover">
+                <thead class=" table-light" style=" color: #2c3e50;">
+                    <tr>
+                       
+                        <th>Medication</th>
+                        <th>Form</th>
+                        <th>Supplier</th>
+                        <th>Qty On Hand</th>
+                        <th>Re-order Level</th>
+                        <th>Order</th>
+                    </tr>
+                </thead>
+                <tbody>
+               
+                    <tr>
+                    
+                        <td>Panado</td>
+                        <td>Tablet</td>
+                        <td>MedLife Distributors</td>
+                        <td>12</td>
+                        <td>20</td>
+                        <td>
+                            <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#orderModal" onclick="setMedication('Panado')">Order</button>
+                        </td>
+                    </tr>
+                    <tr>
+                    
+                        <td>Myprodol</td>
+                        <td>Capsule</td>
+                        <td>PharmaDirect</td>
+                        <td>18</td>
+                        <td>25</td>
+                        <td>
+                            <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#orderModal" onclick="setMedication('Myprodol')">Order</button>
+                        </td>
+                    </tr>
+                    <tr>
+                  
+                        <td>Allergex</td>
+                        <td>Syrup</td>
+
+                        <td>MedLife Distributors</td>
+                        <td>35</td>
+                        <td>10</td>
+                        <td>
+                            <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#orderModal" onclick="setMedication('Allergex')">Order</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="orderModal" tabindex="-1" aria-labelledby="orderModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Order Medication</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="orderForm">
+                    <div class="mb-3">
+                        <label class="form-label">Medication</label>
+                        <p><b>Panado > Tablet</b></p>
+                    </div>
+                    <div class="mb-3">
+                        <label for="orderQty" class="form-label">Quantity to Order</label>
+                        <input type="number" class="form-control" id="orderQty" placeholder="e.g. 50">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button class="btn btn-success" onclick="submitOrder()">Confirm Order</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // function setMedication(name) {
+        //     document.getElementById("selectedMedication").value = name;
+        // }
+
+        function submitOrder() {
+            const med = document.getElementById("selectedMedication").value;
+            const qty = document.getElementById("orderQty").value;
+
+            if (qty && qty > 0) {
+                alert(`Order placed: ${qty} units of ${med}`);
+                document.getElementById("orderForm").reset();
+                var modal = bootstrap.Modal.getInstance(document.getElementById('orderModal'));
+                modal.hide();
+            } else {
+                alert("Please enter a valid quantity.");
+            }
+        }
+    </script>
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@* @{
+    ViewData["Title"] = "Medication Orders";
+    Layout = "~/Views/Shared/_ManagerLayout.cshtml";
+
+}
+
+<style>
+    .meds-card {
+        grid-area: meds;
+    }
+    /* ===== MEDICATION TABLE ===== */
+    .medication-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+        .medication-table th {
+            background: #3498db;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+
+        .medication-table td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+            vertical-align: top;
+        }
+
+        .medication-table select,
+        .medication-table input {
+            margin: 0;
+        }
+
+    .med-details {
+        font-size: 12px;
+        color: #7f8c8d;
+        margin-top: 5px;
+    }
+
+    .remove-btn {
+        color: #e74c3c;
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+    /* ===== SEARCHABLE MEDICATION DROPDOWN ===== */
+    .medication-select-container {
+        position: relative;
+    }
+
+    .medication-search {
+        width: 100%;
+        padding: 8px 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        margin-bottom: 5px;
+        font-size: 14px;
+    }
+
+    .medication-options {
+        position: absolute;
+        width: 100%;
+        max-height: 200px;
+        overflow-y: auto;
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        z-index: 100;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        display: none;
+    }
+
+    .medication-option {
+        padding: 8px 10px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+
+        .medication-option:hover {
+            background-color: #f5f5f5;
+        }
+</style>
+<div class="container">
+    <div class="alert alert-warning " style="display: block;">
+        <i class="fas fa-box-open"></i> <strong>LOW STOCK:</strong> This medication is near reorder level!
+    </div>
+  
+    <div class="card meds-card p-3 mb-4">
+        <h5 class="title-underline"><i class="fas fa-pills "></i> Medication</h5>
+
+ 
+
+        <table class="medication-table">
+            <thead>
+                <tr>
+                    <th width="25%">Medication</th>
+                    <th width="15%">Dosage Form</th>
+                    <th width="15%">Re-order level</th>
+                    <th width="15%">Schedule</th>
+                    <th width="10%">Qty</th>
+                    <th width="5%"></th>
+                </tr>
+            </thead>
+            <tbody id="medsTableBody">
+                <tr id="row-1747813573508">
+                    <td>
+
+
+                  
+                    </td>
+                    <td>
+                       
+                    </td>
+                    <td> </td>
+                    <td> </td>
+                    <td> </td>
+                   
+                    <td><div class="med-details" id="details-1747813573508"></div></td>
+                    <td><button class="remove-btn" onclick="removeRow(1747813573508)"><i class="fas fa-plus"></i> Order</button></td>
+                </tr>
+            </tbody>
+        </table>
+
+
+        <div class="form-footer d-flex justify-content-between">
+            <button class="btn btn-add" id="addMedBtn" type="button"><i class="fas fa-plus"></i> Add Medication</button>
+
+            <button class="btn btn-primary mt-2"><i class="fas fa-save"></i> Generate Order & Send Email</button>
+
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+    
+    <div class="card p-3">
+        <h6 class="title-underline">Orders</h6>
+        <div class="card-body">
+            <table class="table table-hover table-borderless">
+                <thead class="table-light" style=" color: #2c3e50;">
+                    <tr>
+                        <th>Order</th>
+                        <th>Date</th>
+                        <th>Supplier</th>
+                        <th>Items Ordered</th>
+                        <th>Quantity</th>
+                    </tr>
+                </thead>
+                <tbody>
+                  
+                    <tr>
+                        <td>ORD-1001</td>
+                        <td>2025-04-01</td>
+                        <td>PharmaDirect</td>
+                        <td>Myprodol (40)</td>
+                        <td>40</td>
+                       
+                    </tr>
+                    <tr>
+                        <td>ORD-1000</td>
+                        <td>2025-03-29</td>
+                        <td>MedLife Distributors</td>
+                        <td>Panado (50), Allergex (20)</td>
+                        <td>800</td>
+                      
+                    </tr>
+                </tbody>
+            </table>
+
+
+        </div>
+    </div>
+</div>
+ *@

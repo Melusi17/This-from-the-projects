@@ -1,0 +1,44 @@
+﻿
+@{
+    ViewData["Title"] = "AddDoctor";
+    Layout = "~/Views/Shared/_ManagerLayout.cshtml";
+
+}
+
+ 
+
+<!-- Add New Doctor Form -->
+<div class="card p-3">
+    <h5 class="title-underline">New Doctor</h5>
+    <div class="card-body">
+        <form>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="docName" class="form-label">First Name</label>
+                    <input type="text" class="form-control" id="docName" placeholder="e.g. John">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="docSurname" class="form-label">Surname</label>
+                    <input type="text" class="form-control" id="docSurname" placeholder="e.g. Smith">
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="practiceNumber" class="form-label">Practice Number</label>
+                <input type="text" class="form-control" id="practiceNumber" placeholder="e.g. PRC-987654">
+            </div>
+
+            <div class="mb-3">
+                <label for="contactNumber" class="form-label">Contact Number</label>
+                <input type="tel" class="form-control" id="contactNumber" placeholder="e.g. 071 123 4567">
+            </div>
+
+            <div class="mb-3">
+                <label for="email" class="form-label">Email Address</label>
+                <input type="email" class="form-control" id="email" placeholder="e.g. dr.smith@email.com">
+            </div>
+
+            <button type="submit" class="btn btn-primary">Add Doctor</button>
+        </form>
+    </div>
+</div>

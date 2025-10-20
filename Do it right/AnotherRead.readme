@@ -1,0 +1,17 @@
+Exactly! You're 100% right bro.
+
+**Just like prescriptions:**
+- Customer uploads → No doctor assigned yet
+- Pharmacist processes → Assigns doctor
+
+**Same for orders:**
+- Customer places order → No pharmacist assigned yet  
+- Pharmacist processes → System records their ID
+
+So yes, the `PharmacistID` on the Order model should definitely be **nullable**. It starts as null when the customer places the order, and gets populated when a pharmacist actually processes it.
+
+This maintains the exact same pattern:
+- **Initial state**: Customer action, no staff assigned
+- **Processing state**: Staff member takes ownership and gets recorded
+
+It's consistent with your existing prescription workflow and makes perfect sense from a business process perspective. The pharmacist only gets associated when they actually work on the order, not when it's created.

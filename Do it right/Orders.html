@@ -1,71 +1,77 @@
+
+@{
+    ViewData["Title"] = "Orders - Ibhayi Pharmacy";
+    Layout = null;
+}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Processed Orders - Ibhayi Pharmacy</title>
+    <title>Orders - Ibhayi Pharmacy</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* ===== GLOBAL STYLES ===== */
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
         }
-
+        
         body {
             font-family: 'Segoe UI', sans-serif;
             background-color: #f4f6f9;
-            display: flex;
+            color: #333;
+            transition: all 0.3s;
         }
-
+        
         /* ===== SIDEBAR ===== */
         .sidebar {
             width: 220px;
             background: linear-gradient(to bottom, #22586A, #22586A);
             height: 100vh;
             padding: 20px 0;
-            color: white;
             position: fixed;
+            top: 0;
+            left: 0;
             box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            z-index: 1000;
             transition: all 0.3s;
-            z-index: 1001;
         }
         
         .sidebar.collapsed {
-            width: 70px;
+            width: 60px;
             overflow: hidden;
         }
         
-        .sidebar.collapsed .sidebar-header h2 span,
+        .sidebar.collapsed .sidebar-header h2,
         .sidebar.collapsed .sidebar-nav a span,
-        .sidebar.collapsed .sidebar-footer {
+        .sidebar.collapsed .sidebar-footer p {
             display: none;
-        }
-        
-        .sidebar.collapsed .sidebar-header h2 {
-            justify-content: center;
         }
         
         .sidebar.collapsed .sidebar-nav a {
             justify-content: center;
-            padding: 10px 0;
         }
         
         .sidebar-header {
             padding: 0 20px 20px;
-            border-bottom: 1px solid #334155;
+            border-bottom: 1px solid #34495e;
             margin-bottom: 15px;
+            position: relative;
         }
         
         .sidebar h2 {
             font-size: 22px;
             margin: 0;
+            color: white;
             display: flex;
             align-items: center;
             gap: 10px;
         }
         
         .sidebar h2 i {
-            color: #38bdf8;
+            color: #3498db;
         }
         
         .sidebar-nav {
@@ -73,7 +79,7 @@
         }
         
         .sidebar a {
-            color: #e2e8f0;
+            color: #ecf0f1;
             text-decoration: none;
             display: flex;
             align-items: center;
@@ -82,17 +88,11 @@
             padding: 10px 15px;
             border-radius: 5px;
             transition: all 0.3s;
-            font-size: 15px;
         }
         
         .sidebar a:hover, .sidebar a.active {
-            background-color: #334155;
+            background-color: #34495e;
             transform: translateX(5px);
-        }
-        
-        .sidebar a i {
-            width: 20px;
-            text-align: center;
         }
         
         .sidebar-footer {
@@ -101,478 +101,563 @@
             width: 100%;
             padding: 0 20px;
             font-size: 12px;
-            color: #94a3b8;
+            color: #7f8c8d;
         }
-
-        /* Toggle button */
+        
         .toggle-sidebar {
             position: absolute;
-            top: 10px;
             right: -15px;
-            background: #1e293b;
+            top: 20px;
+            background: #3498db;
             color: white;
-            border: 2px solid #334155;
+            border: none;
             width: 30px;
             height: 30px;
             border-radius: 50%;
+            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
-            z-index: 1002;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
         
-        .toggle-sidebar:hover {
-            background: #334155;
-        }
-
-        /* Top Nav */
-        .topnav {
+        /* ===== TOPBAR ===== */
+        .topbar {
             background-color: #ffffff;
             height: 60px;
-            line-height: 60px;
             padding: 0 20px;
             position: fixed;
             left: 220px;
             right: 0;
             top: 0;
-            border-bottom: 1px solid #e2e8f0;
+            border-bottom: 1px solid #ccc;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            z-index: 1000;
+            z-index: 999;
             transition: all 0.3s;
         }
         
-        body.sidebar-collapsed .topnav {
-            left: 70px;
+        .sidebar.collapsed + .topbar {
+            left: 60px;
         }
-
-        .topnav span {
+        
+        .topbar span {
             font-weight: bold;
-            color: #1e293b;
+            color: #2c3e50;
         }
-
-        /* Main Content */
+        
+        /* ===== MAIN CONTENT ===== */
         .main-content {
             margin-left: 220px;
             margin-top: 60px;
             padding: 30px;
-            width: calc(100% - 220px);
             transition: all 0.3s;
         }
         
-        body.sidebar-collapsed .main-content {
-            margin-left: 70px;
-            width: calc(100% - 70px);
+        .sidebar.collapsed + .topbar + .main-content {
+            margin-left: 60px;
         }
-
-        /* Orders Page Styles */
-        .search-container {
+        
+        /* ===== SEARCH SECTION ===== */
+        .search-section {
             background: white;
             padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-            margin-bottom: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
         }
-
-        .search-bar {
+        
+        .search-container {
             display: flex;
             gap: 15px;
         }
-
-        .search-bar input {
+        
+        .search-input {
             flex: 1;
             padding: 10px 15px;
             border: 1px solid #ddd;
             border-radius: 5px;
-            font-size: 16px;
+            font-size: 14px;
         }
-
-        .search-bar button {
-            background-color: #38bdf8;
+        
+        .search-btn {
+            background: #3498db;
             color: white;
             border: none;
-            padding: 0 20px;
+            padding: 10px 20px;
             border-radius: 5px;
             cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .search-bar button:hover {
-            background-color: #0ea5e9;
-        }
-
-        .orders-list {
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-            overflow: hidden;
-        }
-
-        .order-card {
-            padding: 20px;
-            border-bottom: 1px solid #eee;
-            transition: all 0.2s;
-            cursor: pointer;
-        }
-
-        .order-card:hover {
-            background-color: #f8fafc;
-        }
-
-        .order-card.expanded {
-            background-color: #f0f9ff;
-        }
-
-        .order-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-        }
-
-        .order-patient, .order-doctor {
-            font-weight: 600;
-        }
-
-        .order-meta {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            color: #666;
             font-size: 14px;
-            margin-bottom: 10px;
-        }
-
-        .order-repeat {
-            color: #ea580c;
-            font-weight: 600;
-        }
-
-        .order-actions {
-            float: right;
-            display: flex;
-            gap: 10px;
-        }
-
-        .action-btn {
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
-            cursor: pointer;
             transition: all 0.2s;
-            font-size: 14px;
-            text-decoration: none;
-            display: inline-block;
         }
-
-        .email-btn {
-            background-color: #38bdf8;
-        }
-
-        .dispensary-btn {
-            background-color: #10b981;
-        }
-
-        .action-btn:hover {
-            transform: scale(1.05);
+        
+        .search-btn:hover {
             opacity: 0.9;
         }
-
-        .order-details {
-            display: none;
-            margin-top: 15px;
-            padding: 15px;
-            background: white;
-            border-radius: 5px;
-            border: 1px solid #eee;
+        
+        /* ===== PATIENT CARDS ===== */
+        .patient-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
         }
-
-        .order-details table {
+        
+        .patient-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.2s;
+            border-left: 4px solid #3498db;
+        }
+        
+        .patient-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        
+        .patient-card.active {
+            background: #f0f7fc;
+            border-left: 4px solid #27ae60;
+        }
+        
+        .patient-name {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        
+        .patient-id {
+            font-size: 13px;
+            color: #7f8c8d;
+        }
+        
+        .order-count {
+            font-size: 12px;
+            color: #3498db;
+            margin-top: 5px;
+        }
+        
+        /* ===== ORDERS TABLE ===== */
+        .orders-table {
             width: 100%;
             border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-top: 20px;
         }
-
-        .order-details th {
-            background: #38bdf8;
+        
+        .orders-table th {
+            background: #3498db;
             color: white;
-            padding: 10px;
+            padding: 12px;
             text-align: left;
         }
-
-        .order-details td {
-            padding: 10px;
+        
+        .orders-table td {
+            padding: 12px;
             border-bottom: 1px solid #eee;
         }
-
-        .med-badge {
-            display: inline-block;
-            padding: 2px 6px;
+        
+        .order-number {
+            color: #2c3e50;
+            font-weight: 500;
+        }
+        
+        .order-number i {
+            margin-right: 8px;
+            color: #3498db;
+        }
+        
+        .order-status {
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        
+        .status-ordered {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-ready {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+        
+        .status-collected {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .btn {
+            padding: 6px 12px;
+            border: none;
             border-radius: 4px;
-            font-size: 12px;
-            font-weight: 600;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
         }
-
-        .badge-s0 { background: #bbf7d0; color: #166534; }
-        .badge-s1 { background: #fef08a; color: #854d0e; }
-        .badge-s2 { background: #fef08a; color: #854d0e; }
-        .badge-s3 { background: #bae6fd; color: #075985; }
-        .badge-s4 { background: #fecaca; color: #991b1b; }
-        .badge-s5 { background: #e2e8f0; color: #1e293b; }
-        .badge-s6 { background: #fecaca; color: #991b1b; }
-        .badge-s7 { background: #1e293b; color: white; }
-
-        /* Animation for expanding */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
+        
+        .btn-dispensary {
+            background: #27ae60;
+            color: white;
         }
-
-        .expanded .order-details {
-            display: block;
-            animation: fadeIn 0.3s ease-out;
+        
+        .btn:hover {
+            opacity: 0.9;
+        }
+        
+        /* ===== NO RESULTS ===== */
+        .no-results {
+            text-align: center;
+            padding: 30px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            color: #95a5a6;
+            font-style: italic;
+        }
+        
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 60px;
+            }
+            
+            .sidebar:not(.collapsed) {
+                width: 220px;
+            }
+            
+            .topbar {
+                left: 60px;
+            }
+            
+            .sidebar:not(.collapsed) + .topbar {
+                left: 220px;
+            }
+            
+            .main-content {
+                margin-left: 60px;
+            }
+            
+            .sidebar:not(.collapsed) + .topbar + .main-content {
+                margin-left: 220px;
+            }
+            
+            .search-container {
+                flex-direction: column;
+            }
+            
+            .patient-cards {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
     <!-- SIDEBAR -->
     <div class="sidebar">
-        <div class="toggle-sidebar" onclick="toggleSidebar()">
-            <i class="fas fa-angle-left"></i>
-        </div>
-        
         <div class="sidebar-header">
-            <h2><i class="fas fa-prescription-bottle-alt"></i> <span>Pharmacist Panel</span></h2>
+            <h2><i class="fas fa-prescription-bottle-alt"></i> Pharmacist Panel</h2>
+            <button class="toggle-sidebar" onclick="toggleSidebar()">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <small style="color: #bdc3c7;">Dedicated Dictionary</small>
         </div>
-        
         <nav class="sidebar-nav">
             <a href="#"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
             <a href="LoadPrescriptions.html"><i class="fas fa-tachometer-alt"></i> Walk In Prescription</a>
-            <a href="Orders.html"><i class="fas fa-clipboard-list"></i> Orders</a>
+            <a href="#" class="active"><i class="fas fa-clipboard-list"></i> Orders</a>
             <a href="unprocessedScripts.html"><i class="fas fa-file-prescription"></i> Unprocessed Scritps</a>
             <a href="processedScripts.html"><i class="fas fa-boxes"></i> Processed Scripts</a>
             <a href="TrackOrders.html"><i class="fas fa-boxes"></i> Track Orders</a>
             <a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
         </nav>
-        
         <div class="sidebar-footer">
             <p>Ibhayi Pharmacy v2.1</p>
         </div>
     </div>
 
-    <!-- Topbar -->
-    <div class="topnav">
-        <span>Processed Orders</span>
-        <div>Welcome, Pharmacist</div>
+    <!-- TOPBAR -->
+    <div class="topbar">
+        <span>Orders Management</span>
+        <div>Welcome, <strong>Pharmacist</strong></div>
     </div>
 
-    <!-- Main Content -->
+    <!-- MAIN CONTENT -->
     <div class="main-content">
-        <h2>Processed Orders</h2>
-        
-        <div class="search-container">
-            <div class="search-bar">
-                <input type="text" placeholder="Search by patient name or ID..." id="searchInput">
-                <button onclick="searchOrders()"><i class="fas fa-search"></i> Search</button>
+        <!-- SEARCH SECTION -->
+        <div class="search-section">
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="Search by patient name or order number..." id="patientSearch">
+                <button class="search-btn" onclick="searchPatients()"><i class="fas fa-search"></i> Search</button>
             </div>
         </div>
-
-        <div class="orders-list" id="ordersList">
-            <!-- Order 1 -->
-            <div class="order-card">
-                <div class="order-header">
-                    <div>
-                        <span class="order-patient">Patient: John Doe (ID: 9001011234081)</span>
-                    </div>
-                </div>
-                <div class="order-meta">
-                    <span>Doctor: Dr. Sarah Smith (PR1234567)</span>
-                    <span>Date: 2023-05-15</span>
-                    <span class="order-repeat">Repeat (2 remaining)</span>
-                </div>
-                <div class="order-actions">
-                    <button class="action-btn email-btn" onclick="emailOrder(this)">
-                        <i class="fas fa-envelope"></i> Email
-                    </button>
-                    <a href="NewDispensary.html" class="action-btn dispensary-btn">
-                        <i class="fas fa-clipboard-list"></i> Go To Dispensary
-                    </a>
-                </div>
-                <div class="order-details">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Medication</th>
-                                <th>Dosage Form</th>
-                                <th>Qty</th>
-                                <th>Schedule</th>
-                                <th>Price (ZAR)</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Amoxicillin 500mg</td>
-                                <td>Capsule</td>
-                                <td>14</td>
-                                <td><span class="med-badge badge-s4">S4</span></td>
-                                <td>R 85.50</td>
-                            </tr>
-                            <tr>
-                                <td>Panado Extra</td>
-                                <td>Tablet</td>
-                                <td>20</td>
-                                <td><span class="med-badge badge-s0">S0</span></td>
-                                <td>R 45.75</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div style="clear:both"></div>
-            </div>
-
-            <!-- Order 2 -->
-            <div class="order-card">
-                <div class="order-header">
-                    <div>
-                        <span class="order-patient">Patient: Amanda Johnson (ID: 8902021234082)</span>
-                    </div>
-                </div>
-                <div class="order-meta">
-                    <span>Doctor: Dr. Michael Brown (PR7654321)</span>
-                    <span>Date: 2023-05-14</span>
-                </div>
-                <div class="order-actions">
-                    <button class="action-btn email-btn" onclick="emailOrder(this)">
-                        <i class="fas fa-envelope"></i> Email
-                    </button>
-                    <a href="NewDispensary.html" class="action-btn dispensary-btn">
-                        <i class="fas fa-clipboard-list"></i> Go To Dispensary
-                    </a>
-                </div>
-                <div class="order-details">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Medication</th>
-                                <th>Dosage Form</th>
-                                <th>Qty</th>
-                                <th>Schedule</th>
-                                <th>Price (ZAR)</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Lisinopril 10mg</td>
-                                <td>Tablet</td>
-                                <td>30</td>
-                                <td><span class="med-badge badge-s2">S2</span></td>
-                                <td>R 120.00</td>
-                            </tr>
-                            <tr>
-                                <td>Simvastatin 20mg</td>
-                                <td>Tablet</td>
-                                <td>30</td>
-                                <td><span class="med-badge badge-s3">S3</span></td>
-                                <td>R 95.00</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div style="clear:both"></div>
-            </div>
-
-            <!-- Order 3 -->
-            <div class="order-card">
-                <div class="order-header">
-                    <div>
-                        <span class="order-patient">Patient: Lunga Dlamini (ID: 8803031234083)</span>
-                    </div>
-                </div>
-                <div class="order-meta">
-                    <span>Doctor: Dr. Thando Nkosi (PR9876543)</span>
-                    <span>Date: 2023-05-12</span>
-                </div>
-                <div class="order-actions">
-                    <button class="action-btn email-btn" onclick="emailOrder(this)">
-                        <i class="fas fa-envelope"></i> Email
-                    </button>
-                    <a href="NewDispensary.html" class="action-btn dispensary-btn">
-                        <i class="fas fa-clipboard-list"></i> Go To Dispensary
-                    </a>
-                </div>
-                <div class="order-details">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Medication</th>
-                                <th>Dosage Form</th>
-                                <th>Qty</th>
-                                <th>Schedule</th>
-                                <th>Price (ZAR)</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Ibuprofen 200mg</td>
-                                <td>Tablet</td>
-                                <td>10</td>
-                                <td><span class="med-badge badge-s1">S1</span></td>
-                                <td>R 32.50</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div style="clear:both"></div>
-            </div>
+        
+        <!-- PATIENT CARDS -->
+        <div class="patient-cards" id="patientCards">
+            <!-- Patient cards will be dynamically inserted here -->
+        </div>
+        
+        <!-- ORDERS TABLE (HIDDEN BY DEFAULT) -->
+        <div id="ordersTableContainer" style="display: none;">
+            <h3 id="selectedPatientName"></h3>
+            <table class="orders-table">
+                <thead>
+                    <tr>
+                        <th width="25%">Order Number</th>
+                        <th width="20%">Date</th>
+                        <th width="20%">Total Due</th>
+                        <th width="20%">Status</th>
+                        <th width="15%">Action</th>
+                    </tr>
+                </thead>
+                <tbody id="ordersTableBody">
+                    <!-- Order rows will be dynamically inserted here -->
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- NO RESULTS MESSAGE (HIDDEN BY DEFAULT) -->
+        <div class="no-results" id="noResults" style="display: none;">
+            <i class="fas fa-search" style="font-size: 24px; margin-bottom: 10px;"></i>
+            <p>No orders found</p>
         </div>
     </div>
 
     <script>
+        // Sample data structure matching your Order model
+        const patients = [
+            {
+                id: "9001011234081",
+                name: "John Doe",
+                orders: [
+                    { 
+                        orderId: 1, 
+                        orderNumber: "ORD-20251015-1234", 
+                        date: "2025-01-15", 
+                        totalDue: "R 245.50", 
+                        status: "Ordered" 
+                    },
+                    { 
+                        orderId: 2, 
+                        orderNumber: "ORD-20250322-5678", 
+                        date: "2025-03-22", 
+                        totalDue: "R 180.75", 
+                        status: "Ready for Collection" 
+                    }
+                ]
+            },
+            {
+                id: "8902021234082",
+                name: "Jane Smith",
+                orders: [
+                    { 
+                        orderId: 3, 
+                        orderNumber: "ORD-20250210-9012", 
+                        date: "2025-02-10", 
+                        totalDue: "R 320.25", 
+                        status: "Ordered" 
+                    }
+                ]
+            },
+            {
+                id: "9103031234083",
+                name: "Robert Johnson",
+                orders: [
+                    { 
+                        orderId: 4, 
+                        orderNumber: "ORD-20250105-3456", 
+                        date: "2025-01-05", 
+                        totalDue: "R 95.80", 
+                        status: "Ordered" 
+                    },
+                    { 
+                        orderId: 5, 
+                        orderNumber: "ORD-20250412-7890", 
+                        date: "2025-04-12", 
+                        totalDue: "R 410.60", 
+                        status: "Collected" 
+                    }
+                ]
+            }
+        ];
+
+        // Filter out patients with no orders
+        const patientsWithOrders = patients.filter(patient => patient.orders.length > 0);
+
+        // Initialize with patients that have orders
+        document.addEventListener('DOMContentLoaded', function() {
+            displayPatients(patientsWithOrders);
+        });
+
         // Toggle sidebar
         function toggleSidebar() {
-            document.body.classList.toggle('sidebar-collapsed');
-            document.querySelector('.sidebar').classList.toggle('collapsed');
-            const icon = document.querySelector('.toggle-sidebar i');
-            icon.classList.toggle('fa-angle-left');
-            icon.classList.toggle('fa-angle-right');
-        }
-
-        // Toggle order details on card click
-        document.querySelectorAll('.order-card').forEach(card => {
-            card.addEventListener('click', function(e) {
-                // Don't toggle if clicking on buttons or links
-                if (!e.target.classList.contains('action-btn') && e.target.tagName !== 'A') {
-                    this.classList.toggle('expanded');
-                }
-            });
-        });
-
-        // Email order function
-        function emailOrder(button) {
-            const card = button.closest('.order-card');
-            const patient = card.querySelector('.order-patient').textContent;
-            alert(`Email sent to ${patient}`);
-            // In a real app, this would trigger an email API
-        }
-
-        // Search orders
-        function searchOrders() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const cards = document.querySelectorAll('.order-card');
+            const sidebar = document.querySelector('.sidebar');
+            sidebar.classList.toggle('collapsed');
             
-            cards.forEach(card => {
-                const patientText = card.querySelector('.order-patient').textContent.toLowerCase();
-                card.style.display = patientText.includes(searchTerm) ? 'block' : 'none';
+            const toggleBtn = document.querySelector('.toggle-sidebar i');
+            if (sidebar.classList.contains('collapsed')) {
+                toggleBtn.classList.remove('fa-chevron-left');
+                toggleBtn.classList.add('fa-chevron-right');
+            } else {
+                toggleBtn.classList.remove('fa-chevron-right');
+                toggleBtn.classList.add('fa-chevron-left');
+            }
+        }
+
+        // Search patients by name or order number
+        function searchPatients() {
+            const searchTerm = document.getElementById('patientSearch').value.toLowerCase();
+            if (searchTerm.trim() === '') {
+                displayPatients(patientsWithOrders);
+                return;
+            }
+            
+            const filteredPatients = patientsWithOrders.filter(patient => 
+                patient.name.toLowerCase().includes(searchTerm) || 
+                patient.id.includes(searchTerm) ||
+                patient.orders.some(order => 
+                    order.orderNumber.toLowerCase().includes(searchTerm)
+                )
+            );
+            
+            displayPatients(filteredPatients);
+        }
+
+        // Display patients in cards
+        function displayPatients(patientList) {
+            const container = document.getElementById('patientCards');
+            container.innerHTML = '';
+            
+            if (patientList.length === 0) {
+                document.getElementById('noResults').style.display = 'block';
+                document.getElementById('ordersTableContainer').style.display = 'none';
+                return;
+            }
+            
+            document.getElementById('noResults').style.display = 'none';
+            
+            patientList.forEach(patient => {
+                // Sort orders by date (oldest first)
+                const sortedOrders = [...patient.orders].sort((a, b) => 
+                    new Date(a.date) - new Date(b.date)
+                );
+                
+                // Get the most recent order date
+                const latestOrder = sortedOrders[sortedOrders.length - 1];
+                
+                const card = document.createElement('div');
+                card.className = 'patient-card';
+                card.innerHTML = `
+                    <div class="patient-name">${patient.name}</div>
+                    <div class="patient-id">ID: ${patient.id}</div>
+                    <div class="order-count">${patient.orders.length} order(s) - Latest: ${formatDate(latestOrder.date)}</div>
+                `;
+                
+                card.addEventListener('click', function() {
+                    // Remove active class from all cards
+                    document.querySelectorAll('.patient-card').forEach(c => {
+                        c.classList.remove('active');
+                    });
+                    
+                    // Add active class to clicked card
+                    this.classList.add('active');
+                    
+                    // Show orders for this patient
+                    showOrders(patient);
+                });
+                
+                container.appendChild(card);
             });
         }
 
-        // Make search work on Enter key
-        document.getElementById('searchInput').addEventListener('keyup', function(event) {
-            if (event.key === 'Enter') {
-                searchOrders();
+        // Show orders for selected patient
+        function showOrders(patient) {
+            document.getElementById('selectedPatientName').textContent = `Orders for ${patient.name}`;
+            const tableBody = document.getElementById('ordersTableBody');
+            tableBody.innerHTML = '';
+            
+            // Sort orders by date (oldest first)
+            const sortedOrders = [...patient.orders].sort((a, b) => 
+                new Date(a.date) - new Date(b.date)
+            );
+            
+            if (sortedOrders.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="5" style="text-align: center; color: #95a5a6; font-style: italic;">
+                            No orders found for this patient
+                        </td>
+                    </tr>
+                `;
+            } else {
+                sortedOrders.forEach(order => {
+                    const row = document.createElement('tr');
+                    
+                    // Determine status class
+                    let statusClass = 'status-ordered';
+                    if (order.status === 'Ready for Collection') {
+                        statusClass = 'status-ready';
+                    } else if (order.status === 'Collected') {
+                        statusClass = 'status-collected';
+                    }
+                    
+                    row.innerHTML = `
+                        <td class="order-number">
+                            <i class="fas fa-receipt"></i> ${order.orderNumber}
+                        </td>
+                        <td>${formatDate(order.date)}</td>
+                        <td>${order.totalDue}</td>
+                        <td>
+                            <span class="order-status ${statusClass}">
+                                ${order.status}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn btn-dispensary" onclick="goToDispensary(${order.orderId}, '${order.orderNumber}')">
+                                    <i class="fas fa-clinic-medical"></i> Go to Dispensary
+                                </button>
+                            </div>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
             }
-        });
+            
+            document.getElementById('ordersTableContainer').style.display = 'block';
+        }
+
+        // Format date as DD/MM/YYYY
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const day = date.getDate().toString().padStart(2, '0');
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            const year = date.getFullYear();
+            return `${day}/${month}/${year}`;
+        }
+
+        // Go to Dispensary - redirect to dispensing page with order info
+        function goToDispensary(orderId, orderNumber) {
+            // Redirect to dispensary page with order information
+            window.location.href = `Dispensary.html?orderId=${orderId}&orderNumber=${encodeURIComponent(orderNumber)}`;
+            
+            // For now, show an alert (replace with actual navigation)
+            alert(`Navigating to dispensary for order: ${orderNumber}`);
+        }
     </script>
 </body>
 </html>

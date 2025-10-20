@@ -1,0 +1,771 @@
+﻿@model List<Prescription>
+@{
+    ViewData["Title"] = "Processed Scripts - Ibhayi Pharmacy";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Processed Scripts - Ibhayi Pharmacy</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ===== GLOBAL STYLES ===== */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f4f6f9;
+            color: #333;
+            transition: all 0.3s;
+        }
+
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            width: 220px;
+            background: linear-gradient(to bottom, #22586A, #22586A);
+            height: 100vh;
+            padding: 20px 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+            transition: all 0.3s;
+        }
+
+            .sidebar.collapsed {
+                width: 60px;
+                overflow: hidden;
+            }
+
+                .sidebar.collapsed .sidebar-header h2,
+                .sidebar.collapsed .sidebar-nav a span,
+                .sidebar.collapsed .sidebar-footer p {
+                    display: none;
+                }
+
+                .sidebar.collapsed .sidebar-nav a {
+                    justify-content: center;
+                }
+
+        .sidebar-header {
+            padding: 0 20px 20px;
+            border-bottom: 1px solid #34495e;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .sidebar h2 {
+            font-size: 22px;
+            margin: 0;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+            .sidebar h2 i {
+                color: #3498db;
+            }
+
+        .sidebar-nav {
+            padding: 0 10px;
+        }
+
+        .sidebar a {
+            color: #ecf0f1;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 8px 0;
+            padding: 10px 15px;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+
+            .sidebar a:hover, .sidebar a.active {
+                background-color: #34495e;
+                transform: translateX(5px);
+            }
+
+        .sidebar-footer {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            padding: 0 20px;
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+
+        .toggle-sidebar {
+            position: absolute;
+            right: -15px;
+            top: 20px;
+            background: #3498db;
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        /* ===== TOPBAR ===== */
+        .topbar {
+            background-color: #ffffff;
+            height: 60px;
+            padding: 0 20px;
+            position: fixed;
+            left: 220px;
+            right: 0;
+            top: 0;
+            border-bottom: 1px solid #ccc;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 999;
+            transition: all 0.3s;
+        }
+
+        .sidebar.collapsed + .topbar {
+            left: 60px;
+        }
+
+        .topbar span {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .main-content {
+            margin-left: 220px;
+            margin-top: 60px;
+            padding: 30px;
+            transition: all 0.3s;
+        }
+
+        .sidebar.collapsed + .topbar + .main-content {
+            margin-left: 60px;
+        }
+
+        /* ===== SEARCH SECTION ===== */
+        .search-section {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .search-container {
+            display: flex;
+            gap: 15px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .search-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+            .search-btn:hover {
+                opacity: 0.9;
+            }
+
+        /* ===== PATIENT CARDS ===== */
+        .patient-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .patient-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.2s;
+            border-left: 4px solid #3498db;
+        }
+
+            .patient-card:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            }
+
+            .patient-card.active {
+                background: #f0f7fc;
+                border-left: 4px solid #27ae60;
+            }
+
+        .patient-name {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .patient-id {
+            font-size: 13px;
+            color: #7f8c8d;
+        }
+
+        .script-date {
+            font-size: 12px;
+            color: #3498db;
+            margin-top: 5px;
+        }
+
+        /* ===== PRESCRIPTION TABLE ===== */
+        .prescription-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+
+            .prescription-table th {
+                background: #3498db;
+                color: white;
+                padding: 12px;
+                text-align: left;
+            }
+
+            .prescription-table td {
+                padding: 12px;
+                border-bottom: 1px solid #eee;
+            }
+
+        .prescription-file {
+            color: #3498db;
+            font-weight: 500;
+        }
+
+            .prescription-file i {
+                margin-right: 8px;
+            }
+
+        .process-status {
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .process-yes {
+            background: #d5f5e3;
+            color: #27ae60;
+        }
+
+        .process-no {
+            background: #fadbd8;
+            color: #e74c3c;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 500;
+        }
+
+        .btn-view {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-download {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        /* ===== NO RESULTS ===== */
+        .no-results {
+            text-align: center;
+            padding: 30px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            color: #95a5a6;
+            font-style: italic;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @@media (max-width: 768px) {
+            .sidebar
+
+        {
+            width: 60px;
+        }
+
+        .sidebar:not(.collapsed) {
+            width: 220px;
+        }
+
+        .topbar {
+            left: 60px;
+        }
+
+        .sidebar:not(.collapsed) + .topbar {
+            left: 220px;
+        }
+
+        .main-content {
+            margin-left: 60px;
+        }
+
+        .sidebar:not(.collapsed) + .topbar + .main-content {
+            margin-left: 220px;
+        }
+
+        .search-container {
+            flex-direction: column;
+        }
+
+        .patient-cards {
+            grid-template-columns: 1fr;
+        }
+
+        .action-buttons {
+            flex-direction: column;
+        }
+
+        }
+    </style>
+</head>
+<body>
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2><i class="fas fa-prescription-bottle-alt"></i> Pharmacist Panel</h2>
+            <button class="toggle-sidebar" onclick="toggleSidebar()">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <small style="color: #bdc3c7;">Dedicated Dictionary</small>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="#"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+            <a href="LoadPrescriptions.html"><i class="fas fa-tachometer-alt"></i> Walk In Prescription</a>
+            <a href="Orders.html"><i class="fas fa-clipboard-list"></i> Orders</a>
+            <a href="@Url.Action("Index", "ScriptsProcessed")"><i class="fas fa-file-prescription"></i> Unprocessed Scripts</a>
+            <a href="@Url.Action("ProcessedScripts", "ScriptsProcessed")" class="active"><i class="fas fa-boxes"></i> Processed Scripts</a>
+            <a href="TrackOrders.html"><i class="fas fa-boxes"></i> Track Orders</a>
+            <a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </nav>
+        <div class="sidebar-footer">
+            <p>Ibhayi Pharmacy v2.1</p>
+        </div>
+    </div>
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+        <span>Processed Scripts</span>
+        <div>Welcome, <strong>Pharmacist</strong></div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <!-- SEARCH SECTION -->
+        <div class="search-section">
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="Search by patient name or ID number..." id="patientSearch">
+                <button class="search-btn" onclick="searchPatients()"><i class="fas fa-search"></i> Search</button>
+            </div>
+        </div>
+
+        <!-- PATIENT CARDS -->
+        <div class="patient-cards" id="patientCards">
+            @if (Model.Any())
+            {
+                @foreach (var patientGroup in Model.GroupBy(p => p.ApplicationUserId))
+                {
+                    var firstPrescription = patientGroup.First();
+                    var latestPrescription = patientGroup.OrderByDescending(p => p.DateIssued).First();
+
+                    <div class="patient-card" data-patient-id="@firstPrescription.ApplicationUserId">
+                        <div class="patient-name">@firstPrescription.ApplicationUser?.Name @firstPrescription.ApplicationUser?.Surname</div>
+                        <div class="patient-id">ID: @firstPrescription.ApplicationUser?.IDNumber</div>
+                        <div class="script-date">Latest script: @latestPrescription.DateIssued.ToString("dd/MM/yyyy")</div>
+                    </div>
+                }
+            }
+        </div>
+
+        <!-- PRESCRIPTION TABLE (HIDDEN BY DEFAULT) -->
+        <div id="prescriptionTableContainer" style="display: none;">
+            <h3 id="selectedPatientName"></h3>
+            <table class="prescription-table">
+                <thead>
+                    <tr>
+                        <th width="15%">Date</th>
+                        <th width="30%">Script</th>
+                        <th width="20%">Doctor</th>
+                        <th width="15%">Status</th>
+                        <th width="20%">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="prescriptionTableBody">
+                    <!-- Prescription rows will be dynamically inserted here -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- NO RESULTS MESSAGE (HIDDEN BY DEFAULT) -->
+        <div class="no-results" id="noResults" style="@(Model.Any() ? "display: none;" : "display: block;")">
+            <i class="fas fa-search" style="font-size: 24px; margin-bottom: 10px;"></i>
+            <p>No processed scripts found</p>
+        </div>
+    </div>
+
+    <script>
+        // Patient data from server - SIMPLIFIED AND CORRECTED VERSION
+        const patients = [
+            @foreach (var patientGroup in Model.GroupBy(p => p.ApplicationUserId))
+            {
+                    var firstPrescription = patientGroup.First();
+                    var patientName = $"{firstPrescription.ApplicationUser?.Name} {firstPrescription.ApplicationUser?.Surname}";
+                    var idNumber = firstPrescription.ApplicationUser?.IDNumber ?? "";
+
+                    // Clean the data for JavaScript
+                    patientName = patientName.Replace("\"", "\\\"");
+                    idNumber = idNumber?.Replace("\"", "\\\"") ?? "";
+
+                    <text>
+                    {
+                        userId: "@firstPrescription.ApplicationUserId",
+                        id: "@idNumber",
+                        name: "@patientName",
+                        prescriptions: [
+                            @foreach (var prescription in patientGroup)
+                            {
+                                    var statusClass = "process-no";
+                                    var statusText = "Unknown";
+
+                                    if (!string.IsNullOrEmpty(prescription.Status))
+                                    {
+                                            statusClass = prescription.Status.ToLower() switch
+                                            {
+                                                    "processed" or "partially processed" => "process-yes",
+                                                    "rejected" => "process-no",
+                                                    _ => "process-no"
+                                            };
+                                            statusText = prescription.Status;
+                                    }
+
+                                    var doctorName = prescription.Doctors != null ?
+                                            $"Dr. {prescription.Doctors.Name} {prescription.Doctors.Surname}" :
+                                            "Not assigned";
+                                    doctorName = doctorName.Replace("\"", "\\\"");
+
+                                    var canDownload = (prescription.Script != null && prescription.Script.Length > 0);
+
+                                    <text>
+                                    {
+                                        date: "@prescription.DateIssued.ToString("yyyy-MM-dd")",
+                                        file: "Prescription_@(prescription.PrescriptionID).pdf",
+                                        processed: true,
+                                        doctor: "@doctorName",
+                                        status: "@statusText",
+                                        statusClass: "@statusClass",
+                                        statusText: "@statusText",
+                                        canDownload: @canDownload.ToString().ToLower(),
+                                        prescriptionId: @prescription.PrescriptionID
+                                    },
+                                    </text>
+                            }
+                        ]
+                    },
+                    </text>
+            }
+        ];
+
+        let currentlyOpenPatientId = null;
+
+        // Debug function to check data
+        function debugPatients() {
+            console.log('Patients loaded:', patients.length);
+            patients.forEach((patient, index) => {
+                console.log(`Patient ${index}:`, patient.name, 'ID:', patient.userId, 'Prescriptions:', patient.prescriptions?.length || 0);
+            });
+        }
+
+        // Initialize with all patients
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded - initializing patients');
+            debugPatients(); // Remove this in production
+            displayPatients(patients);
+            setupPatientCardClick();
+
+            // Show first patient by default for testing
+            if (patients.length > 0) {
+                setTimeout(() => {
+                    const firstCard = document.querySelector('.patient-card');
+                    if (firstCard) {
+                        firstCard.click();
+                    }
+                }, 100);
+            }
+        });
+
+        // Toggle sidebar
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            sidebar.classList.toggle('collapsed');
+
+            const toggleBtn = document.querySelector('.toggle-sidebar i');
+            if (sidebar.classList.contains('collapsed')) {
+                toggleBtn.classList.remove('fa-chevron-left');
+                toggleBtn.classList.add('fa-chevron-right');
+            } else {
+                toggleBtn.classList.remove('fa-chevron-right');
+                toggleBtn.classList.add('fa-chevron-left');
+            }
+        }
+
+        // Search patients by name or ID
+        function searchPatients() {
+            const searchTerm = document.getElementById('patientSearch').value.toLowerCase();
+            if (searchTerm.trim() === '') {
+                displayPatients(patients);
+                return;
+            }
+
+            const filteredPatients = patients.filter(patient =>
+                patient.name.toLowerCase().includes(searchTerm) ||
+                (patient.id && patient.id.toLowerCase().includes(searchTerm))
+            );
+
+            displayPatients(filteredPatients);
+
+            // Hide table when searching
+            document.getElementById('prescriptionTableContainer').style.display = 'none';
+            currentlyOpenPatientId = null;
+        }
+
+        // Display patients in cards
+        function displayPatients(patientList) {
+            const container = document.getElementById('patientCards');
+            container.innerHTML = '';
+
+            if (patientList.length === 0) {
+                document.getElementById('noResults').style.display = 'block';
+                document.getElementById('prescriptionTableContainer').style.display = 'none';
+                return;
+            }
+
+            document.getElementById('noResults').style.display = 'none';
+
+            patientList.forEach(patient => {
+                // Get the most recent prescription date
+                let latestDate = '';
+                if (patient.prescriptions && patient.prescriptions.length > 0) {
+                    const dates = patient.prescriptions.map(p => p.date).filter(d => d);
+                    if (dates.length > 0) {
+                        latestDate = dates.sort().reverse()[0];
+                    }
+                }
+
+                const card = document.createElement('div');
+                card.className = 'patient-card';
+                card.setAttribute('data-patient-id', patient.userId);
+                card.innerHTML = `
+                    <div class="patient-name">${patient.name}</div>
+                    <div class="patient-id">ID: ${patient.id || 'N/A'}</div>
+                    <div class="script-date">Latest script: ${latestDate ? formatDate(latestDate) : 'No scripts'}</div>
+                `;
+
+                container.appendChild(card);
+            });
+
+            // Re-setup click events after updating cards
+            setupPatientCardClick();
+        }
+
+        // Setup patient card click events with toggle functionality
+        function setupPatientCardClick() {
+            const cards = document.querySelectorAll('.patient-card');
+            console.log('Setting up click events for', cards.length, 'cards');
+
+            cards.forEach(card => {
+                // Remove existing event listeners
+                card.replaceWith(card.cloneNode(true));
+            });
+
+            // Re-select cards after cloning
+            const newCards = document.querySelectorAll('.patient-card');
+
+            newCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    console.log('Card clicked');
+                    const patientId = this.getAttribute('data-patient-id');
+                    console.log('Patient ID:', patientId);
+
+                    // If clicking the same card that's already open, close it
+                    if (currentlyOpenPatientId === patientId) {
+                        this.classList.remove('active');
+                        document.getElementById('prescriptionTableContainer').style.display = 'none';
+                        currentlyOpenPatientId = null;
+                        return;
+                    }
+
+                    // Remove active class from all cards
+                    document.querySelectorAll('.patient-card').forEach(c => {
+                        c.classList.remove('active');
+                    });
+
+                    // Add active class to clicked card
+                    this.classList.add('active');
+
+                    // Find patient data
+                    const patient = patients.find(p => p.userId === patientId);
+                    console.log('Found patient:', patient);
+
+                    if (patient) {
+                        showPrescriptions(patient);
+                        currentlyOpenPatientId = patientId;
+                    } else {
+                        console.error('Patient not found with ID:', patientId);
+                    }
+                });
+            });
+        }
+
+        // Show prescriptions for selected patient
+        function showPrescriptions(patient) {
+            console.log('Showing prescriptions for:', patient.name);
+            document.getElementById('selectedPatientName').textContent = `Prescriptions for ${patient.name}`;
+            const tableBody = document.getElementById('prescriptionTableBody');
+            tableBody.innerHTML = '';
+
+            if (!patient.prescriptions || patient.prescriptions.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="5" style="text-align: center; color: #95a5a6; font-style: italic;">
+                            No prescriptions found for this patient
+                        </td>
+                    </tr>
+                `;
+            } else {
+                // Sort prescriptions by date (newest first)
+                const sortedPrescriptions = [...patient.prescriptions].sort((a, b) =>
+                    new Date(b.date) - new Date(a.date)
+                );
+
+                sortedPrescriptions.forEach(prescription => {
+                    const row = document.createElement('tr');
+
+                    // Create action buttons HTML
+                    let actionButtons = '';
+                    if (prescription.canDownload) {
+                        actionButtons += `
+                            <a href="/ScriptsProcessed/Download/${prescription.prescriptionId}" class="btn btn-download">
+                                <i class="fas fa-download"></i> Download
+                            </a>
+                        `;
+                    }
+                    actionButtons += `
+                        <a href="/ScriptsProcessed/ProcessedDetails/${prescription.prescriptionId}" class="btn btn-view">
+                            <i class="fas fa-eye"></i> View Details
+                        </a>
+                    `;
+
+                    row.innerHTML = `
+                        <td>${formatDate(prescription.date)}</td>
+                        <td class="prescription-file">
+                            <i class="fas fa-file-pdf"></i> ${prescription.file}
+                        </td>
+                        <td>${prescription.doctor}</td>
+                        <td>
+                            <span class="process-status ${prescription.statusClass}">
+                                ${prescription.statusText}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="action-buttons">
+                                ${actionButtons}
+                            </div>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            }
+
+            document.getElementById('prescriptionTableContainer').style.display = 'block';
+            console.log('Table should be visible now');
+        }
+
+        // Format date as DD/MM/YYYY
+        function formatDate(dateString) {
+            try {
+                if (!dateString) return 'Unknown date';
+                const date = new Date(dateString);
+                if (isNaN(date.getTime())) return 'Invalid date';
+
+                const day = date.getDate().toString().padStart(2, '0');
+                const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                const year = date.getFullYear();
+                return `${day}/${month}/${year}`;
+            } catch (e) {
+                console.error('Error formatting date:', dateString, e);
+                return 'Invalid Date';
+            }
+        }
+
+        // Add enter key support for search
+        document.getElementById('patientSearch').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchPatients();
+            }
+        });
+
+        // Auto-focus search on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('patientSearch').focus();
+        });
+    </script>
+</body>
+</html>

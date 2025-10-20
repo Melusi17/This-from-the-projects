@@ -1,0 +1,374 @@
+﻿@{
+    ViewData["Title"] = "Manage Repeats";
+    Layout = "~/Views/Shared/CustomerLayout/_CustomerLayout.cshtml";
+}
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f7f9fb;
+        color: #333;
+    }
+
+    .upload-prescription-panel {
+        max-width: 1000px;
+        margin: 30px auto;
+        padding: 30px;
+        background-color: #ffffff;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+        color: #1f9f77;
+        margin-bottom: 20px;
+    }
+
+    .prescription-table, .modal-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        background-color: #ffffff;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+        .prescription-table th, .prescription-table td,
+        .modal-table th, .modal-table td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #ccc;
+        }
+
+        .prescription-table thead,
+        .modal-table thead {
+            background-color: #1f9f77;
+            color: white;
+        }
+
+        .prescription-table tbody tr:nth-child(even),
+        .modal-table tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .prescription-table tbody tr:hover,
+        .modal-table tbody tr:hover {
+            background-color: #e3f5f0;
+        }
+
+    .order-row {
+        cursor: pointer;
+        background-color: #d6f5e3;
+        font-weight: bold;
+        color: #0d3d2c;
+    }
+
+        .order-row:hover {
+            background-color: #c0ecd5;
+        }
+
+    .medication-details {
+        display: none;
+        background-color: #f9f9f9;
+    }
+
+    .btn-upload {
+        background-color: #1f9f77;
+        color: white;
+        padding: 6px 12px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: background-color 0.3s ease;
+    }
+
+        .btn-upload:hover {
+            background-color: #28bf96;
+        }
+
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 9999;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background: rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-content {
+        background-color: #ffffff;
+        margin: 10% auto;
+        padding: 25px;
+        border-radius: 10px;
+        width: 600px;
+        position: relative;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        color: #333;
+    }
+
+        .modal-content h3 {
+            color: #1f9f77;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+    .close {
+        position: absolute;
+        right: 15px;
+        top: 10px;
+        color: #999;
+        font-size: 24px;
+        cursor: pointer;
+        font-weight: bold;
+    }
+
+        .close:hover {
+            color: red;
+        }
+
+    .modal-footer {
+        text-align: right;
+        margin-top: 15px;
+        font-weight: bold;
+    }
+</style>
+
+<div class="upload-prescription-panel">
+    <h2>Prescription Orders</h2>
+
+    <table class="prescription-table" id="orders-table">
+        <thead>
+            <tr>
+                <th>Doctor</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="order-row" data-order-id="1">
+                <td data-doctor="Dr. Smith">Dr. Smith</td>
+                <td data-date="2025-05-10">2025-05-10</td>
+            </tr>
+            <tr class="medication-details" data-parent-id="1">
+                <td colspan="2">
+                    <table class="modal-table">
+                        <thead>
+                            <tr>
+                                <th>Medication</th>
+                                <th>Instruction</th>
+                                <th>Qty</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="prescription-row" data-order-id="1" data-med-id="101" data-medication="Amoxicillin 500mg" data-price="12.00" data-qty="21">
+                                <td class="medication-name">Amoxicillin 500mg</td>
+                                <td>Take one capsule thrice daily</td>
+                                <td>21</td>
+                            </tr>
+                            <tr class="prescription-row" data-order-id="1" data-med-id="102" data-medication="Paracetamol 500mg" data-price="6.00" data-qty="24">
+                                <td class="medication-name">Paracetamol 500mg</td>
+                                <td>Take two tablets every 6 hours</td>
+                                <td>24</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+
+            <tr class="order-row" data-order-id="2">
+                <td data-doctor="Dr. Johnson">Dr. Johnson</td>
+                <td data-date="2025-05-08">2025-05-08</td>
+            </tr>
+            <tr class="medication-details" data-parent-id="2">
+                <td colspan="2">
+                    <table class="modal-table">
+                        <thead>
+                            <tr>
+                                <th>Medication</th>
+                                <th>Instruction</th>
+                                <th>Qty</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="prescription-row" data-order-id="2" data-med-id="201" data-medication="Ibuprofen 400mg" data-price="8.50" data-qty="15">
+                                <td class="medication-name">Ibuprofen 400mg</td>
+                                <td>Take one tablet every 8 hours</td>
+                                <td>15</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Refill History Modal -->
+<div class="modal" id="refill-modal">
+    <div class="modal-content">
+        <span class="close" id="modal-close">&times;</span>
+        <h3 id="modal-medication-title">Refill History & Request</h3>
+        <table class="modal-table" id="refill-history-table">
+            <thead>
+                <tr>
+                    <th>Date of Refill Request</th>
+                    <th>Order No.</th>
+                    <th>Repeats Left</th>
+                    <th>Request Refill</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Filled by JS -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Order Summary Modal -->
+<div class="modal" id="order-summary-modal">
+    <div class="modal-content">
+        <span class="close" id="order-summary-close">&times;</span>
+        <h3>
+            <span id="summary-order-no">Order No: </span>
+            <span id="summary-order-date" style="float:right;"></span>
+        </h3>
+        <p><strong>Doctor:</strong> <span id="summary-doctor"></span></p>
+        <table class="modal-table">
+            <thead>
+                <tr>
+                    <th>Medication</th>
+                    <th>Qty</th>
+                    <th>Price</th>
+                    <th>Subtotal</th>
+                </tr>
+            </thead>
+            <tbody id="order-summary-body">
+                <!-- JS will populate -->
+            </tbody>
+        </table>
+        <div class="modal-footer">
+            Total: R<span id="order-total">0.00</span>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const refillData = {
+            "101": [
+                { date: "2025-05-15", orderNo: "ORD001", repeatsLeft: 2 },
+                { date: "2025-06-01", orderNo: "ORD001", repeatsLeft: 1 }
+            ],
+            "102": [
+                { date: "2025-05-12", orderNo: "ORD001", repeatsLeft: 0 }
+            ],
+            "201": [
+                { date: "2025-05-10", orderNo: "ORD002", repeatsLeft: 3 }
+            ]
+        };
+
+        const modal = document.getElementById('refill-modal');
+        const modalClose = document.getElementById('modal-close');
+        const refillTableBody = document.querySelector('#refill-history-table tbody');
+        const modalTitle = document.getElementById('modal-medication-title');
+
+        document.querySelectorAll('.order-row').forEach(row => {
+            row.addEventListener('click', () => {
+                const id = row.dataset.orderId;
+                document.querySelectorAll('.medication-details').forEach(r => r.style.display = 'none');
+                document.querySelector(`.medication-details[data-parent-id="${id}"]`).style.display = 'table-row';
+            });
+        });
+
+        document.querySelectorAll('.prescription-row').forEach(row => {
+            row.addEventListener('click', () => {
+                const medId = row.dataset.medId;
+                const medName = row.querySelector('.medication-name').textContent;
+                modalTitle.textContent = `${medName} - Refill History & Request`;
+
+                const data = refillData[medId] || [];
+                refillTableBody.innerHTML = '';
+
+                if (data.length === 0) {
+                    refillTableBody.innerHTML = `<tr><td colspan="4" style="color:#999;">No refill history found.</td></tr>`;
+                } else {
+                    data.forEach(entry => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td>${entry.date}</td>
+                            <td><a href="#" class="order-summary-link" data-order-id="${row.dataset.orderId}">${entry.orderNo}</a></td>
+                            <td>${entry.repeatsLeft}</td>
+                            <td>
+                                ${entry.repeatsLeft > 0
+                                    ? `<button class="btn-upload">Request Refill</button>`
+                                    : `<span style="color:#aaa;">No repeats left</span>`}
+                            </td>`;
+                        refillTableBody.appendChild(tr);
+                    });
+                }
+                modal.style.display = 'block';
+            });
+        });
+
+        modalClose.addEventListener('click', () => modal.style.display = 'none');
+        window.addEventListener('click', e => {
+            if (e.target === modal) modal.style.display = 'none';
+        });
+
+        // Order Summary Modal logic
+        const orderSummaryModal = document.getElementById('order-summary-modal');
+        const orderSummaryClose = document.getElementById('order-summary-close');
+        const summaryDoctor = document.getElementById('summary-doctor');
+        const summaryOrderNo = document.getElementById('summary-order-no');
+        const summaryOrderDate = document.getElementById('summary-order-date');
+        const summaryBody = document.getElementById('order-summary-body');
+        const summaryTotal = document.getElementById('order-total');
+
+        document.addEventListener('click', function (e) {
+            if (e.target.classList.contains('order-summary-link')) {
+                e.preventDefault();
+                const orderId = e.target.dataset.orderId;
+
+                const doctor = document.querySelector(`.order-row[data-order-id="${orderId}"] td[data-doctor]`).dataset.doctor;
+                const date = document.querySelector(`.order-row[data-order-id="${orderId}"] td[data-date]`).dataset.date;
+
+                summaryDoctor.textContent = doctor;
+                summaryOrderNo.textContent = `Order No: ${e.target.textContent}`;
+                summaryOrderDate.textContent = date;
+
+                summaryBody.innerHTML = '';
+                let total = 0;
+
+                document.querySelectorAll(`.prescription-row[data-order-id="${orderId}"]`).forEach(row => {
+                    const name = row.dataset.medication;
+                    const qty = parseInt(row.dataset.qty);
+                    const price = parseFloat(row.dataset.price);
+                    const subtotal = qty * price;
+                    total += subtotal;
+
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${name}</td>
+                        <td>${qty}</td>
+                        <td>R${price.toFixed(2)}</td>
+                        <td>R${subtotal.toFixed(2)}</td>`;
+                    summaryBody.appendChild(tr);
+                });
+
+                summaryTotal.textContent = total.toFixed(2);
+                orderSummaryModal.style.display = 'block';
+            }
+        });
+
+        orderSummaryClose.addEventListener('click', () => orderSummaryModal.style.display = 'none');
+        window.addEventListener('click', e => {
+            if (e.target === orderSummaryModal) orderSummaryModal.style.display = 'none';
+        });
+    });
+</script>

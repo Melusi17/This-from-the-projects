@@ -1,0 +1,1577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Dashboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        /* General Body Style */
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f4f6f9;
+            overflow: hidden;
+        }
+
+        /* Dashboard Layout */
+        .dashboard-wrapper {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* Shared Sidebar Styles */
+        .sidebar {
+            width: 220px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.05);
+        }
+
+        /* Left Sidebar */
+        .sidebar-left {
+            background: linear-gradient(to bottom, #22586A, #22586A);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* vertical centering */
+            align-items: center;
+            height: 100vh;
+            padding: 10px;
+        }
+
+        .sidebar-left ul a{
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar-left li a {
+            display: block;
+            padding: 1rem 2rem;
+            color: white;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .sidebar-left li a:hover {
+            background-color: rgba(244, 246, 246, 0.15);
+            transform: translateX(5px);
+        }
+
+        .logo-container {
+            text-align: center;
+            margin-bottom: 0px;
+        }
+
+        .logo {
+            width: 200px;
+            height: auto;
+        }
+
+        .sidebar-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* vertical centering */
+            align-items: center; /* horizontal centering */
+        }
+
+        .sidebar-content ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sidebar-content li {
+            margin: 10px 0;
+            font-size: 16px;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        /* Welcome Panel */
+        .welcome-panel {
+            background: white;
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.07);
+        }
+
+        /* Right Sidebar */
+        .sidebar-right {
+            background: linear-gradient(145deg, #ffffff, #f0f0f0);
+            border-top-left-radius: 30px;
+            border-bottom-left-radius: 30px;
+            border-left: 1px solid #ddd;
+        }
+
+        .profile-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        .profile-icon img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 3px solid #1f9f77;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+
+        .profile-icon img:hover {
+            transform: scale(1.05);
+        }
+
+        .profile-menu {
+            position: absolute;
+            top: 70px;
+            right: 0;
+            background: #fff;
+            border: 1px solid #ccc;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            padding: 10px;
+            border-radius: 8px;
+            width: 160px;
+            z-index: 10;
+        }
+
+        .profile-menu a {
+            display: block;
+            padding: 8px;
+            color: #333;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        .profile-menu a:hover {
+            background-color: #eaeaea;
+        }
+
+        .notifications {
+            border-top: 0px solid #eee;
+            padding-top: 50px;
+        }
+
+        .notifications h4 {
+            margin-top: 20;
+            color: #444;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .sidebar-right {
+            width: 180px; /* Adjust this value to reduce the sidebar width */
+            background: linear-gradient(145deg, #ffffff, #f0f0f0);
+            border-left: 1px solid #ddd;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            padding: 20px;
+            box-shadow: -4px 0 10px rgba(0, 0, 0, 0.03);
+            border-top-left-radius: 30px;
+            border-bottom-left-radius: 30px;
+        }
+
+        .upload-prescription-panel {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.07);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .upload-prescription-panel h2 {
+            margin-bottom: 20px;
+            color: #1f9f77;
+        }
+
+        .upload-prescription-panel input,
+        .upload-prescription-panel textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .btn-upload {
+            background-color: #1f9f77;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-upload:hover {
+            background-color: #28bf96;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .inline-fields {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .inline-fields input[type="text"],
+        .inline-fields input[type="date"] {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        input[type="file"] {
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .btn-upload {
+            background-color: #1f9f77;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 15px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-upload:hover {
+            background-color: #28bf96;
+        }
+
+        /* Panel styling */
+        .upload-prescription-panel {
+            background-color: #f8f9fa;
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.05);
+            width: 90%;               /* Custom width, adjust as needed */
+            max-width: 1200px;        /* Set a max width */
+            height: auto;             /* or set fixed height like 600px */
+            padding: 40px 30px;       /* More spacing inside the panel */
+            margin: 20px auto;   
+        }
+
+        .upload-prescription-panel h2 {
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #00796b;
+        }
+
+        /* Form styling */
+        .upload-prescription-panel form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .inline-fields {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .inline-fields input[type="date"],
+        .inline-fields input[type="text"] {
+            flex: 1;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+        }
+
+        input[type="file"] {
+            padding: 6px;
+            font-size: 14px;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+        }
+
+        .btn-upload {
+            background-color: #00796b;
+            color: white;
+            padding: 10px;
+            border-radius: 6px;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-upload:hover {
+            background-color: #00695c;
+        }
+
+        .prescription-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+
+        .prescription-table th,
+        .prescription-table td {
+            padding: 12px 15px;
+            border: 1px solid #ccc;
+            text-align: left;
+        }
+
+        .prescription-table th {
+            background-color: #e0f2f1;
+            color: #004d40;
+        }
+
+        .prescription-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .prescription-table button {
+            background-color: #1f9f77;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 5px;
+            font-size: 13px;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+
+        .prescription-table button:hover {
+            background-color: #28bf96;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 700px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+        }
+
+        .modal-content h2 {
+            color: #1f9f77;
+            margin-bottom: 20px;
+        }
+
+        .total-summary {
+            margin-top: 20px;
+            font-size: 16px;
+        }
+
+        .order-tracker {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .order-card {
+            border: 1px solid #ccc;
+            background: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .tracker {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+        }
+
+        .step {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            border-radius: 10px;
+            background: #eee;
+            color: #777;
+            position: relative;
+            font-weight: bold;
+        }
+
+        .step::after {
+            content: '';
+            position: absolute;
+            right: -50%;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 100%;
+            height: 4px;
+            background: #ccc;
+            z-index: -1;
+        }
+
+        .step:last-child::after {
+            display: none;
+        }
+
+        .step.completed {
+            background: #1f9f77;
+            color: white;
+        }
+
+        .step.completed::after {
+            background: #1f9f77;
+        }
+
+        .step.active {
+            background: #ffc107;
+            color: white;
+        }
+
+        .status-tracker {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            font-size: 14px;
+        }
+
+        .status {
+            padding: 4px 8px;
+            border-radius: 6px;
+            background: #e0e0e0;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .status.done {
+            background: #1f9f77;
+            color: white;
+        }
+
+        .status.current {
+            background: #ffc107;
+            color: black;
+        }
+
+        .track-order-panel {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.07);
+            max-width: 800px;
+            margin: 0 auto;
+            font-family: Arial, sans-serif;
+        }
+
+        .track-order-panel h2 {
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #00796b;
+        }
+
+        .prescription-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .prescription-table th, .prescription-table td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+
+        .prescription-table th {
+            background-color: #1f9f77;
+            color: white;
+        }
+
+        .status-tracker {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .status {
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .status.ordered {
+            background-color: #1f9f77;
+            color: white;
+        }
+
+        .status.packed {
+            background-color: #ffc107;
+            color: white;
+        }
+
+        .status.ready {
+            background-color: #00bcd4;
+            color: white;
+        }
+
+        .status.collected {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .status:hover {
+            cursor: pointer;
+            opacity: 0.8;
+        }
+
+        .status.current {
+            background-color: #00796b;
+        }
+
+        .status[title] {
+            cursor: help;
+        }
+
+        .btn-upload {
+            background-color: #1f9f77;
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            font-size: 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .btn-upload:hover {
+            background-color: #28bf96;
+        }
+
+        .order-section {
+            background: #ffffff;
+            border: 1px solid #ccc;
+            padding: 20px;
+            margin-bottom: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        label {
+            font-weight: 600;
+            display: block;
+            margin-top: 10px;
+        }
+
+        select,
+        input[type="number"] {
+            padding: 8px;
+            width: 100%;
+            margin: 8px 0 16px;
+            border: 1px solid #bbb;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        .add-button {
+            background-color: #1f9f77;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .add-button:hover {
+            background-color: #28bf96;
+        }
+
+        .summary {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #e6f5f1;
+            border-left: 4px solid #1f9f77;
+            border-radius: 8px;
+        }
+
+        .order-item {
+            margin-bottom: 10px;
+        }
+
+        .submit-button {
+            margin-top: 20px;
+            background-color: #1f9f77;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .submit-button:hover {
+            background-color: #28bf96;
+        }
+
+        .order-container {
+            background: white;
+            padding: 20px 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        label {
+            display: block;
+            margin: 10px 0;
+        }
+
+        .doctor-checkboxes label {
+            margin-right: 20px;
+        }
+
+        .doctor-section {
+            margin-top: 30px;
+            border-top: 2px solid #ccc;
+            padding-top: 20px;
+        }
+
+        .medication-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .medication-table th, .medication-table td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .summary {
+            font-size: 16px;
+            margin-top: 20px;
+        }
+
+        button {
+            background-color: #1f9f77;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background-color: #28bf96;
+        }
+
+        .sidebar-button-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            width: 100%;
+        }
+
+        .sidebar-button {
+            display: block;
+            width: 100%;
+            text-align: left;
+            padding: 15px 25px;
+            margin: 5px 0;
+            background: transparent;
+            color: white;
+            font-weight: bold;
+            text-decoration: none;
+            border: none;
+            border-radius: 25px 0 0 25px;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.2s ease;
+            font-size: 16px;
+        }
+
+        .sidebar-button:hover {
+            background-color: rgba(255, 255, 255, 0.15);
+            transform: translateX(5px);
+            color: #e0f7f5;
+        }
+
+        /* Upload Prescription Styles */
+        .drop-area {
+            border: 2px dashed #1f9f77;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            color: #1f9f77;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            transition: background-color 0.3s;
+        }
+
+        .drop-area.drag-over {
+            background-color: #e0f7f1;
+            border-color: #28bf96;
+        }
+
+        .file-preview {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .btn-remove {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .btn-upload {
+            background-color: #1f9f77;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .checkbox-container {
+            margin-top: 15px;
+            text-align: left;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+            font-size: 14px;
+            color: #333;
+            gap: 8px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 10000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+            padding-top: 60px;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 40%;
+            border-radius: 8px;
+        }
+
+        .close {
+            float: right;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-wrapper">
+        <!-- Left Sidebar -->
+        <aside class="sidebar sidebar-left">
+            <div class="sidebar-header">
+                <img style="height:160px;width:220px;" src="~/css/img/ibhayi2.png" />
+            </div>
+            <div class="sidebar-content">
+                <nav>
+                    <div class="sidebar-button-container">
+                        <a href="#" class="sidebar-button" onclick="showUploadPrescription()">📥 Upload Prescription</a>
+                        <a href="#" class="sidebar-button" onclick="showPlaceOrder()">🛒 Place Orders</a>
+                        <a href="#" class="sidebar-button" onclick="showTrackOrder()">📦 Track Orders</a>
+                        <a href="#" class="sidebar-button" onclick="showManageRepeats()">🔁 Manage Repeats</a>
+                        <a href="#" class="sidebar-button" onclick="showViewReports()">📄 View Reports</a>
+                        <a href="#" class="sidebar-button" onclick="return confirm('Are you sure you want to log out?');">
+                            &#10145; Logout
+                        </a>
+                    </div>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content" id="mainContent">
+            <!-- Default content - Upload Prescription -->
+            <div id="uploadPrescriptionContent">
+                <h2>📥 Upload Prescription</h2>
+
+                <!-- Drop area -->
+                <div id="drop-area" class="drop-area">
+                    <p>Drag & Drop PDF/Image here or click to select</p>
+                    <input type="file" id="prescriptionFile" name="prescriptionFile" accept=".pdf, image/*" required hidden>
+                </div>
+
+                <!-- File preview with remove button -->
+                <div id="filePreview" class="file-preview" style="display:none;">
+                    <span id="fileName"></span>
+                    <button type="button" class="btn-remove" onclick="removeSelectedFile()">❌ Remove</button>
+                </div>
+
+                <!-- Dispense checkbox -->
+                <div class="checkbox-container">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="dispenseCheckbox" name="dispenseCheckbox">
+                        Dispense this prescription upon approval
+                    </label>
+                </div>
+
+                <!-- Upload Button -->
+                <button type="button" class="btn-upload" onclick="uploadPrescription()">Upload</button>
+
+                <div class="upload-prescription-panel">
+                    <h2>📋 Unprocessed Prescriptions</h2>
+                    <table class="prescription-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>File</th>
+                                <th>Dispense</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="unprocessedBody">
+                            <!-- Hardcoded sample record -->
+                            <tr>
+                                <td>2025-05-13</td>
+                                <td>Prescription_ABC.pdf</td>
+                                <td>Yes</td>
+                                <td>
+                                    <button class="btn-upload" onclick="openEditModal(this)">Edit</button>
+                                    <button class="btn-upload" onclick="this.parentElement.parentElement.remove()">Remove</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Edit Prescription Modal -->
+                <div id="editModal" class="modal">
+                    <div class="modal-content">
+                        <span class="close" onclick="closeEditModal()">&times;</span>
+                        <h3>✏️ Edit Prescription</h3>
+
+                        <div class="form-group">
+                            <label for="editFileInput">Select New File (PDF/Image):</label>
+                            <input type="file" id="editFileInput" accept=".pdf, image/*">
+                        </div>
+
+                        <div class="checkbox-container">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="editDispenseCheckbox">
+                                Dispense this prescription upon approval
+                            </label>
+                        </div>
+
+                        <button class="btn-upload" onclick="saveEdit()">Save Changes</button>
+                    </div>
+                </div>
+
+                <div class="upload-prescription-panel">
+                    <h2>✅ Processed Prescriptions</h2>
+                    <table class="prescription-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Doctor</th>
+                                <th>Prescription</th>
+                                <th>Order Medication</th>
+                            </tr>
+                        </thead>
+                        <tbody id="processedBody">
+                            <!-- Example hardcoded data -->
+                            <tr>
+                                <td>2025-05-13</td>
+                                <td>Dr. John Smith</td>
+                                <td>Prescription_XYZ.pdf</td>
+                                <td><button class="btn-upload" onclick="openOrderModal('2025-05-13', 'Dr. John Smith')">View</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Medication Order Modal -->
+                <div id="orderModal" class="modal-overlay" style="display: none;">
+                    <div class="modal-content">
+                        <h2>🩺 Order Medication</h2>
+                        <div class="order-details">
+                            <p><strong>Date:</strong> <span id="modalDate">2025-05-13</span></p>
+                            <p><strong>Doctor:</strong> <span id="modalDoctor">Dr. John Smith</span></p>
+                        </div>
+
+                        <table class="prescription-table">
+                            <thead>
+                                <tr>
+                                    <th>Select</th>
+                                    <th>Medication</th>
+                                    <th>Qty</th>
+                                    <th>Instructions</th>
+                                    <th>Repeats</th>
+                                    <th>Price (R)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="modalMedications">
+                                <tr>
+                                    <td><input type="checkbox" class="med-check" data-price="120" onchange="updateTotal()"></td>
+                                    <td>Amoxicillin</td>
+                                    <td>2</td>
+                                    <td>Twice a day</td>
+                                    <td>1</td>
+                                    <td>120</td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" class="med-check" data-price="60" onchange="updateTotal()"></td>
+                                    <td>Ibuprofen</td>
+                                    <td>1</td>
+                                    <td>After meals</td>
+                                    <td>0</td>
+                                    <td>60</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="total-summary">
+                            <p><strong>Total (incl. VAT): R</strong><span id="totalDue">0.00</span></p>
+                        </div>
+
+                        <button class="btn-upload" onclick="placeMedicationOrder()">Place Order</button>
+                        <button class="btn-upload" style="background-color: grey;" onclick="closeModal()">Close</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Place Order Content -->
+            <div id="placeOrderContent" style="display:none;">
+                <h2>🛒 Place Order</h2>
+                <div class="order-container">
+                    <div class="order-section">
+                        <h3>Select Doctor and Medications</h3>
+                        <label for="doctorSelect">Select Doctor:</label>
+                        <select id="doctorSelect" onchange="addMedications()">
+                            <option value="">-- Select Doctor --</option>
+                            <option value="1">Dr. John Smith</option>
+                            <option value="2">Dr. Sarah Johnson</option>
+                        </select>
+
+                        <table id="medicationTable" class="medication-table" style="display:none;">
+                            <thead>
+                                <tr>
+                                    <th>Select</th>
+                                    <th>Doctor</th>
+                                    <th>Medication</th>
+                                    <th>Quantity</th>
+                                    <th>Repeats</th>
+                                    <th>Instructions</th>
+                                    <th>Price (R)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="medicationBody">
+                                <!-- Medications will be added here dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="summary">
+                        <h3>Order Summary</h3>
+                        <p>Subtotal: R<span id="subtotal">0.00</span></p>
+                        <p>Tax (15%): R<span id="tax">0.00</span></p>
+                        <p><strong>Total: R<span id="total">0.00</span></strong></p>
+                        <button class="submit-button" onclick="submitOrder()">Submit Order</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Track Order Content -->
+            <div id="trackOrderContent" style="display:none;">
+                <h2>📦 Track Orders</h2>
+                <div class="track-order-panel">
+                    <table class="prescription-table">
+                        <thead>
+                            <tr>
+                                <th>Order Date</th>
+                                <th>Doctor</th>
+                                <th>Medication</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orderList">
+                            <!-- Orders will be displayed here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Manage Repeats Content -->
+            <div id="manageRepeatsContent" style="display:none;">
+                <h2>🔁 Manage Repeats</h2>
+                <div class="upload-prescription-panel">
+                    <table class="prescription-table">
+                        <thead>
+                            <tr>
+                                <th>Medication</th>
+                                <th>Repeats Left</th>
+                                <th>Last Refill</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Amoxicillin 250mg</td>
+                                <td id="repeatCount1">3</td>
+                                <td>2025-04-15</td>
+                                <td>
+                                    <button class="btn-upload" onclick="requestRefill('repeatCount1', this)">Request Refill</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Ibuprofen 200mg</td>
+                                <td id="repeatCount2">0</td>
+                                <td>2025-05-01</td>
+                                <td>
+                                    <button class="btn-upload" disabled>No Repeats Left</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- View Reports Content -->
+            <div id="viewReportsContent" style="display:none;">
+                <h2>📄 View Reports</h2>
+                <div class="upload-prescription-panel">
+                    <label for="reportDate">Select Date:</label>
+                    <input type="date" id="reportDate">
+                    <button class="btn-upload" onclick="generatePDFReport()">Generate PDF Report</button>
+                </div>
+            </div>
+        </main>
+
+        <!-- Right Sidebar -->
+        <aside class="sidebar sidebar-right">
+            <div class="profile-container">
+                <div class="profile-icon" onclick="toggleProfileMenu()">
+                    <img src="~/css/img/Customer_img/Profile.png" alt="Profile" />
+                </div>
+                <div id="profileMenu" class="profile-menu hidden">
+                    <a href="#" class="sidebar-button">👤 Account</a>
+                    <a href="#" class="sidebar-button">🚪 Logout</a>
+                </div>
+            </div>
+
+            <div class="notifications" style="background-color: #ffffff; border: 1px solid #dcdcdc; padding: 20px; border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.05); margin: 20px 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+                <h4 style="font-size: 18px; margin-bottom: 15px; color: #333;">🔔 Notifications</h4>
+                <ul style="list-style-type: none; padding: 0; margin: 0;">
+                    <li style="padding: 12px 0; border-bottom: 1px solid #eee; font-size: 15px; color: #555;">
+                        🏥 Your <strong>Amoxicillin</strong> prescription is due for a refill.
+                    </li>
+                    <li style="padding: 12px 0; font-size: 15px; color: #555;">
+                        📧 IBhayi Pharmacy order <strong>[ORD202505341]</strong> is ready for collection.
+                    </li>
+                </ul>
+            </div>
+        </aside>
+    </div>
+
+    <script>
+        // Global variables
+        let orders = [];
+        let currentEditRow = null;
+
+        // Sample medication data per doctor
+        const medicationData = {
+            1: [
+                { name: "Panado", price: 10.00, instructions: "Take 1 tab 3 times/day" },
+                { name: "Amoxicillin", price: 50.00, instructions: "Take 1 tab 2 times/day" }
+            ],
+            2: [
+                { name: "Ibuprofen", price: 20.00, instructions: "Take 1 tab after meals" },
+                { name: "Loratadine", price: 25.00, instructions: "Take 1 tab daily" }
+            ]
+        };
+
+        // Navigation functions
+        function showUploadPrescription() {
+            hideAllContent();
+            document.getElementById('uploadPrescriptionContent').style.display = 'block';
+        }
+
+        function showPlaceOrder() {
+            hideAllContent();
+            document.getElementById('placeOrderContent').style.display = 'block';
+            document.getElementById("orderDate").valueAsDate = new Date();
+        }
+
+        function showTrackOrder() {
+            hideAllContent();
+            document.getElementById('trackOrderContent').style.display = 'block';
+            displayOrders();
+        }
+
+        function showManageRepeats() {
+            hideAllContent();
+            document.getElementById('manageRepeatsContent').style.display = 'block';
+        }
+
+        function showViewReports() {
+            hideAllContent();
+            document.getElementById('viewReportsContent').style.display = 'block';
+        }
+
+        function hideAllContent() {
+            const contents = document.querySelectorAll('#mainContent > div');
+            contents.forEach(content => {
+                content.style.display = 'none';
+            });
+        }
+
+        // Initialize page
+        document.addEventListener("DOMContentLoaded", function () {
+            const customerName = localStorage.getItem("loggedInCustomerName") || "Customer";
+            document.getElementById("welcomeText").textContent = `Welcome, ${customerName}!`;
+            
+            // Set up file upload functionality
+            setupFileUpload();
+            
+            // Show upload prescription by default
+            showUploadPrescription();
+        });
+
+        // File upload functionality
+        function setupFileUpload() {
+            const dropArea = document.getElementById('drop-area');
+            const fileInput = document.getElementById('prescriptionFile');
+            const filePreview = document.getElementById('filePreview');
+            const fileNameDisplay = document.getElementById('fileName');
+
+            // Trigger file input on click
+            dropArea.addEventListener('click', () => fileInput.click());
+
+            // When user selects a file manually
+            fileInput.addEventListener('change', (e) => {
+                handleFileUpload(e.target.files[0]);
+            });
+
+            // Drag over styling
+            dropArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropArea.classList.add('drag-over');
+            });
+
+            dropArea.addEventListener('dragleave', () => {
+                dropArea.classList.remove('drag-over');
+            });
+
+            // Handle dropped file
+            dropArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropArea.classList.remove('drag-over');
+                const file = e.dataTransfer.files[0];
+                if (file) {
+                    fileInput.files = e.dataTransfer.files; // attach dropped file to input
+                    handleFileUpload(file);
+                }
+            });
+
+            function handleFileUpload(file) {
+                fileNameDisplay.textContent = file.name;
+                filePreview.style.display = 'flex';
+            }
+        }
+
+        function removeSelectedFile() {
+            const fileInput = document.getElementById('prescriptionFile');
+            const filePreview = document.getElementById('filePreview');
+            const fileNameDisplay = document.getElementById('fileName');
+            
+            fileInput.value = ""; // clear input
+            filePreview.style.display = 'none';
+            fileNameDisplay.textContent = "";
+        }
+
+        function uploadPrescription() {
+            const fileInput = document.getElementById('prescriptionFile');
+            const dispenseChecked = document.getElementById('dispenseCheckbox').checked;
+
+            // Check if file is selected
+            if (!fileInput.files || fileInput.files.length === 0) {
+                alert("Please select a prescription file before uploading.");
+                return;
+            }
+
+            const file = fileInput.files[0];
+            const fileName = file.name;
+
+            // Get today's date
+            const today = new Date().toISOString().split('T')[0];
+
+            // Create new table row
+            const tableBody = document.getElementById('unprocessedBody');
+            const newRow = document.createElement('tr');
+
+            newRow.innerHTML = `
+                <td>${today}</td>
+                <td>${fileName}</td>
+                <td>${dispenseChecked ? 'Yes' : 'No'}</td>
+                <td>
+                    <button class="btn-upload" onclick="openEditModal(this)">Edit</button>
+                    <button class="btn-upload" onclick="this.parentElement.parentElement.remove()">Remove</button>
+                </td>
+            `;
+
+            tableBody.appendChild(newRow);
+
+            // Reset form fields
+            fileInput.value = '';
+            document.getElementById('dispenseCheckbox').checked = false;
+            document.getElementById('filePreview').style.display = 'none';
+            document.getElementById('fileName').textContent = '';
+
+            // Optional: Confirmation message
+            alert("📤 Prescription uploaded successfully!");
+        }
+
+        // Edit prescription modal functions
+        function openEditModal(button) {
+            currentEditRow = button.closest('tr');
+
+            // Populate current values
+            const fileName = currentEditRow.cells[1].textContent.trim();
+            const dispense = currentEditRow.cells[2].textContent.trim().toLowerCase() === 'yes';
+
+            document.getElementById("editFileInput").value = ""; // Clear previous file
+            document.getElementById("editDispenseCheckbox").checked = dispense;
+
+            // Show modal
+            document.getElementById("editModal").style.display = "block";
+        }
+
+        function closeEditModal() {
+            document.getElementById("editModal").style.display = "none";
+            currentEditRow = null;
+        }
+
+        function saveEdit() {
+            if (!currentEditRow) return;
+
+            const fileInput = document.getElementById("editFileInput");
+            const dispenseChecked = document.getElementById("editDispenseCheckbox").checked;
+
+            if (fileInput.files.length > 0) {
+                // Update filename only if a new file is selected
+                const newFileName = fileInput.files[0].name;
+                currentEditRow.cells[1].textContent = newFileName;
+            }
+
+            // Update dispense value
+            currentEditRow.cells[2].textContent = dispenseChecked ? "Yes" : "No";
+
+            closeEditModal();
+        }
+
+        // Order modal functions
+        function openOrderModal(date, doctor) {
+            document.getElementById("modalDate").textContent = date;
+            document.getElementById("modalDoctor").textContent = doctor;
+            document.getElementById("orderModal").style.display = "flex";
+        }
+
+        function closeModal() {
+            document.getElementById("orderModal").style.display = "none";
+        }
+
+        function updateTotal() {
+            let total = 0;
+            const checkboxes = document.querySelectorAll(".med-check");
+            checkboxes.forEach(cb => {
+                if (cb.checked) {
+                    total += parseFloat(cb.getAttribute("data-price"));
+                }
+            });
+
+            const vat = total * 0.15; // 15% VAT
+            const totalDue = (total + vat).toFixed(2);
+            document.getElementById("totalDue").textContent = totalDue;
+        }
+
+        function placeMedicationOrder() {
+            alert("Medication order has been placed successfully.");
+            closeModal();
+        }
+
+        // Place order functions
+        function addMedications() {
+            const doctorSelect = document.getElementById("doctorSelect");
+            const doctorId = doctorSelect.value;
+            const doctorName = doctorSelect.options[doctorSelect.selectedIndex].text;
+
+            if (!doctorId || !medicationData[doctorId]) return;
+
+            // Show the table
+            const table = document.getElementById("medicationTable");
+            table.style.display = 'table';
+
+            const tbody = document.getElementById("medicationBody");
+
+            // Remove previous rows from the same doctor (optional: or clear all)
+            medicationData[doctorId].forEach(med => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td><input type="checkbox" onchange="updateOrderTotal()"></td>
+                    <td>${doctorName}</td>
+                    <td>${med.name}</td>
+                    <td><input type="number" value="1" min="1" onchange="updateOrderTotal()"></td>
+                    <td><input type="number" value="0" min="0"></td>
+                    <td>${med.instructions}</td>
+                    <td class="price">${med.price.toFixed(2)}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function updateOrderTotal() {
+            let subtotal = 0;
+            const rows = document.querySelectorAll("#medicationBody tr");
+
+            rows.forEach(row => {
+                const checkbox = row.querySelector("input[type='checkbox']");
+                const qtyInput = row.cells[3].querySelector("input");
+                const price = parseFloat(row.querySelector(".price").textContent);
+
+                if (checkbox.checked) {
+                    const qty = parseInt(qtyInput.value);
+                    subtotal += qty * price;
+                }
+            });
+
+            const tax = subtotal * 0.15;
+            const total = subtotal + tax;
+
+            document.getElementById("subtotal").textContent = subtotal.toFixed(2);
+            document.getElementById("tax").textContent = tax.toFixed(2);
+            document.getElementById("total").textContent = total.toFixed(2);
+        }
+
+        function submitOrder() {
+            alert("Order submitted successfully!");
+            // Reset form
+            document.getElementById("medicationBody").innerHTML = "";
+            document.getElementById("medicationTable").style.display = "none";
+            document.getElementById("subtotal").textContent = "0.00";
+            document.getElementById("tax").textContent = "0.00";
+            document.getElementById("total").textContent = "0.00";
+        }
+
+        // Track order functions
+        function displayOrders() {
+            const orderList = document.getElementById("orderList");
+
+            // Clear the current list before adding new rows
+            orderList.innerHTML = "";
+
+            // Loop through the orders and add them as rows in the table
+            orders.forEach((order) => {
+                const row = document.createElement("tr");
+
+                const dateCell = document.createElement("td");
+                dateCell.textContent = order.orderDate;
+                row.appendChild(dateCell);
+
+                const doctorCell = document.createElement("td");
+                doctorCell.textContent = order.doctor;
+                row.appendChild(doctorCell);
+
+                const medicationCell = document.createElement("td");
+                medicationCell.textContent = order.medication;
+                row.appendChild(medicationCell);
+
+                const statusCell = document.createElement("td");
+                statusCell.textContent = order.status;
+                row.appendChild(statusCell);
+
+                orderList.appendChild(row);
+            });
+        }
+
+        // Manage repeats functions
+        function requestRefill(repeatCountId, btn) {
+            const countElem = document.getElementById(repeatCountId);
+            let currentRepeats = parseInt(countElem.textContent);
+
+            if (currentRepeats > 0) {
+                currentRepeats -= 1;
+                countElem.textContent = currentRepeats;
+                alert("✅ Refill request placed!");
+
+                if (currentRepeats === 0) {
+                    btn.disabled = true;
+                    btn.textContent = "No repeats left";
+                    btn.style.backgroundColor = "#ccc";
+                }
+            }
+        }
+
+        // View reports functions
+        async function generatePDFReport() {
+            const { jsPDF } = window.jspdf;
+            const selectedDate = document.getElementById("reportDate").value;
+            if (!selectedDate) {
+                alert("Please select a date.");
+                return;
+            }
+
+            // 🔹 Sample/mock data - replace with dynamic values if needed
+            const dispensedData = [
+                {
+                    patient: "Sarah Nkosi",
+                    doctor: "Dr. John Smith",
+                    medication: "Amoxicillin 250mg",
+                    qty: 20,
+                    instruction: "1 capsule 3x a day",
+                    repeats: 1,
+                    price: 80,
+                    date: "2025-05-13"
+                },
+                {
+                    patient: "Sarah Nkosi",
+                    doctor: "Dr. John Smith",
+                    medication: "Ibuprofen 200mg",
+                    qty: 15,
+                    instruction: "1 tablet twice a day",
+                    repeats: 0,
+                    price: 45,
+                    date: "2025-05-13"
+                }
+                // Add more if needed
+            ];
+
+            const filtered = dispensedData.filter(d => d.date === selectedDate);
+            if (filtered.length === 0) {
+                alert("No records found for selected date.");
+                return;
+            }
+
+            const doc = new jsPDF();
+            doc.setFontSize(16);
+            doc.text(`Medication Report - ${selectedDate}`, 14, 20);
+            doc.setFontSize(12);
+
+            let y = 30;
+
+            const grouped = {};
+            filtered.forEach(entry => {
+                const { patient, doctor, medication } = entry;
+                if (!grouped[patient]) grouped[patient] = {};
+                if (!grouped[patient][doctor]) grouped[patient][doctor] = [];
+                grouped[patient][doctor].push(entry);
+            });
+
+            for (const patient in grouped) {
+                doc.setFont(undefined, "bold");
+                doc.text(`Patient: ${patient}`, 14, y);
+                y += 8;
+
+                for (const doctor in grouped[patient]) {
+                    doc.setFont(undefined, "normal");
+                    doc.text(`Doctor: ${doctor}`, 20, y);
+                    y += 8;
+
+                    grouped[patient][doctor].forEach(med => {
+                        doc.text(`• ${med.medication}`, 26, y);
+                        y += 6;
+                        doc.text(`  Qty: ${med.qty} | Repeats: ${med.repeats} | Instruction: ${med.instruction}`, 30, y);
+                        y += 6;
+                        doc.text(`  Price: R${med.price.toFixed(2)}`, 30, y);
+                        y += 10;
+
+                        if (y > 270) {
+                            doc.addPage();
+                            y = 20;
+                        }
+                    });
+                }
+            }
+
+            doc.save(`Medication_Report_${selectedDate}.pdf`);
+        }
+
+        // Profile menu functions
+        function toggleProfileMenu() {
+            const menu = document.getElementById('profileMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        function logout() {
+            localStorage.removeItem("loggedInCustomerName");
+            alert('Logging out...');
+            // Add your logout logic here
+        }
+    </script>
+</body>
+</html>

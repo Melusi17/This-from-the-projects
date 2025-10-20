@@ -1,0 +1,118 @@
+﻿@{
+    ViewData["Title"] = "Dispensary";
+    Layout = "~/Views/Shared/PharmacistLayouts/_DispensaryLayout.cshtml";
+}
+
+<div class="main-content">
+    <div class="form-container-two-cards">
+        <!-- CARD 1: PATIENT INFO -->
+        <div class="card patient-card">
+            <h3><i class="fas fa-user-injured"></i> Patient Information</h3>
+
+            <div class="patient-info-grid">
+                <div class="patient-details">
+                    <div class="detail-row">
+                        <span class="detail-label">Name:</span>
+                        <span class="detail-value">John Doe</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Surname:</span>
+                        <span class="detail-value">Smith</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">DOB:</span>
+                        <span class="detail-value">15/06/1990 (33 yrs)</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">ID Number:</span>
+                        <span class="detail-value">9001011234081</span>
+                    </div>
+                </div>
+
+                <div class="medical-info">
+                    <div class="alert alert-warning">
+                        <h4><i class="fas fa-allergy"></i> Allergies</h4>
+                        <ul>
+                            <li>Penicillin</li>
+                            <li>Sulfa drugs</li>
+                            <li>Ibuprofen</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CARD 2: MEDICATION DISPENSING -->
+        <div class="card medication-card">
+            <h3><i class="fas fa-pills"></i> Medication Dispensing</h3>
+
+            <div class="alert alert-danger allergy-alert">
+                <i class="fas fa-exclamation-triangle"></i> <strong>ALLERGY WARNING:</strong> Patient is allergic to this medication!
+            </div>
+
+            <div class="alert alert-warning stock-alert">
+                <i class="fas fa-box-open"></i> <strong>LOW STOCK:</strong> This medication is near reorder level!
+            </div>
+
+            <table class="medication-table">
+                <thead>
+                    <tr>
+                        <th width="5%"></th>
+                        <th width="30%">Medication</th>
+                        <th width="12%">Dosage Form</th>
+                        <th width="8%">Qty</th>
+                        <th width="20%">Instructions</th>
+                        <th width="8%">Repeats Left</th>
+                        <th width="10%">Status</th>
+                        <th width="7%">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="medsTableBody">
+                    <!-- Rows will be added dynamically -->
+                </tbody>
+            </table>
+
+            <button class="btn btn-add" id="addMedBtn" style="margin-top: 15px;">
+                <i class="fas fa-plus"></i> Add Medication
+            </button>
+
+            <div class="form-footer">
+                <button class="btn btn-alert"><i class="fas fa-exclamation-triangle"></i> Check Interactions</button>
+                <button class="btn btn-add" onclick="markAsDispensed()"><i class="fas fa-check-circle"></i> Mark as Dispensed</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- REJECTION MODAL -->
+<div class="modal-overlay" id="rejectionModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4><i class="fas fa-ban"></i> Reject Medication</h4>
+            <button class="close-modal" onclick="closeModal()">&times;</button>
+        </div>
+        <div class="rejection-reasons">
+            <p>Please select the reason for rejecting this medication:</p>
+            <div class="reason-option">
+                <input type="radio" id="reason1" name="rejectionReason" value="Out of stock">
+                <label for="reason1">Out of stock</label>
+            </div>
+            <div class="reason-option">
+                <input type="radio" id="reason2" name="rejectionReason" value="Patient allergic">
+                <label for="reason2">Patient allergic</label>
+            </div>
+            <div class="reason-option">
+                <input type="radio" id="reason3" name="rejectionReason" value="Patient already has it">
+                <label for="reason3">Patient already has it</label>
+            </div>
+        </div>
+        <div class="modal-actions">
+            <button class="btn" onclick="closeModal()">Cancel</button>
+            <button class="btn btn-alert" onclick="confirmRejection()">Confirm Rejection</button>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script src="~/js/Dispensary.js"></script>
+}
+
