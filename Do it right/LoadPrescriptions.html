@@ -533,20 +533,24 @@
             <div class="card customer-card">
                 <h3><i class="fas fa-user-injured"></i> Customer Information</h3>
                 
-                <div class="search-container">
-                    <select id="customerSelect">
-                        <option value="">Select patient...</option>
-                        <option value="1">John Doe (ID: 9001011234081)</option>
-                        <option value="2">Amanda Johnson (ID: 8902021234082)</option>
-                        <option value="3">Lunga Dlamini (ID: 8803031234083)</option>
-                    </select>
-                    <button class="btn"><i class="fas fa-search"></i> Search</button>
+                <div class="form-group">
+                    <label for="patientSearch">Select Patient</label>
+                    <div class="searchable-select">
+                        <input list="patients-list" id="patientSearch" 
+                               placeholder="Search or select patient..." 
+                               oninput="filterPatients(this)">
+                        <datalist id="patients-list">
+                            <option value="John Doe (ID: 9001011234081)" data-id="1" data-dob="15/06/1990" data-allergies="Penicillin, Sulfa drugs" data-conditions="Hypertension">
+                            <option value="Amanda Johnson (ID: 8902021234082)" data-id="2" data-dob="02/02/1989" data-allergies="None" data-conditions="Asthma">
+                            <option value="Lunga Dlamini (ID: 8803031234083)" data-id="3" data-dob="03/03/1988" data-allergies="Peanuts" data-conditions="Diabetes">
+                        </datalist>
+                    </div>
                 </div>
                 
                 <div class="info-box" id="patientDetails">
-                    <p><strong>DOB:</strong> <span id="dob">15/06/1990</span></p>
-                    <p><strong>Allergies:</strong> <span id="allergies">Penicillin, Sulfa drugs</span></p>
-                    <p><strong>Chronic Conditions:</strong> <span id="conditions">Hypertension</span></p>
+                    <p><strong>DOB:</strong> <span id="dob">-</span></p>
+                    <p><strong>Allergies:</strong> <span id="allergies">-</span></p>
+                    <p><strong>Chronic Conditions:</strong> <span id="conditions">-</span></p>
                 </div>
                 
                 <button class="btn btn-add" id="addPatientBtn"><i class="fas fa-user-plus"></i> Add New Patient</button>
@@ -557,14 +561,17 @@
                 <h3><i class="fas fa-user-md"></i> Doctor Information</h3>
                 
                 <div class="form-group">
-                    <label for="doctorSelect">Select Doctor</label>
-                    <select id="doctorSelect">
-                        <option value="">Select doctor...</option>
-                        <option value="1">Dr. Sarah Smith (PR1234567)</option>
-                        <option value="2">Dr. Michael Brown (PR7654321)</option>
-                        <option value="3">Dr. Thando Nkosi (PR9876543)</option>
-                    </select>
-                    <button class="btn btn-add" id="addDoctorBtn" style="margin-top: 10px;"><i class="fas fa-user-md"></i> Add New Doctor</button>
+                    <label for="doctorSearch">Select Doctor</label>
+                    <div class="searchable-select">
+                        <input list="doctors-list" id="doctorSearch" 
+                               placeholder="Search or select doctor..." 
+                               oninput="filterDoctors(this)">
+                        <datalist id="doctors-list">
+                            <option value="Dr. Sarah Smith (PR1234567)" data-id="1">
+                            <option value="Dr. Michael Brown (PR7654321)" data-id="2">
+                            <option value="Dr. Thando Nkosi (PR9876543)" data-id="3">
+                        </datalist>
+                    </div>
                 </div>
                 
                 <div class="form-group">
@@ -586,6 +593,8 @@
                     <label for="prescriptionUpload">Upload New Prescription</label>
                     <input type="file" id="prescriptionUpload" accept=".pdf">
                 </div>
+                
+                <button class="btn btn-add" id="addDoctorBtn"><i class="fas fa-user-md"></i> Add New Doctor</button>
             </div>
             
             <!-- MEDICATION CARD -->
@@ -596,13 +605,12 @@
                     <thead>
                         <tr>
                             <th width="25%">Medication</th>
-                            <th width="15%">Dosage Form</th>
                             <th width="10%">Qty</th>
-                            <th width="25%">Instructions</th>
-                            <th width="10%">Details</th>
+                            <th width="30%">Instructions</th>
+                            <th width="15%">Details</th>
                             <th width="5%">Repeat</th>
                             <th width="5%">Repeats Left</th>
-                            <th width="5%"></th>
+                            <th width="10%"></th>
                         </tr>
                     </thead>
                     <tbody id="medsTableBody">
@@ -793,6 +801,9 @@
             "Take 1 tablet twice daily",
             "Take 2 tablets at bedtime",
             "Take as needed for pain",
+            "Take 1 capsule three times daily",
+            "Use as needed for wheezing",
+            "Apply thin layer to affected area twice daily",
             "Other (specify)"
         ];
 
@@ -833,6 +844,23 @@
             
             // Initialize form validation
             initRegistrationForm();
+            
+            // Add event listeners for patient and doctor search
+            document.getElementById('patientSearch').addEventListener('change', function() {
+                const selectedOption = document.querySelector(`#patients-list option[value="${this.value}"]`);
+                if (selectedOption) {
+                    updatePatientDetails(
+                        selectedOption.getAttribute('data-dob'),
+                        selectedOption.getAttribute('data-allergies'),
+                        selectedOption.getAttribute('data-conditions')
+                    );
+                }
+            });
+            
+            document.getElementById('doctorSearch').addEventListener('change', function() {
+                // In a real application, you might want to do something when a doctor is selected
+                console.log("Doctor selected:", this.value);
+            });
         });
 
         // Function to load existing prescription
@@ -891,32 +919,32 @@
                 <td>
                     <div class="searchable-select">
                         <input list="meds-list-${rowId}" id="med-input-${rowId}" 
-                               value="${medData.name}" 
+                               value="${medData.name} (${medData.form})" 
                                placeholder="Search or select medication..." 
                                oninput="filterMeds(this, ${rowId})">
                         <datalist id="meds-list-${rowId}">
                             ${medications.map(med => 
-                                `<option value="${med.name} (${med.schedule})" data-id="${med.id}">${med.active}</option>`
+                                med.forms.map(form => 
+                                    `<option value="${med.name} (${form})" data-id="${med.id}" data-form="${form}">${med.active}</option>`
+                                ).join('')
                             ).join('')}
                         </datalist>
                     </div>
                 </td>
-                <td>
-                    <select class="form-select" id="form-${rowId}">
-                        <option value="">Select form</option>
-                        ${medications.find(m => m.id === medData.id)?.forms.map(form => 
-                            `<option value="${form}" ${form === medData.form ? 'selected' : ''}>${form}</option>`
-                        ).join('')}
-                    </select>
-                </td>
                 <td><input type="number" min="1" value="${medData.qty}" class="qty-input"></td>
                 <td>
-                    <select class="inst-select" onchange="handleInstructionSelect(this, ${rowId})">
-                        ${commonInstructions.map(inst => 
-                            `<option value="${inst}" ${inst === medData.instructions ? 'selected' : ''}>${inst}</option>`
-                        ).join('')}
-                    </select>
-                    <div id="custom-inst-${rowId}" style="display:none; margin-top:5px;">
+                    <div class="searchable-select">
+                        <input list="instructions-list-${rowId}" id="instructions-input-${rowId}" 
+                               value="${medData.instructions}" 
+                               placeholder="Search or select instructions..." 
+                               oninput="filterInstructions(this, ${rowId})">
+                        <datalist id="instructions-list-${rowId}">
+                            ${commonInstructions.map(inst => 
+                                `<option value="${inst}">${inst}</option>`
+                            ).join('')}
+                        </datalist>
+                    </div>
+                    <div id="custom-inst-${rowId}" style="display:${medData.instructions === 'Other (specify)' ? 'block' : 'none'}; margin-top:5px;">
                         <textarea placeholder="Enter custom instructions..." rows="2"></textarea>
                     </div>
                 </td>
@@ -937,6 +965,24 @@
             `;
             
             tbody.appendChild(row);
+            
+            // Add event listener for when a medication is selected
+            document.getElementById(`med-input-${rowId}`).addEventListener('change', function() {
+                const selectedOption = document.querySelector(`#meds-list-${rowId} option[value="${this.value}"]`);
+                if (selectedOption) {
+                    updateMedDetails(selectedOption.getAttribute('data-id'), rowId);
+                }
+            });
+            
+            // Add event listener for when an instruction is selected
+            document.getElementById(`instructions-input-${rowId}`).addEventListener('change', function() {
+                const customDiv = document.getElementById(`custom-inst-${rowId}`);
+                if (this.value === "Other (specify)") {
+                    customDiv.style.display = 'block';
+                } else {
+                    customDiv.style.display = 'none';
+                }
+            });
         }
 
         // Add medication row with searchable select
@@ -944,10 +990,12 @@
             const tbody = document.getElementById('medsTableBody');
             const rowId = Date.now();
             
-            // Create datalist options
+            // Create datalist options for medications
             let medOptions = '';
             medications.forEach(med => {
-                medOptions += `<option value="${med.name} (${med.schedule})" data-id="${med.id}">${med.active}</option>`;
+                med.forms.forEach(form => {
+                    medOptions += `<option value="${med.name} (${form})" data-id="${med.id}" data-form="${form}">${med.active}</option>`;
+                });
             });
             
             // Instruction options
@@ -969,16 +1017,16 @@
                         </datalist>
                     </div>
                 </td>
-                <td>
-                    <select class="form-select" id="form-${rowId}">
-                        <option value="">Select form</option>
-                    </select>
-                </td>
                 <td><input type="number" min="1" value="1" class="qty-input"></td>
                 <td>
-                    <select class="inst-select" onchange="handleInstructionSelect(this, ${rowId})">
-                        ${instructionOptions}
-                    </select>
+                    <div class="searchable-select">
+                        <input list="instructions-list-${rowId}" id="instructions-input-${rowId}" 
+                               placeholder="Search or select instructions..." 
+                               oninput="filterInstructions(this, ${rowId})">
+                        <datalist id="instructions-list-${rowId}">
+                            ${instructionOptions}
+                        </datalist>
+                    </div>
                     <div id="custom-inst-${rowId}" style="display:none; margin-top:5px;">
                         <textarea placeholder="Enter custom instructions..." rows="2"></textarea>
                     </div>
@@ -1004,6 +1052,16 @@
                 const selectedOption = document.querySelector(`#meds-list-${rowId} option[value="${this.value}"]`);
                 if (selectedOption) {
                     updateMedDetails(selectedOption.getAttribute('data-id'), rowId);
+                }
+            });
+            
+            // Add event listener for when an instruction is selected
+            document.getElementById(`instructions-input-${rowId}`).addEventListener('change', function() {
+                const customDiv = document.getElementById(`custom-inst-${rowId}`);
+                if (this.value === "Other (specify)") {
+                    customDiv.style.display = 'block';
+                } else {
+                    customDiv.style.display = 'none';
                 }
             });
         }
@@ -1032,11 +1090,55 @@
                 }
             });
         }
+        
+        // Filter instructions as user types
+        function filterInstructions(input, rowId) {
+            const searchTerm = input.value.toLowerCase();
+            const options = document.querySelectorAll(`#instructions-list-${rowId} option`);
+            
+            options.forEach(option => {
+                const text = option.value.toLowerCase();
+                if (text.includes(searchTerm)) {
+                    option.style.display = 'block';
+                } else {
+                    option.style.display = 'none';
+                }
+            });
+        }
+        
+        // Filter patients as user types
+        function filterPatients(input) {
+            const searchTerm = input.value.toLowerCase();
+            const options = document.querySelectorAll('#patients-list option');
+            
+            options.forEach(option => {
+                const text = option.value.toLowerCase();
+                if (text.includes(searchTerm)) {
+                    option.style.display = 'block';
+                } else {
+                    option.style.display = 'none';
+                }
+            });
+        }
+        
+        // Filter doctors as user types
+        function filterDoctors(input) {
+            const searchTerm = input.value.toLowerCase();
+            const options = document.querySelectorAll('#doctors-list option');
+            
+            options.forEach(option => {
+                const text = option.value.toLowerCase();
+                if (text.includes(searchTerm)) {
+                    option.style.display = 'block';
+                } else {
+                    option.style.display = 'none';
+                }
+            });
+        }
 
         // Update medication details when selected
         function updateMedDetails(medId, rowId) {
             const detailsDiv = document.getElementById(`details-${rowId}`);
-            const formSelect = document.getElementById(`form-${rowId}`);
             
             if (medId) {
                 const med = medications.find(m => m.id == medId);
@@ -1048,30 +1150,19 @@
                         <small><strong>Stock:</strong> ${med.stock}</small><br>
                         <small><strong>Reorder:</strong> ${med.reorder}</small>
                     `;
-                    
-                    // Update dosage forms
-                    formSelect.innerHTML = '<option value="">Select form</option>';
-                    med.forms.forEach(form => {
-                        formSelect.innerHTML += `<option value="${form}">${form}</option>`;
-                    });
-                    
                     return;
                 }
             }
             
             // Clear if no medication selected
             detailsDiv.innerHTML = '';
-            formSelect.innerHTML = '<option value="">Select form</option>';
         }
-
-        // Handle instruction selection
-        function handleInstructionSelect(select, rowId) {
-            const customDiv = document.getElementById(`custom-inst-${rowId}`);
-            if (select.value === "Other (specify)") {
-                customDiv.style.display = 'block';
-            } else {
-                customDiv.style.display = 'none';
-            }
+        
+        // Update patient details when selected
+        function updatePatientDetails(dob, allergies, conditions) {
+            document.getElementById('dob').textContent = dob || '-';
+            document.getElementById('allergies').textContent = allergies || '-';
+            document.getElementById('conditions').textContent = conditions || '-';
         }
 
         // Remove row
@@ -1092,14 +1183,14 @@
             
             if (name && practiceNumber) {
                 // Add to the dropdown (in a real app, this would come from the server)
-                const select = document.getElementById('doctorSelect');
+                const datalist = document.getElementById('doctors-list');
                 const newOption = document.createElement('option');
-                newOption.value = "new";
-                newOption.textContent = `${name} (${practiceNumber})`;
-                select.appendChild(newOption);
+                newOption.value = `${name} (${practiceNumber})`;
+                newOption.setAttribute('data-id', 'new');
+                datalist.appendChild(newOption);
                 
                 // Select the new doctor
-                select.value = "new";
+                document.getElementById('doctorSearch').value = `${name} (${practiceNumber})`;
                 
                 closeModal('doctorModal');
             } else {
@@ -1262,19 +1353,24 @@
                 localStorage.setItem('patients', JSON.stringify(patients));
                 
                 // Add to the patient dropdown
-                const select = document.getElementById('customerSelect');
+                const datalist = document.getElementById('patients-list');
                 const newOption = document.createElement('option');
-                newOption.value = patients.length;
-                newOption.textContent = `${name} ${surname} (ID: ${idNumber})`;
-                select.appendChild(newOption);
+                newOption.value = `${name} ${surname} (ID: ${idNumber})`;
+                newOption.setAttribute('data-id', patients.length);
+                newOption.setAttribute('data-dob', `${dd}/${mm}/20${yy}`);
+                newOption.setAttribute('data-allergies', patient.allergies.join(', '));
+                newOption.setAttribute('data-conditions', 'None known');
+                datalist.appendChild(newOption);
                 
                 // Select the new patient
-                select.value = patients.length;
+                document.getElementById('patientSearch').value = `${name} ${surname} (ID: ${idNumber})`;
                 
                 // Update patient details
-                document.getElementById('dob').textContent = `${dd}/${mm}/20${yy}`;
-                document.getElementById('allergies').textContent = patient.allergies.join(', ');
-                document.getElementById('conditions').textContent = 'None known';
+                updatePatientDetails(
+                    `${dd}/${mm}/20${yy}`,
+                    patient.allergies.join(', '),
+                    'None known'
+                );
                 
                 // Close the modal
                 closeModal('patientModal');

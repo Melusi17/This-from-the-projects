@@ -1,0 +1,2165 @@
+﻿@model IbhayiPharmacy.Models.PharmacistVM.WalkInPrescriptionVM
+@{
+    ViewData["Title"] = "Walk-In Prescription";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Walk-In Prescription - Ibhayi Pharmacy</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ===== GLOBAL STYLES ===== */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f4f6f9;
+            color: #333;
+            transition: all 0.3s;
+        }
+
+        /* ===== COLLAPSIBLE SIDEBAR ===== */
+        .sidebar {
+            width: 220px;
+            background: linear-gradient(to bottom, #22586A, #22586A);
+            height: 100vh;
+            padding: 20px 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+            .sidebar.collapsed {
+                width: 60px;
+            }
+
+                .sidebar.collapsed .sidebar-header,
+                .sidebar.collapsed .sidebar-nav,
+                .sidebar.collapsed .sidebar-footer {
+                    display: none;
+                }
+
+        .sidebar-header {
+            padding: 0 20px 20px;
+            border-bottom: 1px solid #34495e;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .sidebar h2 {
+            font-size: 22px;
+            margin: 0;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+            .sidebar h2 i {
+                color: #3498db;
+            }
+
+        .sidebar-nav {
+            padding: 0 10px;
+        }
+
+        .sidebar a {
+            color: #ecf0f1;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 8px 0;
+            padding: 10px 15px;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+
+            .sidebar a:hover, .sidebar a.active {
+                background-color: #34495e;
+                transform: translateX(5px);
+            }
+
+        .sidebar-footer {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            padding: 0 20px;
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+
+        .toggle-sidebar {
+            position: absolute;
+            right: -15px;
+            top: 20px;
+            background: #3498db;
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+            z-index: 1001;
+        }
+
+        /* ===== TOPBAR ===== */
+        .topbar {
+            background-color: #ffffff;
+            height: 60px;
+            padding: 0 20px;
+            position: fixed;
+            left: 220px;
+            right: 0;
+            top: 0;
+            border-bottom: 1px solid #ccc;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 999;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar.collapsed + .topbar {
+            left: 60px;
+        }
+
+        .topbar span {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .main-content {
+            margin-left: 220px;
+            margin-top: 60px;
+            padding: 30px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar.collapsed + .topbar + .main-content {
+            margin-left: 60px;
+        }
+
+        /* ===== FORM LAYOUT ===== */
+        .form-container {
+            display: grid;
+            grid-template-areas:
+                "customer doctor"
+                "pdf pdf"
+                "meds meds";
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+
+        .customer-card {
+            grid-area: customer;
+            min-height: 200px;
+        }
+
+        .doctor-card {
+            grid-area: doctor;
+            min-height: 200px;
+        }
+
+        .meds-card {
+            grid-area: meds;
+            position: relative;
+            min-height: 600px;
+        }
+
+        .pdf-card {
+            grid-area: pdf;
+            height: 500px;
+            overflow: hidden;
+            border: 2px dashed #3498db;
+        }
+
+        h3 {
+            color: #2c3e50;
+            margin-top: 0;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1.4em;
+        }
+
+        /* ===== FIXED DROPDOWN STYLES ===== */
+        .searchable-dropdown {
+            position: relative;
+            width: 100%;
+        }
+
+            .searchable-dropdown input {
+                width: 100%;
+                padding: 12px;
+                border: 2px solid #e1e8ed;
+                border-radius: 8px;
+                font-size: 14px;
+                transition: all 0.3s;
+                cursor: pointer;
+            }
+
+                .searchable-dropdown input:focus {
+                    border-color: #3498db;
+                    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+                    outline: none;
+                }
+
+        .dropdown-results {
+            position: absolute;
+            background: white;
+            width: 100%;
+            max-height: 250px;
+            overflow-y: auto;
+            border: 2px solid #e1e8ed;
+            border-radius: 0 0 8px 8px;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            display: none;
+            top: 100%;
+            left: 0;
+        }
+
+        .dropdown-item {
+            padding: 12px 15px;
+            cursor: pointer;
+            border-bottom: 1px solid #f8f9fa;
+            transition: all 0.2s;
+        }
+
+            .dropdown-item:hover,
+            .dropdown-item.active {
+                background-color: #3498db;
+                color: white;
+            }
+
+            .dropdown-item:last-child {
+                border-bottom: none;
+            }
+
+        /* ===== FORM ELEMENTS ===== */
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #34495e;
+            font-size: 14px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e8ed;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+            input:focus, select:focus, textarea:focus {
+                border-color: #3498db;
+                box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+                outline: none;
+            }
+
+        .info-box {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            border-left: 4px solid #3498db;
+        }
+
+        .customer-info {
+            margin-bottom: 20px;
+        }
+
+            .customer-info p {
+                margin-bottom: 8px;
+                padding: 5px 0;
+            }
+
+            .customer-info strong {
+                display: inline-block;
+                width: 140px;
+                color: #2c3e50;
+            }
+
+        .btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+            .btn:hover {
+                background: #2980b9;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            }
+
+        .btn-add {
+            background: #27ae60;
+        }
+
+            .btn-add:hover {
+                background: #219653;
+            }
+
+        .btn-alert {
+            background: #e74c3c;
+        }
+
+            .btn-alert:hover {
+                background: #c0392b;
+            }
+
+        .btn-done {
+            background: #9b59b6;
+        }
+
+        /* ===== FIXED EXPANDED MEDICATION CARD ===== */
+        .medication-table-container {
+            max-height: 500px;
+            overflow-y: auto;
+            border: 1px solid #e1e8ed;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .medication-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1200px;
+        }
+
+            .medication-table th {
+                background: #3498db;
+                color: white;
+                padding: 12px 8px;
+                text-align: left;
+                position: sticky;
+                top: 0;
+                font-weight: 600;
+                font-size: 13px;
+                white-space: nowrap;
+                z-index: 10;
+            }
+
+            .medication-table td {
+                padding: 12px 8px;
+                border-bottom: 1px solid #e1e8ed;
+                vertical-align: top;
+                background: white;
+            }
+
+            .medication-table tr:hover td {
+                background-color: #f8f9fa;
+            }
+
+        .med-details {
+            font-size: 11px;
+            color: #5d6d7e;
+            margin-top: 4px;
+            line-height: 1.4;
+        }
+
+        .allergy-alert {
+            background-color: #fadbd8;
+            color: #e74c3c;
+            padding: 6px 8px;
+            border-radius: 4px;
+            margin-top: 6px;
+            display: none;
+            font-size: 11px;
+            border-left: 3px solid #e74c3c;
+        }
+
+        .remove-btn {
+            color: #e74c3c;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            padding: 4px;
+        }
+
+        .reject-btn {
+            color: #e67e22;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            padding: 4px;
+            margin-right: 5px;
+        }
+
+        .rejected-row {
+            background-color: #f8f9fa !important;
+            opacity: 0.6;
+            text-decoration: line-through;
+        }
+
+        /* ===== STATUS INDICATORS ===== */
+        .status-indicator {
+            font-size: 11px;
+            margin-top: 4px;
+            padding: 4px 8px;
+            border-radius: 12px;
+            display: inline-block;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .approved {
+            background-color: #d5f5e3;
+            color: #27ae60;
+            border: 1px solid #27ae60;
+        }
+
+        .rejected {
+            background-color: #fadbd8;
+            color: #e74c3c;
+            border: 1px solid #e74c3c;
+        }
+
+        .pending {
+            background-color: #fef9e7;
+            color: #f39c12;
+            border: 1px solid #f39c12;
+        }
+
+        /* Rejection reason display */
+        .rejection-reason {
+            margin-top: 8px;
+            padding: 8px;
+            background-color: #fadbd8;
+            border-radius: 4px;
+            font-size: 11px;
+            display: none;
+            border-left: 3px solid #e74c3c;
+        }
+
+            .rejection-reason p {
+                margin: 2px 0;
+                color: #e74c3c;
+                font-weight: 500;
+            }
+
+        /* ===== PDF VIEWER ===== */
+        #pdfViewer {
+            height: 450px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .placeholder {
+            color: #95a5a6;
+            text-align: center;
+            font-style: italic;
+            font-size: 16px;
+        }
+
+        /* Repeat columns */
+        .repeats-input {
+            width: 60px;
+            text-align: center;
+            padding: 6px;
+            font-size: 13px;
+        }
+
+        .qty-input {
+            width: 70px;
+            padding: 6px;
+            text-align: center;
+            font-size: 13px;
+        }
+
+        /* ===== FORM FOOTER BUTTONS ===== */
+        .form-footer {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+            padding: 15px 0;
+            border-top: 2px solid #e1e8ed;
+        }
+
+        .form-footer-right {
+            display: flex;
+            gap: 12px;
+        }
+
+        /* ===== MODALS ===== */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .stock-alert {
+            background-color: #fef9e7;
+            color: #f39c12;
+            padding: 4px 6px;
+            border-radius: 3px;
+            margin-top: 3px;
+            display: none;
+            font-size: 10px;
+            border-left: 2px solid #f39c12;
+            font-weight: 500;
+        }
+
+        .out-of-stock-alert {
+            background-color: #fadbd8;
+            color: #e74c3c;
+            padding: 4px 6px;
+            border-radius: 3px;
+            margin-top: 3px;
+            display: none;
+            font-size: 10px;
+            border-left: 2px solid #e74c3c;
+            font-weight: 500;
+        }
+
+        /* Alert styles */
+        .alert {
+            padding: 12px 16px;
+            margin-bottom: 20px;
+            border: 1px solid transparent;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .alert-success {
+            color: #155724;
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+
+        .alert-danger {
+            color: #721c24;
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
+
+        /* ===== PATIENT REGISTRATION FORM STYLES ===== */
+        .register-container {
+            max-width: 100%;
+            margin: 0;
+            padding: 0;
+            background-color: #fff;
+            border-radius: 12px;
+        }
+
+            .register-container h2 {
+                text-align: center;
+                margin-bottom: 20px;
+                color: #2c3e50;
+            }
+
+            .register-container input,
+            .register-container select {
+                width: 100%;
+                padding: 10px;
+                margin-top: 6px;
+                margin-bottom: 15px;
+                border: 1px solid #ccc;
+                border-radius: 8px;
+                box-sizing: border-box;
+                font-size: 14px;
+            }
+
+        .password-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+            .password-wrapper input {
+                padding-right: 35px;
+            }
+
+        .toggle-icon {
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%);
+            cursor: pointer;
+            font-size: 16px;
+            color: #888;
+        }
+
+        .error-message {
+            color: red;
+            font-size: 12px;
+            margin-top: -10px;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .allergy-section {
+            margin-top: 10px;
+            margin-bottom: 15px;
+        }
+
+        .add-allergy-btn {
+            margin-top: 8px;
+            background-color: #1f9f77;
+            color: #fff;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color .25s;
+        }
+
+            .add-allergy-btn:hover {
+                background-color: #28bf96;
+            }
+
+        .allergy-cart {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 0;
+            margin-top: 12px;
+            list-style: none;
+        }
+
+            .allergy-cart li {
+                background: #eef3f7;
+                border-radius: 20px;
+                padding: 4px 10px;
+                display: flex;
+                align-items: center;
+                font-size: 13px;
+                color: #333;
+            }
+
+            .allergy-cart .remove-btn {
+                background: none;
+                border: none;
+                color: #d22;
+                font-size: 16px;
+                margin-left: 6px;
+                cursor: pointer;
+                line-height: 1;
+            }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        /* Multi-select styles */
+        .allergy-select {
+            height: 120px;
+        }
+
+        /* Validation styles */
+        .field-validation-error {
+            color: #e74c3c;
+            font-size: 11px;
+            display: block;
+            margin-top: 4px;
+        }
+
+        .input-validation-error {
+            border-color: #e74c3c !important;
+            background-color: #fdf2f2;
+        }
+
+        .validation-summary-errors {
+            background-color: #fdf2f2;
+            border: 1px solid #e74c3c;
+            border-radius: 5px;
+            padding: 12px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+            .validation-summary-errors ul {
+                margin: 0;
+                padding-left: 20px;
+            }
+
+            .validation-summary-errors li {
+                color: #e74c3c;
+                margin-bottom: 5px;
+            }
+
+        /* Rejection modal styles */
+        .rejection-reason-group {
+            margin-bottom: 15px;
+        }
+
+        .rejection-option {
+            margin-bottom: 8px;
+        }
+
+        .rejection-radio {
+            margin-right: 8px;
+        }
+
+        .rejection-label {
+            font-weight: normal;
+            cursor: pointer;
+        }
+
+        .custom-reason {
+            margin-top: 10px;
+        }
+
+        .custom-reason-textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        /* Icons legend */
+        .icons-legend {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border-left: 4px solid #3498db;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+
+        .legend-icon {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @@media (max-width: 1200px) {
+            .form-container {
+                grid-template-areas:
+                    "customer"
+                    "doctor"
+                    "pdf"
+                    "meds";
+                grid-template-columns: 1fr;
+            }
+
+            .meds-card {
+                min-height: auto;
+            }
+
+            .pdf-card {
+                height: 400px;
+            }
+
+            .medication-table-container {
+                overflow-x: auto;
+            }
+        }
+
+        @@media (max-width: 768px) {
+            .sidebar {
+                width: 0;
+            }
+
+                .sidebar:not(.collapsed) {
+                    width: 220px;
+                }
+
+            .topbar {
+                left: 0;
+            }
+
+            .sidebar:not(.collapsed) + .topbar {
+                left: 220px;
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+
+            .sidebar:not(.collapsed) + .topbar + .main-content {
+                margin-left: 220px;
+            }
+
+            .form-footer {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .form-footer-right {
+                justify-content: stretch;
+            }
+
+                .form-footer-right .btn {
+                    flex: 1;
+                    text-align: center;
+                }
+
+            .card {
+                padding: 20px;
+            }
+
+            .medication-table th,
+            .medication-table td {
+                padding: 10px 6px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2><i class="fas fa-prescription-bottle-alt"></i> Pharmacist Panel</h2>
+            <button class="toggle-sidebar" onclick="toggleSidebar()">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <small style="color: #bdc3c7;">Dedicated Dictionary</small>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="#"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+            <a href="#" class="active"><i class="fas fa-tachometer-alt"></i> Walk In Prescription</a>
+            <a href="@Url.Action("Index", "PharmacistDispensing")"><i class="fas fa-clipboard-list"></i> Orders</a>
+            <a href="@Url.Action("Index", "ScriptsProcessed")"><i class="fas fa-file-prescription"></i> Unprocessed Scripts</a>
+            <a href="@Url.Action("ProcessedScripts", "ScriptsProcessed")"><i class="fas fa-boxes"></i> Processed Scripts</a>
+            <a href="@Url.Action("CollectionTracking", "PharmacistDispensing")"><i class="fas fa-boxes"></i> Track Orders</a>
+            <a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </nav>
+        <div class="sidebar-footer">
+            <p>Ibhayi Pharmacy v2.1</p>
+        </div>
+    </div>
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+        <span>Create Walk-In Prescription</span>
+        <div>
+            <button class="btn btn-add" onclick="toggleSidebar()" style="margin-right: 15px;">
+                <i class="fas fa-bars"></i> Toggle Sidebar
+            </button>
+            Welcome, <strong>Pharmacist</strong>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <!-- Validation Summary -->
+        <div asp-validation-summary="ModelOnly" class="validation-summary-errors"></div>
+
+        <!-- Display Messages -->
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success">
+                <i class="fas fa-check-circle"></i> @TempData["SuccessMessage"]
+            </div>
+        }
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger">
+                <i class="fas fa-exclamation-circle"></i> @TempData["ErrorMessage"]
+            </div>
+        }
+
+        <form asp-action="Create" method="post" enctype="multipart/form-data" id="prescriptionForm">
+            @Html.AntiForgeryToken()
+
+            <div class="form-container">
+                <!-- CUSTOMER CARD -->
+                <div class="card customer-card">
+                    <h3><i class="fas fa-user-injured"></i> Customer Information</h3>
+
+                    <div class="form-group">
+                        <label for="customerSearch">Select Patient</label>
+                        <div class="searchable-dropdown">
+                            <input type="text" id="customerSearch"
+                                   placeholder="Type to search or click to see all patients..."
+                                   autocomplete="off">
+                            <div class="dropdown-results" id="customerResults"></div>
+                        </div>
+                        <input type="hidden" asp-for="CustomerId" id="customerId" />
+                        <input type="hidden" asp-for="CustomerName" id="customerName" />
+                        <input type="hidden" asp-for="CustomerIDNumber" id="customerIDNumber" />
+                        <span asp-validation-for="CustomerId" class="field-validation-error"></span>
+                    </div>
+
+                    <div class="info-box" id="patientDetails" style="display: none;">
+                        <p><strong>Name:</strong> <span id="displayCustomerName">-</span></p>
+                        <p><strong>ID Number:</strong> <span id="displayCustomerID">-</span></p>
+                        <p><strong>Allergies:</strong> <span id="displayAllergies">None recorded</span></p>
+                    </div>
+
+                    <button type="button" class="btn btn-add" id="addPatientBtn"><i class="fas fa-user-plus"></i> Register New Patient</button>
+                </div>
+
+                <!-- DOCTOR CARD -->
+                <div class="card doctor-card">
+                    <h3><i class="fas fa-user-md"></i> Doctor Information</h3>
+
+                    <div class="form-group">
+                        <label for="doctorSearch">Select Doctor</label>
+                        <div class="searchable-dropdown">
+                            <input type="text" id="doctorSearch"
+                                   placeholder="Type to search or click to see all doctors..."
+                                   autocomplete="off">
+                            <div class="dropdown-results" id="doctorResults"></div>
+                        </div>
+                        <input type="hidden" asp-for="DoctorId" id="doctorId" />
+                        <input type="hidden" asp-for="DoctorName" id="doctorName" />
+                        <span asp-validation-for="DoctorId" class="field-validation-error"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="PrescriptionDate">Prescription Date</label>
+                        <input asp-for="PrescriptionDate" type="date" class="form-control">
+                        <span asp-validation-for="PrescriptionDate" class="field-validation-error"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="DispenseUponApproval">
+                            <input asp-for="DispenseUponApproval" type="checkbox" /> Dispense Upon Approval
+                        </label>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="PrescriptionFile">Upload Prescription (Optional)</label>
+                        <input asp-for="PrescriptionFile" type="file" accept=".pdf" class="form-control">
+                        <span asp-validation-for="PrescriptionFile" class="field-validation-error"></span>
+                    </div>
+
+                    <button type="button" class="btn btn-add" id="addDoctorBtn" style="margin-top: 10px;">
+                        <i class="fas fa-user-md"></i> Add New Doctor
+                    </button>
+                </div>
+
+                <!-- MEDICATION CARD -->
+                <div class="card meds-card">
+                    <h3><i class="fas fa-pills"></i> Medication</h3>
+
+                    <div class="medication-table-container">
+                        <table class="medication-table">
+                            <thead>
+                                <tr>
+                                    <th width="30%">Medication</th>
+                                    <th width="8%">Qty</th>
+                                    <th width="25%">Instructions</th>
+                                    <th width="15%">Details</th>
+                                    <th width="5%">Repeat</th>
+                                    <th width="5%">Repeats Left</th>
+                                    <th width="7%">Status</th>
+                                    <th width="5%">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="medsTableBody">
+                                @for (int i = 0; i < Model.ScriptLines.Count; i++)
+                                {
+                                    <tr id="row-@i">
+                                        <td>
+                                            <div class="searchable-dropdown">
+                                                <input type="text"
+                                                       placeholder="Click to see all medications..."
+                                                       class="medication-search"
+                                                       data-index="@i"
+                                                       autocomplete="off">
+                                                <div class="dropdown-results medication-results" data-index="@i"></div>
+                                                <input type="hidden" asp-for="ScriptLines[i].MedicationId" class="medication-id" data-index="@i" />
+                                                <input type="hidden" asp-for="ScriptLines[i].MedicationName" class="medication-name" data-index="@i" />
+                                                <input type="hidden" asp-for="ScriptLines[i].Status" class="status-input" data-index="@i" value="Approved" />
+                                                <input type="hidden" asp-for="ScriptLines[i].RejectionReason" class="rejection-reason-input" data-index="@i" value="" />
+                                            </div>
+                                            <div class="allergy-alert" data-index="@i" style="display: none;">
+                                                <i class="fas fa-exclamation-triangle"></i> <strong>Allergy Warning:</strong> <span class="conflict-details"></span>
+                                            </div>
+                                            <div id="rejection-reason-@i" class="rejection-reason" style="display: none;">
+                                                <p><strong>Reason:</strong> <span class="rejection-text"></span></p>
+                                            </div>
+                                            <span asp-validation-for="ScriptLines[i].MedicationId" class="field-validation-error"></span>
+                                        </td>
+                                        <td>
+                                            <input asp-for="ScriptLines[i].Quantity" type="number" min="1" class="qty-input" value="1">
+                                            <span asp-validation-for="ScriptLines[i].Quantity" class="field-validation-error"></span>
+                                        </td>
+                                        <td>
+                                            <div class="searchable-dropdown">
+                                                <input type="text"
+                                                       placeholder="Click to see instructions..."
+                                                       class="instruction-search"
+                                                       data-index="@i"
+                                                       autocomplete="off">
+                                                <div class="dropdown-results instruction-results" data-index="@i"></div>
+                                            </div>
+                                            <span asp-validation-for="ScriptLines[i].Instructions" class="field-validation-error"></span>
+                                        </td>
+                                        <td>
+                                            <div class="med-details medication-details" data-index="@i">
+                                                <small class="placeholder">Select medication</small>
+                                                <div class="stock-alert" data-index="@i" style="display: none;">
+                                                    <i class="fas fa-exclamation-triangle"></i> Low stock
+                                                </div>
+                                                <div class="out-of-stock-alert" data-index="@i" style="display: none;">
+                                                    <i class="fas fa-times-circle"></i> Out of stock
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td style="text-align: center;">
+                                            <input asp-for="ScriptLines[i].IsRepeat" type="checkbox" class="repeat-check" data-index="@i" onchange="toggleRepeats(@i)">
+                                        </td>
+                                        <td>
+                                            <input asp-for="ScriptLines[i].RepeatsLeft" type="number" min="0" value="0" disabled class="repeats-input" data-index="@i">
+                                        </td>
+                                        <td>
+                                            <span id="status-@i" class="status-indicator approved">Approved</span>
+                                        </td>
+                                        <td>
+                                            <button type="button" class="reject-btn" onclick="rejectMedication(@i)" title="Reject Medication">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                            <button type="button" class="remove-btn" onclick="removeMedicationRow(@i)" @(Model.ScriptLines.Count == 1 ? "disabled" : "") title="Remove Medication">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <button type="button" class="btn btn-add" id="addMedBtn"><i class="fas fa-plus"></i> Add Medication</button>
+
+                    <!-- Icons Legend -->
+                    <div class="icons-legend">
+                        <div class="legend-item">
+                            <span class="legend-icon"><i class="fas fa-times" style="color: #e67e22;"></i></span>
+                            <span>Reject medication (marks as rejected)</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-icon"><i class="fas fa-trash" style="color: #e74c3c;"></i></span>
+                            <span>Remove medication from list</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-icon"><i class="fas fa-exclamation-triangle" style="color: #f39c12;"></i></span>
+                            <span>Low stock warning</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-icon"><i class="fas fa-times-circle" style="color: #e74c3c;"></i></span>
+                            <span>Out of stock</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-icon"><i class="fas fa-exclamation-triangle" style="color: #e74c3c;"></i></span>
+                            <span>Allergy conflict detected</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-icon"><i class="fas fa-info-circle" style="color: #3498db;"></i></span>
+                            <span>Green = Approved, Red = Rejected, Yellow = Pending</span>
+                        </div>
+                    </div>
+
+                    <div class="form-footer">
+                        <button type="button" class="btn btn-alert" onclick="checkAllInteractions()">
+                            <i class="fas fa-exclamation-triangle"></i> Check All Interactions
+                        </button>
+                        <div class="form-footer-right">
+                            <button type="submit" class="btn btn-add">
+                                <i class="fas fa-save"></i> Save Prescription & Create Order
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PDF VIEWER CARD -->
+                <div class="card pdf-card">
+                    <h3><i class="fas fa-file-pdf"></i> Prescription Preview</h3>
+                    <div id="pdfViewer">
+                        <p class="placeholder">Upload a prescription to preview.</p>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- PATIENT REGISTRATION MODAL -->
+    <div class="modal" id="patientModal">
+        <div class="modal-content">
+            <div class="register-container">
+                <h2>Register New Patient</h2>
+                <form id="registerPatientForm">
+                    <input type="text" id="newPatientName" name="name" placeholder="Name" required />
+                    <span class="error-message" id="nameError"></span>
+
+                    <input type="text" id="newPatientSurname" name="surname" placeholder="Surname" required />
+                    <span class="error-message" id="surnameError"></span>
+
+                    <input type="text" id="newPatientID" name="idNumber" placeholder="ID Number" required />
+                    <span class="error-message" id="idError"></span>
+
+                    <input type="tel" id="newPatientCellphone" name="cellphone" placeholder="Cellphone Number" required />
+                    <span class="error-message" id="cellphoneError"></span>
+
+                    <input type="email" id="newPatientEmail" name="email" placeholder="Email Address" required />
+                    <span class="error-message" id="emailError"></span>
+
+                    <div class="password-wrapper">
+                        <input type="password" id="newPatientPassword" name="password" placeholder="Password" required />
+                        <span class="toggle-icon" onclick="togglePassword('newPatientPassword', this)">
+                            <i class="fas fa-eye"></i>
+                        </span>
+                    </div>
+                    <span class="error-message" id="passwordError"></span>
+
+                    <div class="password-wrapper">
+                        <input type="password" id="newPatientConfirmPassword" name="confirmPassword" placeholder="Confirm Password" required />
+                        <span class="toggle-icon" onclick="togglePassword('newPatientConfirmPassword', this)">
+                            <i class="fas fa-eye"></i>
+                        </span>
+                    </div>
+                    <span class="error-message" id="confirmPasswordError"></span>
+
+                    <!-- Allergy picker with real Active Ingredients -->
+                    <div class="allergy-section">
+                        <label>Allergies (Select from Active Ingredients)</label>
+                        <select id="allergySelect" multiple class="allergy-select" size="4">
+                            <!-- Options will be loaded dynamically -->
+                        </select>
+                        <small class="text-muted">Hold Ctrl to select multiple allergies</small>
+
+                        <div class="allergy-cart-container">
+                            <label>Selected Allergies:</label>
+                            <ul id="allergyCart" class="allergy-cart"></ul>
+                        </div>
+                    </div>
+
+                    <div class="modal-buttons">
+                        <button type="button" class="btn" onclick="closeModal('patientModal')">Cancel</button>
+                        <button type="button" class="btn btn-add" onclick="registerNewPatient()">Register Patient</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- DOCTOR MODAL -->
+    <div class="modal" id="doctorModal">
+        <div class="modal-content">
+            <h3><i class="fas fa-user-md"></i> Add New Doctor</h3>
+            <div class="form-group">
+                <label for="newDoctorName">Doctor Name</label>
+                <input type="text" id="newDoctorName" placeholder="Enter doctor's full name">
+            </div>
+            <div class="form-group">
+                <label for="newDoctorSurname">Doctor Surname</label>
+                <input type="text" id="newDoctorSurname" placeholder="Enter doctor's surname">
+            </div>
+            <div class="form-group">
+                <label for="newDoctorPracticeNumber">Practice Number</label>
+                <input type="text" id="newDoctorPracticeNumber" placeholder="Enter practice number">
+            </div>
+            <div class="form-group">
+                <label for="newDoctorContact">Contact Number</label>
+                <input type="tel" id="newDoctorContact" placeholder="Enter contact number">
+            </div>
+            <div class="form-group">
+                <label for="newDoctorEmail">Email</label>
+                <input type="email" id="newDoctorEmail" placeholder="Enter email address">
+            </div>
+            <div style="text-align: right; margin-top: 20px;">
+                <button class="btn" onclick="closeModal('doctorModal')">Cancel</button>
+                <button class="btn btn-add" onclick="registerNewDoctor()">Save Doctor</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- REJECTION MODAL -->
+    <div class="modal" id="rejectionModal">
+        <div class="modal-content">
+            <h3><i class="fas fa-times-circle"></i> Reason for Rejection</h3>
+            <div class="form-group">
+                <label>Select rejection reason:</label>
+                <select id="rejectionReason" class="form-control">
+                    <option value="">-- Select a reason --</option>
+                    <option value="Patient allergic">Patient allergic to medication</option>
+                    <option value="Medication Interaction">Medication interaction</option>
+                    <option value="Patient has it">Patient already has sufficient supply</option>
+                    <option value="Other">Other (specify)</option>
+                </select>
+            </div>
+            <div class="form-group" id="otherReasonContainer" style="display: none;">
+                <label for="otherReason">Specify reason:</label>
+                <textarea id="otherReason" rows="3" class="form-control"></textarea>
+            </div>
+            <div style="text-align: right; margin-top: 20px;">
+                <button class="btn" onclick="closeModal('rejectionModal')">Cancel</button>
+                <button class="btn btn-alert" onclick="confirmRejection()">Confirm Rejection</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let currentCustomerAllergies = [];
+        let rowCounter = @Model.ScriptLines.Count;
+        let currentRejectionRow = null;
+
+        // Common instructions for the dropdown
+        const commonInstructions = [
+            "Take 1 tablet daily",
+            "Take 1 tablet twice daily",
+            "Take 2 tablets at bedtime",
+            "Take as needed for pain",
+            "Take 1 capsule three times daily",
+            "Use as needed for wheezing",
+            "Apply thin layer to affected area twice daily",
+            "Take with food",
+            "Take on empty stomach",
+            "Take with plenty of water",
+            "Other (specify)"
+        ];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Page loaded, initializing searchable dropdowns...');
+
+            // Initialize all dropdown functionality
+            setupSearchableDropdowns();
+
+            // Initialize event listeners
+            document.getElementById('addPatientBtn').addEventListener('click', function() {
+                loadAllergyOptions();
+                document.getElementById('patientModal').style.display = 'flex';
+            });
+
+            document.getElementById('addDoctorBtn').addEventListener('click', function() {
+                document.getElementById('doctorModal').style.display = 'flex';
+            });
+
+            // PDF upload handler
+            document.getElementById('PrescriptionFile')?.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                const pdfViewer = document.getElementById('pdfViewer');
+
+                if (file && file.type === 'application/pdf') {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        pdfViewer.innerHTML = `
+                            <embed src="${e.target.result}" type="application/pdf" width="100%" height="100%">
+                        `;
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    pdfViewer.innerHTML = '<p class="placeholder">Please upload a valid PDF file.</p>';
+                }
+            });
+
+            // Initialize repeat toggles
+            initRepeatToggles();
+
+            // Load instruction dropdowns
+            loadInstructionDropdowns();
+
+            // Rejection reason select handler
+            document.getElementById('rejectionReason').addEventListener('change', function() {
+                const otherContainer = document.getElementById('otherReasonContainer');
+                otherContainer.style.display = this.value === 'Other' ? 'block' : 'none';
+            });
+        });
+
+        // Setup searchable dropdown functionality
+        function setupSearchableDropdowns() {
+            // Customer search
+            const customerSearch = document.getElementById('customerSearch');
+            customerSearch.addEventListener('click', function() {
+                searchCustomers('');
+            });
+            customerSearch.addEventListener('input', function(e) {
+                searchCustomers(e.target.value);
+            });
+
+            // Doctor search
+            const doctorSearch = document.getElementById('doctorSearch');
+            doctorSearch.addEventListener('click', function() {
+                searchDoctors('');
+            });
+            doctorSearch.addEventListener('input', function(e) {
+                searchDoctors(e.target.value);
+            });
+
+            // Medication search for all existing and future rows
+            document.addEventListener('click', function(e) {
+                if (e.target.matches('.medication-search')) {
+                    const index = e.target.getAttribute('data-index');
+                    searchMedications('', index);
+                }
+                if (e.target.matches('.instruction-search')) {
+                    const index = e.target.getAttribute('data-index');
+                    showInstructions(index);
+                }
+            });
+
+            document.addEventListener('input', function(e) {
+                if (e.target.matches('.medication-search')) {
+                    const index = e.target.getAttribute('data-index');
+                    searchMedications(e.target.value, index);
+                }
+                if (e.target.matches('.instruction-search')) {
+                    const index = e.target.getAttribute('data-index');
+                    filterInstructions(e.target.value, index);
+                }
+            });
+
+            // Close dropdowns when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!e.target.matches('.searchable-dropdown input')) {
+                    document.querySelectorAll('.dropdown-results').forEach(container => {
+                        container.style.display = 'none';
+                    });
+                }
+            });
+        }
+
+        // Load instruction dropdowns
+        function loadInstructionDropdowns() {
+            document.querySelectorAll('.instruction-search').forEach(input => {
+                const index = input.getAttribute('data-index');
+                // Don't pre-populate, just set up the click handler
+            });
+        }
+
+        function showInstructions(index) {
+            const resultsContainer = document.querySelector(`.instruction-results[data-index="${index}"]`);
+            if (!resultsContainer) return;
+
+            resultsContainer.innerHTML = '';
+            resultsContainer.style.display = 'block';
+
+            commonInstructions.forEach(instruction => {
+                const item = document.createElement('div');
+                item.className = 'dropdown-item';
+                item.textContent = instruction;
+                item.onclick = () => {
+                    const input = document.querySelector(`.instruction-search[data-index="${index}"]`);
+                    input.value = instruction;
+                    resultsContainer.style.display = 'none';
+                };
+                resultsContainer.appendChild(item);
+            });
+        }
+
+        function filterInstructions(searchTerm, index) {
+            const resultsContainer = document.querySelector(`.instruction-results[data-index="${index}"]`);
+            if (!resultsContainer) return;
+
+            resultsContainer.innerHTML = '';
+            resultsContainer.style.display = 'block';
+
+            const filtered = commonInstructions.filter(instruction =>
+                instruction.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+
+            if (filtered.length > 0) {
+                filtered.forEach(instruction => {
+                    const item = document.createElement('div');
+                    item.className = 'dropdown-item';
+                    item.textContent = instruction;
+                    item.onclick = () => {
+                        const input = document.querySelector(`.instruction-search[data-index="${index}"]`);
+                        input.value = instruction;
+                        resultsContainer.style.display = 'none';
+                    };
+                    resultsContainer.appendChild(item);
+                });
+            } else {
+                const item = document.createElement('div');
+                item.className = 'dropdown-item';
+                item.textContent = 'No instructions match your search';
+                resultsContainer.appendChild(item);
+            }
+        }
+
+        // Search customers - calls your SearchCustomers endpoint
+        async function searchCustomers(searchTerm) {
+            const resultsContainer = document.getElementById('customerResults');
+            if (!resultsContainer) return;
+
+            resultsContainer.innerHTML = '';
+            resultsContainer.style.display = 'block';
+
+            // Show loading
+            if (searchTerm === '') {
+                const loadingItem = document.createElement('div');
+                loadingItem.className = 'dropdown-item';
+                loadingItem.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading customers...';
+                resultsContainer.appendChild(loadingItem);
+            }
+
+            try {
+                const response = await fetch(`@Url.Action("SearchCustomers", "WalkInPrescription")?searchTerm=${encodeURIComponent(searchTerm)}`);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const customers = await response.json();
+                console.log('Customers data received:', customers);
+
+                resultsContainer.innerHTML = '';
+
+                if (customers && customers.length > 0) {
+                    customers.forEach(customer => {
+                        const item = document.createElement('div');
+                        item.className = 'dropdown-item';
+                        item.innerHTML = `
+                            <div><strong>${customer.text}</strong></div>
+                            <small>ID: ${customer.idNumber}</small>
+                        `;
+                        item.onclick = () => selectCustomer(customer);
+                        resultsContainer.appendChild(item);
+                    });
+                } else {
+                    const item = document.createElement('div');
+                    item.className = 'dropdown-item';
+                    item.textContent = searchTerm ? 'No customers match your search' : 'No customers found in database';
+                    resultsContainer.appendChild(item);
+                }
+            } catch (error) {
+                console.error('Error searching customers:', error);
+                resultsContainer.innerHTML = '';
+                const item = document.createElement('div');
+                item.className = 'dropdown-item';
+                item.style.color = '#e74c3c';
+                item.innerHTML = `<i class="fas fa-exclamation-circle"></i> Error loading customers: ${error.message}`;
+                resultsContainer.appendChild(item);
+            }
+        }
+
+        // Search doctors - calls your SearchDoctors endpoint
+        async function searchDoctors(searchTerm) {
+            const resultsContainer = document.getElementById('doctorResults');
+            if (!resultsContainer) return;
+
+            resultsContainer.innerHTML = '';
+            resultsContainer.style.display = 'block';
+
+            // Show loading
+            if (searchTerm === '') {
+                const loadingItem = document.createElement('div');
+                loadingItem.className = 'dropdown-item';
+                loadingItem.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading doctors...';
+                resultsContainer.appendChild(loadingItem);
+            }
+
+            try {
+                const response = await fetch(`@Url.Action("SearchDoctors", "WalkInPrescription")?searchTerm=${encodeURIComponent(searchTerm)}`);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const doctors = await response.json();
+                console.log('Doctors data received:', doctors);
+
+                resultsContainer.innerHTML = '';
+
+                if (doctors && doctors.length > 0) {
+                    doctors.forEach(doctor => {
+                        const item = document.createElement('div');
+                        item.className = 'dropdown-item';
+                        item.innerHTML = `
+                            <div><strong>${doctor.text}</strong></div>
+                            <small>Council #: ${doctor.practiceNumber}</small>
+                        `;
+                        item.onclick = () => selectDoctor(doctor);
+                        resultsContainer.appendChild(item);
+                    });
+                } else {
+                    const item = document.createElement('div');
+                    item.className = 'dropdown-item';
+                    item.textContent = searchTerm ? 'No doctors match your search' : 'No doctors found in database';
+                    resultsContainer.appendChild(item);
+                }
+            } catch (error) {
+                console.error('Error searching doctors:', error);
+                resultsContainer.innerHTML = '';
+                const item = document.createElement('div');
+                item.className = 'dropdown-item';
+                item.style.color = '#e74c3c';
+                item.innerHTML = `<i class="fas fa-exclamation-circle"></i> Error loading doctors: ${error.message}`;
+                resultsContainer.appendChild(item);
+            }
+        }
+
+        // Search medications - calls your SearchMedications endpoint
+        async function searchMedications(searchTerm, rowIndex) {
+            const resultsContainer = document.querySelector(`.medication-results[data-index="${rowIndex}"]`);
+            if (!resultsContainer) return;
+
+            resultsContainer.innerHTML = '';
+            resultsContainer.style.display = 'block';
+
+            // Show loading
+            if (searchTerm === '') {
+                const loadingItem = document.createElement('div');
+                loadingItem.className = 'dropdown-item';
+                loadingItem.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading medications...';
+                resultsContainer.appendChild(loadingItem);
+            }
+
+            try {
+                const response = await fetch(`@Url.Action("SearchMedications", "WalkInPrescription")?searchTerm=${encodeURIComponent(searchTerm)}`);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const medications = await response.json();
+                console.log('Medications data received:', medications);
+
+                resultsContainer.innerHTML = '';
+
+                if (medications && medications.length > 0) {
+                    medications.forEach(medication => {
+                        const item = document.createElement('div');
+                        item.className = 'dropdown-item';
+                        item.innerHTML = `
+                            <div><strong>${medication.displayName}</strong></div>
+                            <small>${medication.schedule} - R${medication.price} - Stock: ${medication.stock}</small>
+                        `;
+                        item.onclick = () => selectMedication(medication, rowIndex);
+                        resultsContainer.appendChild(item);
+                    });
+                } else {
+                    const item = document.createElement('div');
+                    item.className = 'dropdown-item';
+                    item.textContent = searchTerm ? 'No medications match your search' : 'No medications found in database';
+                    resultsContainer.appendChild(item);
+                }
+            } catch (error) {
+                console.error('Error searching medications:', error);
+                resultsContainer.innerHTML = '';
+                const item = document.createElement('div');
+                item.className = 'dropdown-item';
+                item.style.color = '#e74c3c';
+                item.innerHTML = `<i class="fas fa-exclamation-circle"></i> Error loading medications: ${error.message}`;
+                resultsContainer.appendChild(item);
+            }
+        }
+
+        // Selection functions
+        async function selectCustomer(customer) {
+            document.getElementById('customerId').value = customer.id;
+            document.getElementById('customerName').value = customer.name;
+            document.getElementById('customerIDNumber').value = customer.idNumber;
+
+            document.getElementById('customerSearch').value = customer.text;
+            document.getElementById('customerResults').style.display = 'none';
+
+            document.getElementById('displayCustomerName').textContent = customer.text;
+            document.getElementById('displayCustomerID').textContent = customer.idNumber;
+
+            // Load customer allergies
+            const allergies = await loadCustomerAllergies(customer.id);
+            document.getElementById('displayAllergies').textContent =
+                allergies.length > 0 ? allergies.map(a => a.name).join(', ') : 'None recorded';
+
+            // Show customer details
+            document.getElementById('patientDetails').style.display = 'block';
+        }
+
+        function selectDoctor(doctor) {
+            document.getElementById('doctorId').value = doctor.id;
+            document.getElementById('doctorName').value = doctor.text;
+
+            document.getElementById('doctorSearch').value = doctor.text;
+            document.getElementById('doctorResults').style.display = 'none';
+        }
+
+        async function selectMedication(medication, index) {
+            const medicationIdInput = document.querySelector(`.medication-id[data-index="${index}"]`);
+            const medicationNameInput = document.querySelector(`.medication-name[data-index="${index}"]`);
+            const searchInput = document.querySelector(`.medication-search[data-index="${index}"]`);
+
+            medicationIdInput.value = medication.id;
+            medicationNameInput.value = medication.displayName;
+            searchInput.value = medication.displayName;
+
+            // Update medication details
+            const detailsContainer = document.querySelector(`.medication-details[data-index="${index}"]`);
+            detailsContainer.innerHTML = `
+                <small><strong>Active:</strong> ${medication.activeIngredients.join(', ')}</small><br>
+                <small><strong>Stock:</strong> ${medication.stock}</small><br>
+                <small><strong>Reorder:</strong> ${medication.reorderLevel}</small>
+            `;
+
+            // Show stock alerts
+            const stockAlert = document.querySelector(`.stock-alert[data-index="${index}"]`);
+            const outOfStockAlert = document.querySelector(`.out-of-stock-alert[data-index="${index}"]`);
+
+            if (medication.stock === 0) {
+                outOfStockAlert.style.display = 'block';
+                stockAlert.style.display = 'none';
+            } else if (medication.stock <= medication.reorderLevel + 10) {
+                stockAlert.style.display = 'block';
+                outOfStockAlert.style.display = 'none';
+            } else {
+                stockAlert.style.display = 'none';
+                outOfStockAlert.style.display = 'none';
+            }
+
+            // Check for allergy conflicts
+            const customerId = document.getElementById('customerId').value;
+            if (customerId) {
+                await checkAllergyConflicts(medication.id, index);
+            }
+
+            // Hide search results
+            const resultsContainer = document.querySelector(`.medication-results[data-index="${index}"]`);
+            if (resultsContainer) {
+                resultsContainer.style.display = 'none';
+            }
+        }
+
+        // Load real allergy options from database
+        async function loadAllergyOptions() {
+            try {
+                const response = await fetch('@Url.Action("GetAllergyOptions", "WalkInPrescription")');
+                const allergyOptions = await response.json();
+
+                const allergySelect = document.getElementById('allergySelect');
+                allergySelect.innerHTML = '';
+
+                allergyOptions.forEach(allergy => {
+                    const option = document.createElement('option');
+                    option.value = allergy.id;
+                    option.textContent = allergy.name;
+                    allergySelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error loading allergies:', error);
+            }
+        }
+
+        // Get customer allergies when customer is selected
+        async function loadCustomerAllergies(customerId) {
+            try {
+                const response = await fetch('@Url.Action("GetCustomerAllergies", "WalkInPrescription")?customerId=' + customerId);
+                const allergies = await response.json();
+
+                currentCustomerAllergies = allergies.map(a => a.name);
+                return allergies;
+            } catch (error) {
+                console.error('Error loading customer allergies:', error);
+                return [];
+            }
+        }
+
+        // Check for allergy conflicts when medication is selected
+        async function checkAllergyConflicts(medicationId, rowIndex) {
+            const customerId = document.getElementById('customerId').value;
+            if (!customerId || !medicationId) return;
+
+            try {
+                const response = await fetch('@Url.Action("CheckAllergyConflicts", "WalkInPrescription")?customerId=' + customerId + '&medicationId=' + medicationId);
+                const result = await response.json();
+
+                const allergyAlert = document.querySelector(`.allergy-alert[data-index="${rowIndex}"]`);
+                const conflictDetails = document.querySelector(`.allergy-alert[data-index="${rowIndex}"] .conflict-details`);
+
+                if (result.hasConflicts && allergyAlert && conflictDetails) {
+                    allergyAlert.style.display = 'block';
+                    conflictDetails.textContent = result.conflicts.join(', ');
+                } else if (allergyAlert) {
+                    allergyAlert.style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Error checking allergies:', error);
+            }
+        }
+
+        // Toggle sidebar
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            const toggleBtn = document.querySelector('.toggle-sidebar i');
+
+            sidebar.classList.toggle('collapsed');
+
+            if (sidebar.classList.contains('collapsed')) {
+                toggleBtn.classList.remove('fa-chevron-left');
+                toggleBtn.classList.add('fa-chevron-right');
+            } else {
+                toggleBtn.classList.remove('fa-chevron-right');
+                toggleBtn.classList.add('fa-chevron-left');
+            }
+        }
+
+        function initRepeatToggles() {
+            document.querySelectorAll('.repeat-check').forEach(checkbox => {
+                const index = checkbox.getAttribute('data-index');
+                toggleRepeats(index);
+            });
+        }
+
+        // Toggle repeats input based on checkbox
+        function toggleRepeats(rowId) {
+            const checkbox = document.querySelector(`.repeat-check[data-index="${rowId}"]`);
+            const repeatsInput = document.querySelector(`.repeats-input[data-index="${rowId}"]`);
+            if (checkbox && repeatsInput) {
+                repeatsInput.disabled = !checkbox.checked;
+                if (!checkbox.checked) {
+                    repeatsInput.value = 0;
+                }
+            }
+        }
+
+        // Add new medication row
+        function addMedicationRow() {
+            const tbody = document.getElementById('medsTableBody');
+            const rowId = rowCounter++;
+
+            const row = document.createElement('tr');
+            row.id = `row-${rowId}`;
+            row.innerHTML = `
+                <td>
+                    <div class="searchable-dropdown">
+                        <input type="text"
+                               placeholder="Click to see all medications..."
+                               class="medication-search"
+                               data-index="${rowId}"
+                               autocomplete="off">
+                        <div class="dropdown-results medication-results" data-index="${rowId}"></div>
+                        <input type="hidden" name="ScriptLines[${rowId}].MedicationId" class="medication-id" data-index="${rowId}" value="0" />
+                        <input type="hidden" name="ScriptLines[${rowId}].MedicationName" class="medication-name" data-index="${rowId}" value="" />
+                        <input type="hidden" name="ScriptLines[${rowId}].Status" class="status-input" data-index="${rowId}" value="Approved" />
+                        <input type="hidden" name="ScriptLines[${rowId}].RejectionReason" class="rejection-reason-input" data-index="${rowId}" value="" />
+                    </div>
+                    <div class="allergy-alert" data-index="${rowId}" style="display: none;">
+                        <i class="fas fa-exclamation-triangle"></i> <strong>Allergy Warning:</strong> <span class="conflict-details"></span>
+                    </div>
+                    <div id="rejection-reason-${rowId}" class="rejection-reason" style="display: none;">
+                        <p><strong>Reason:</strong> <span class="rejection-text"></span></p>
+                    </div>
+                </td>
+                <td>
+                    <input type="number" name="ScriptLines[${rowId}].Quantity" min="1" value="1" class="qty-input">
+                </td>
+                <td>
+                    <div class="searchable-dropdown">
+                        <input type="text"
+                               placeholder="Click to see instructions..."
+                               class="instruction-search"
+                               data-index="${rowId}"
+                               autocomplete="off">
+                        <div class="dropdown-results instruction-results" data-index="${rowId}"></div>
+                    </div>
+                </td>
+                <td>
+                    <div class="med-details medication-details" data-index="${rowId}">
+                        <small class="placeholder">Select medication</small>
+                        <div class="stock-alert" data-index="${rowId}" style="display: none;">
+                            <i class="fas fa-exclamation-triangle"></i> Low stock
+                        </div>
+                        <div class="out-of-stock-alert" data-index="${rowId}" style="display: none;">
+                            <i class="fas fa-times-circle"></i> Out of stock
+                        </div>
+                    </div>
+                </td>
+                <td style="text-align: center;">
+                    <input type="checkbox" name="ScriptLines[${rowId}].IsRepeat" class="repeat-check" data-index="${rowId}" onchange="toggleRepeats(${rowId})">
+                </td>
+                <td>
+                    <input type="number" name="ScriptLines[${rowId}].RepeatsLeft" min="0" value="0" disabled class="repeats-input" data-index="${rowId}">
+                </td>
+                <td>
+                    <span id="status-${rowId}" class="status-indicator approved">Approved</span>
+                </td>
+                <td>
+                    <button type="button" class="reject-btn" onclick="rejectMedication(${rowId})" title="Reject Medication">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    <button type="button" class="remove-btn" onclick="removeMedicationRow(${rowId})" title="Remove Medication">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            `;
+
+            tbody.appendChild(row);
+        }
+
+        function removeMedicationRow(rowId) {
+            const row = document.getElementById(`row-${rowId}`);
+            if (row) {
+                row.remove();
+            }
+        }
+
+        // Reject medication functionality - FIXED with proper modal
+        function rejectMedication(rowId) {
+            const medicationId = document.querySelector(`.medication-id[data-index="${rowId}"]`).value;
+            const medicationName = document.querySelector(`.medication-search[data-index="${rowId}"]`).value;
+
+            if (!medicationId || medicationId === '0' || !medicationName) {
+                alert('Please select a medication first before rejecting.\n\nClick on the medication field and choose from the dropdown list.');
+                return;
+            }
+
+            currentRejectionRow = rowId;
+            document.getElementById('rejectionModal').style.display = 'flex';
+            document.getElementById('rejectionReason').value = '';
+            document.getElementById('otherReason').value = '';
+            document.getElementById('otherReasonContainer').style.display = 'none';
+        }
+
+        function confirmRejection() {
+            if (currentRejectionRow === null || currentRejectionRow === undefined) {
+                alert('Error: No medication selected for rejection');
+                return;
+            }
+
+            const medicationId = document.querySelector(`.medication-id[data-index="${currentRejectionRow}"]`).value;
+            if (!medicationId || medicationId === '0') {
+                alert('Error: No medication selected for rejection');
+                return;
+            }
+
+            const reasonSelect = document.getElementById('rejectionReason');
+            let reason = reasonSelect.value;
+
+            if (reason === 'Other') {
+                reason = document.getElementById('otherReason').value;
+                if (!reason.trim()) {
+                    alert('Please specify the rejection reason');
+                    return;
+                }
+            } else if (!reason) {
+                alert('Please select a rejection reason');
+                return;
+            }
+
+            const statusInput = document.querySelector(`.status-input[data-index="${currentRejectionRow}"]`);
+            const rejectionReasonInput = document.querySelector(`.rejection-reason-input[data-index="${currentRejectionRow}"]`);
+            const statusElement = document.getElementById(`status-${currentRejectionRow}`);
+            const rejectionDiv = document.getElementById(`rejection-reason-${currentRejectionRow}`);
+            const rejectionText = document.querySelector(`#rejection-reason-${currentRejectionRow} .rejection-text`);
+
+            if (!statusInput || !rejectionReasonInput || !statusElement || !rejectionDiv || !rejectionText) {
+                alert('Error: Could not find form elements');
+                return;
+            }
+
+            // Mark as rejected
+            statusInput.value = 'Rejected';
+            rejectionReasonInput.value = reason;
+
+            // Update visual status
+            statusElement.textContent = "Rejected";
+            statusElement.className = "status-indicator rejected";
+
+            // Show rejection reason
+            rejectionText.textContent = reason;
+            rejectionDiv.style.display = 'block';
+
+            // Visual styling for rejected row
+            const row = document.getElementById(`row-${currentRejectionRow}`);
+            row.classList.add('rejected-row');
+
+            // Add rejected styling to medication name
+            const medicationSearch = document.querySelector(`.medication-search[data-index="${currentRejectionRow}"]`);
+            if (medicationSearch) {
+                medicationSearch.style.textDecoration = 'line-through';
+                medicationSearch.style.color = '#95a5a6';
+            }
+
+            closeModal('rejectionModal');
+            currentRejectionRow = null;
+
+            // Show confirmation
+            alert('Medication rejected successfully!');
+        }
+
+        // Register new patient with real allergy system
+        async function registerNewPatient() {
+            const selectedAllergyIds = Array.from(document.getElementById('allergySelect').selectedOptions)
+                .map(option => parseInt(option.value));
+
+            const request = {
+                name: document.getElementById('newPatientName').value,
+                surname: document.getElementById('newPatientSurname').value,
+                idNumber: document.getElementById('newPatientID').value,
+                email: document.getElementById('newPatientEmail').value,
+                cellphone: document.getElementById('newPatientCellphone').value,
+                password: document.getElementById('newPatientPassword').value,
+                confirmPassword: document.getElementById('newPatientConfirmPassword').value,
+                selectedAllergyIds: selectedAllergyIds
+            };
+
+            try {
+                const response = await fetch('@Url.Action("RegisterNewPatient", "WalkInPrescription")', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(request)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    // Auto-select the new customer
+                    const customer = {
+                        id: result.customerId,
+                        text: result.customerName,
+                        name: result.customerName.split(' ')[0],
+                        surname: result.customerName.split(' ')[1],
+                        idNumber: result.customerIDNumber
+                    };
+                    selectCustomer(customer);
+                    closeModal('patientModal');
+                    alert(result.message);
+                } else {
+                    alert('Error: ' + result.error);
+                }
+            } catch (error) {
+                console.error('Error registering customer:', error);
+                alert('Error registering customer');
+            }
+        }
+
+        async function registerNewDoctor() {
+            const request = {
+                name: document.getElementById('newDoctorName').value,
+                surname: document.getElementById('newDoctorSurname').value,
+                practiceNumber: document.getElementById('newDoctorPracticeNumber').value,
+                contactNumber: document.getElementById('newDoctorContact').value,
+                email: document.getElementById('newDoctorEmail').value
+            };
+
+            try {
+                const response = await fetch('@Url.Action("RegisterNewDoctor", "WalkInPrescription")', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(request)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    // Auto-select the new doctor
+                    const doctor = {
+                        id: result.doctorId,
+                        text: result.doctorName,
+                        name: result.doctorName.replace('Dr. ', '').split(' ')[0],
+                        surname: result.doctorName.split(' ')[2] || result.doctorName.split(' ')[1],
+                        practiceNumber: result.practiceNumber
+                    };
+                    selectDoctor(doctor);
+                    closeModal('doctorModal');
+                    alert(result.message);
+                } else {
+                    alert('Error: ' + result.error);
+                }
+            } catch (error) {
+                console.error('Error registering doctor:', error);
+                alert('Error registering doctor');
+            }
+        }
+
+        function checkAllInteractions() {
+            let hasAllergyConflicts = false;
+            let hasLowStock = false;
+            let hasOutOfStock = false;
+            let hasRejected = false;
+
+            document.querySelectorAll('.allergy-alert').forEach(alert => {
+                if (alert.style.display === 'block') hasAllergyConflicts = true;
+            });
+
+            document.querySelectorAll('.stock-alert').forEach(alert => {
+                if (alert.style.display === 'block') hasLowStock = true;
+            });
+
+            document.querySelectorAll('.out-of-stock-alert').forEach(alert => {
+                if (alert.style.display === 'block') hasOutOfStock = true;
+            });
+
+            document.querySelectorAll('.rejected-row').forEach(row => {
+                hasRejected = true;
+            });
+
+            let message = '';
+            const issues = [];
+
+            if (hasAllergyConflicts) issues.push('• Allergy conflicts detected');
+            if (hasLowStock) issues.push('• Low stock warnings');
+            if (hasOutOfStock) issues.push('• Out of stock medications');
+            if (hasRejected) issues.push('• Rejected medications');
+
+            if (issues.length > 0) {
+                message = 'The following issues were found:\n\n' + issues.join('\n') + '\n\nThese are informational only and will not block the process.';
+            } else {
+                message = 'No issues detected.';
+            }
+
+            alert(message);
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).style.display = 'none';
+            if (id === 'rejectionModal') {
+                currentRejectionRow = null;
+            }
+        }
+
+        function togglePassword(fieldId, icon) {
+            const field = document.getElementById(fieldId);
+            const isPass = field.type === 'password';
+
+            field.type = isPass ? 'text' : 'password';
+            icon.innerHTML = isPass ? '<i class="fas fa-eye-slash"></i>' : '<i class="fas fa-eye"></i>';
+        }
+
+        // Add medication button event listener
+        document.getElementById('addMedBtn').addEventListener('click', addMedicationRow);
+
+        // Handle allergy selection in customer registration
+        document.getElementById('allergySelect').addEventListener('change', function() {
+            updateAllergyCart();
+        });
+
+        function updateAllergyCart() {
+            const allergyCart = document.getElementById('allergyCart');
+            allergyCart.innerHTML = '';
+
+            const selectedOptions = Array.from(document.getElementById('allergySelect').selectedOptions);
+
+            selectedOptions.forEach(option => {
+                const li = document.createElement('li');
+                li.textContent = option.textContent;
+
+                const btn = document.createElement('button');
+                btn.textContent = '×';
+                btn.className = 'remove-btn';
+                btn.onclick = () => removeAllergy(option.value);
+
+                li.appendChild(btn);
+                allergyCart.appendChild(li);
+            });
+        }
+
+        function removeAllergy(allergyId) {
+            const option = document.querySelector(`#allergySelect option[value="${allergyId}"]`);
+            if (option) {
+                option.selected = false;
+                updateAllergyCart();
+            }
+        }
+
+        // Form validation before submission
+        function validateFormBeforeSubmit() {
+            const customerId = document.getElementById('customerId').value;
+            const doctorId = document.getElementById('doctorId').value;
+
+            if (!customerId) {
+                alert('Please select a customer before submitting.');
+                return false;
+            }
+
+            if (!doctorId) {
+                alert('Please select a doctor before submitting.');
+                return false;
+            }
+
+            // Check if at least one medication is selected
+            const medicationIds = document.querySelectorAll('.medication-id');
+            let hasMedications = false;
+
+            medicationIds.forEach(input => {
+                if (input.value && input.value !== '0') {
+                    hasMedications = true;
+                }
+            });
+
+            if (!hasMedications) {
+                alert('Please add at least one medication before submitting.');
+                return false;
+            }
+
+            return true;
+        }
+
+        // Add form submit validation
+        document.getElementById('prescriptionForm').addEventListener('submit', function(e) {
+            if (!validateFormBeforeSubmit()) {
+                e.preventDefault();
+            }
+        });
+    </script>
+</body>
+</html>

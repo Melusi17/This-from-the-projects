@@ -1,0 +1,56 @@
+﻿@model IEnumerable<Order>
+@{
+    ViewData["Title"] = "Manage Orders";
+    Layout = "~/Views/Shared/_ManagerLayout.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="card p-3">
+        <h5 class="title-underline">Medication Orders</h5>
+        <div class="card-body">
+            <table class="table table-hover table-borderless">
+                <thead class="table-light">
+                    <tr>
+                        <th>Date</th>
+                        <th>Supplier</th>
+                        <th>Medication</th>
+                        <th>Quantity</th>
+                        <th>Order Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var order in Model)
+                    {
+                        // Group order lines by supplier
+                        var supplierGroups = order.OrderLines.GroupBy(ol => ol.Medications.Supplier.SupplierName);
+
+                        foreach (var group in supplierGroups)
+                        {
+                            var lineCount = group.Count();
+                            var firstLine = group.First();
+
+                            bool isFirst = true;
+                            foreach (var line in group)
+                            {
+                                <tr>
+                                    @if (isFirst)
+                                    {
+                                        <td rowspan="@lineCount">@order.OrderDate.ToShortDateString()</td>
+                                        <td rowspan="@lineCount">@group.Key</td>
+                                    }
+                                    <td>@line.Medications.MedicationName</td>
+                                    <td>@line.Quantity</td>
+                                    @if (isFirst)
+                                    {
+                                        <td rowspan="@lineCount">@order.Status</td>
+                                        isFirst = false;
+                                    }
+                                </tr>
+                            }
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

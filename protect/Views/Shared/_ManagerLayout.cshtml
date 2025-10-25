@@ -1,0 +1,281 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - PharmMan</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/PharmMan.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+   
+
+        body {
+            margin: 0;
+            background-color: #f4f6f9;
+            
+            color: #333;
+            overflow:scroll;
+        } 
+
+     
+
+      /*  .sidebar {
+            width: 15em;
+            height: 100vh;
+            background: #00695c;
+            padding-top: 2rem;
+            position: fixed;
+        }
+        */
+       
+        .main-content {
+            margin-left: 220px;
+            padding: 2rem;
+        }
+
+        .card {
+            background: white;
+           
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            
+        }
+
+        h1, h2 {
+            color: #00695c;
+        }
+
+        .btn {
+           /*  background-color: #00695c; */
+            background-color: #1f9f77;
+            color: white;
+            border: none;
+           /*  padding: 0.6rem 1.2rem; */
+            border-radius: 3px;
+            cursor: pointer;
+            margin-right: 10px;
+            text-decoration: none;
+            display: inline-block;
+            transition: 0.3s;
+        }
+
+            .btn:hover {
+                background-color: #00695c;
+                
+            }
+
+        .wrapper {
+            display: flex;
+            padding-top: 2em;
+            height: 100vh;
+        } 
+
+      
+
+       
+
+       /*   ===== SIDEBAR =====  */
+        .sidebar {
+            width: 220px;
+         /*    background: linear-gradient(to bottom, #22586a, #1a252f); */
+            background: linear-gradient(to bottom, #22586A, #22586A);
+            height: 100vh;
+           
+            position: fixed;
+            top: 0;
+            left: 0;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+
+        .sidebar-item {
+            color: #ecf0f1;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+            padding: 10px 15px;
+           
+            transition: all 0.3s;
+           border:none;
+            background: none;
+            width: 100%;
+        }
+
+         
+
+        .sidebar a {
+            display: block;
+            padding: 1rem 2rem;
+            color: white;
+            text-decoration: none;
+            transition: 0.5s;
+        }
+
+            .sidebar a:hover, .dropdown-btn:hover {
+                background-color: rgba(244, 246, 246, 0.15);
+            }
+
+        .dropdown-btn {
+            transition: 0.3s;
+        }
+
+        .dropdown-container {
+            display: none;
+            background-color: #23687f;
+            padding-left: 20px;
+            transition: 0.3s;
+        }
+
+            .dropdown-container a {
+                font-size: 14px;
+                text-decoration: none;
+                color: #fff;
+               
+            }
+
+          
+     /*    .sidebar-nav {
+            padding: 0 10px;
+        }
+ */
+        .sidebar-footer {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            padding: 0 20px;
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+                
+        .title-underline{
+            color: #2c3e50;
+            margin-top: 0;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            
+        }
+
+        .topbar {
+            background-color: #ffff;
+            height: 60px;
+            padding: 0 20px;
+            position: fixed;
+            left: 220px;
+            right: 0;
+            top: 0;
+            border-bottom: 1px solid #ccc;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 999;
+        }
+
+           /*  ==== Allerts ====== */
+        .alert-warning {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            color: #856404;
+        }
+
+       /*  ===== Tables ===== */
+        .tables {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .tables th
+          {
+            background: #3498db;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+ 
+
+
+
+    <div   class="topbar">
+        <span><b>Pharmacy Manager</b></span>
+        <div b-0kim8ztmh6="">Welcome, <strong b-0kim8ztmh6="">Name</strong></div>
+    </div>
+
+    <div class="sidebar">
+
+        <div class="sidebar-header">
+            <img style="height:160px;width:220px;" src="~/css/img/Manager_img/ibhayi2.png" />
+        </div>
+        <br />
+        <br />
+       
+       
+        <a class="sidebar-item p-3" asp-controller="PharmacyManager" asp-action="index">Home</a>
+
+        <button class=" sidebar-item dropdown-btn">Pharmacy <span><img style="height:10px;" src="~/css/img/Manager_img/arrow-down-sign-to-navigate.png" /></span></button>
+        <div class="dropdown-container">
+            <a asp-controller="PharmacyManager" asp-action="AddPharmacyInfo">Pharmacy details</a>
+            <a asp-controller="PharmacyManager" asp-action="AddDoctor">Docters</a>
+            <a asp-controller="PharmacyManager" asp-action="AddPharmacists">Pharmacists</a>
+        </div>
+
+        <button class=" sidebar-item dropdown-btn">Medication <img style="height:10px;" src="~/css/img/Manager_img/arrow-down-sign-to-navigate.png" /></span></button>
+        <div class="dropdown-container">
+            <a asp-controller="PharmacyManager" asp-action="AddActiveIngredients">Add Active indredients</a>
+            <a asp-controller="PharmacyManager" asp-action="AddDosageForms">Add Dosage Form</a>
+            <a asp-controller="PharmacyManager" asp-action="AddMedication">Add Medication</a>
+        </div>
+        <button class=" sidebar-item dropdown-btn">Stock & Orders <img style="height:10px;" src="~/css/img/Manager_img/arrow-down-sign-to-navigate.png" /></span></button>
+        <div class="dropdown-container">
+            <a asp-controller="PharmacyManager" asp-action="Orders">Order Medication</a>
+            <a asp-controller="PharmacyManager" asp-action="StockManagement">Manage Stock</a>
+
+        </div>
+        <a class="sidebar-item p-3" asp-controller="PharmacyManager" asp-action="Reports">Reports</a>
+        <a class="sidebar-item p-3" asp-controller="Home" asp-action="Index"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </div>
+
+
+
+
+
+    <div style="    margin-left: 220px;
+    margin-top: 50px;
+    padding: 30px;">
+            <main role="main" class="pb-3">
+                @RenderBody()
+            </main>
+        </div>
+      
+    
+    @*    <footer class="border-top footer   text-muted">
+        <div class="container">
+            &copy; 2025 - PharmMan - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer> *@
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+          const dropdownButtons = document.querySelectorAll(".dropdown-btn");
+
+        dropdownButtons.forEach(button => {
+            button.addEventListener("click", () => {
+                const container = button.nextElementSibling;
+                if (container && container.classList.contains("dropdown-container")) {
+                    const isOpen = container.style.display === "block";
+                    container.style.display = isOpen ? "none" : "block";
+                }
+            });
+        });
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

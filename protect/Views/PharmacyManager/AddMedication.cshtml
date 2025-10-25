@@ -1,0 +1,120 @@
+﻿@model IbhayiPharmacy.Models.Medication
+@{
+    ViewData["Title"] = "Add Medication";
+    Layout = "~/Views/Shared/_ManagerLayout.cshtml";
+}
+
+<div class="card p-3 mt-4">
+    <h5 class="title-underline mb-3">Add New Medication</h5>
+
+    <form asp-action="AddMedication" method="post">
+        @Html.AntiForgeryToken()
+
+        <!-- Basic Fields -->
+        <div class="mb-3">
+            <label asp-for="MedicationName" class="form-label"></label>
+            <input asp-for="MedicationName" class="form-control" placeholder="e.g. Myprodol" />
+            <span asp-validation-for="MedicationName" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Schedule" class="form-label"></label>
+            <select asp-for="Schedule" class="form-select">
+                <option disabled selected>Choose schedule</option>
+                @for (int i = 0; i <= 6; i++)
+                {
+                    <option value="@i">Schedule @i</option>
+                }
+            </select>
+            <span asp-validation-for="Schedule" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="DosageFormID" class="form-label"></label>
+            <select asp-for="DosageFormID" asp-items="ViewBag.DosageForms" class="form-select">
+                <option disabled selected>Select dosage form</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="SupplierID" class="form-label"></label>
+            <select asp-for="SupplierID" asp-items="ViewBag.Suppliers" class="form-select">
+                <option disabled selected>Select supplier</option>
+            </select>
+        </div>
+
+        <!-- Reorder, Price, Quantity -->
+        <div class="mb-3">
+            <label asp-for="ReOrderLevel" class="form-label"></label>
+            <input asp-for="ReOrderLevel" class="form-control" placeholder="e.g. 20" />
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="CurrentPrice" class="form-label"></label>
+            <input asp-for="CurrentPrice" type="number" class="form-control" placeholder="e.g. 29" />
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="QuantityOnHand" class="form-label"></label>
+            <input asp-for="QuantityOnHand" type="number" class="form-control" placeholder="e.g. 100" />
+        </div>
+
+        <!-- Active Ingredients -->
+        <div class="mb-3">
+            <label class="form-label">Active Ingredients</label>
+            <div id="ingredients-container">
+                <div class="input-group mb-2 ingredient-row">
+                    <select name="Ingredients[0].Active_IngredientID" class="form-select">
+                        <option disabled selected>Select ingredient</option>
+                        @foreach (var ing in ViewBag.ActiveIngredients)
+                        {
+                            <option value="@ing.Active_IngredientID">@ing.Name</option>
+                        }
+                    </select>
+                    <input type="text" name="Ingredients[0].Strength" class="form-control" placeholder="Strength e.g. 200mg" />
+                    <button type="button" class="btn btn-outline-secondary remove-ingredient">-</button>
+                </div>
+            </div>
+            <button type="button" class="btn btn-outline-primary" id="add-ingredient">Add Ingredient</button>
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-2">Add Medication</button>
+        <a asp-action="ManageMedication" class="btn btn-secondary ms-2 mt-2">Cancel</a>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+             let ingredientIndex = 1;
+
+        document.getElementById('add-ingredient').addEventListener('click', function () {
+            const container = document.getElementById('ingredients-container');
+            const row = document.createElement('div');
+            row.className = 'input-group mb-2 ingredient-row';
+            let options = '';
+        @* Generate options dynamically from ActiveIngredients *@
+        @foreach (var ing in ViewBag.ActiveIngredients)
+        {
+            <text>options += '<option value="@ing.Active_IngredientID">@ing.Name</option>';</text>
+        }
+
+            row.innerHTML = `
+                <select name="Ingredients[${ingredientIndex}].Active_IngredientID" class="form-select">
+                    <option disabled selected>Select ingredient</option>
+                    ${options}
+                </select>
+                <input type="text" name="Ingredients[${ingredientIndex}].Strength" class="form-control" placeholder="Strength">
+                <button type="button" class="btn btn-outline-secondary remove-ingredient">-</button>
+            `;
+            container.appendChild(row);
+            ingredientIndex++;
+        });
+
+        document.getElementById('ingredients-container').addEventListener('click', function (e) {
+            if (e.target.classList.contains('remove-ingredient')) {
+                e.target.parentElement.remove();
+            }
+        });
+    </script>
+}

@@ -1,0 +1,726 @@
+﻿@using IbhayiPharmacy.Models.PharmacistVM
+@model List<PrescriptionRefillVM>
+@{
+    ViewData["Title"] = "Manage Repeats";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Repeat Prescriptions</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f9fb;
+            color: #333;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .dashboard-wrapper {
+            display: flex;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 220px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.05);
+        }
+
+        .sidebar-left {
+            background: linear-gradient(to bottom, #22586A, #22586A);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            padding: 10px;
+        }
+
+        .sidebar-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .sidebar-right {
+            background: linear-gradient(145deg, #ffffff, #f0f0f0);
+            border-top-left-radius: 30px;
+            border-bottom-left-radius: 30px;
+            border-left: 1px solid #ddd;
+            width: 180px;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+            height: 100vh;
+        }
+
+        .profile-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        .profile-icon img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 3px solid #1f9f77;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+
+            .profile-icon img:hover {
+                transform: scale(1.05);
+            }
+
+        .profile-menu {
+            position: absolute;
+            top: 70px;
+            right: 0;
+            background: #fff;
+            border: 1px solid #ccc;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            padding: 10px;
+            border-radius: 8px;
+            width: 160px;
+            z-index: 10;
+        }
+
+            .profile-menu a {
+                display: block;
+                padding: 8px;
+                color: #333;
+                text-decoration: none;
+                border-radius: 5px;
+            }
+
+                .profile-menu a:hover {
+                    background-color: #eaeaea;
+                }
+
+        .notifications {
+            border-top: 0px solid #eee;
+            padding-top: 50px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .sidebar-button-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            width: 100%;
+        }
+
+        .sidebar-button {
+            display: block;
+            width: 100%;
+            text-align: left;
+            padding: 15px 25px;
+            margin: 5px 0;
+            background: transparent;
+            color: white;
+            font-weight: bold;
+            text-decoration: none;
+            border: none;
+            border-radius: 25px 0 0 25px;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.2s ease;
+            font-size: 16px;
+        }
+
+            .sidebar-button:hover {
+                background-color: rgba(255, 255, 255, 0.15);
+                transform: translateX(5px);
+                color: #e0f7f5;
+            }
+
+        /* Prescription Panel Styles */
+        .upload-prescription-panel {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 30px;
+            background-color: #ffffff;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            height: calc(100vh - 60px);
+            overflow-y: auto;
+        }
+
+        h2 {
+            color: #1f9f77;
+            margin-bottom: 20px;
+        }
+
+        .prescription-table, .modal-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: #ffffff;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+            .prescription-table th, .prescription-table td,
+            .modal-table th, .modal-table td {
+                padding: 12px;
+                text-align: center;
+                border: 1px solid #ccc;
+            }
+
+            .prescription-table thead,
+            .modal-table thead {
+                background-color: #1f9f77;
+                color: white;
+            }
+
+            .prescription-table tbody tr:nth-child(even),
+            .modal-table tbody tr:nth-child(even) {
+                background-color: #f9f9f9;
+            }
+
+            .prescription-table tbody tr:hover,
+            .modal-table tbody tr:hover {
+                background-color: #e3f5f0;
+            }
+
+        .order-row {
+            cursor: pointer;
+            background-color: #d6f5e3;
+            font-weight: bold;
+            color: #0d3d2c;
+        }
+
+            .order-row:hover {
+                background-color: #c0ecd5;
+            }
+
+        .medication-details {
+            display: none;
+            background-color: #f9f9f9;
+        }
+
+        .btn-view-history, .btn-request-refill {
+            background-color: #1f9f77;
+            color: white;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+            margin: 2px;
+        }
+
+            .btn-view-history:hover, .btn-request-refill:hover {
+                background-color: #28bf96;
+            }
+
+            .btn-request-refill:disabled {
+                background-color: #cccccc;
+                cursor: not-allowed;
+            }
+
+        .no-repeats {
+            color: #999;
+            font-style: italic;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: #ffffff;
+            margin: 10% auto;
+            padding: 25px;
+            border-radius: 10px;
+            width: 600px;
+            position: relative;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            color: #333;
+        }
+
+            .modal-content h3 {
+                color: #1f9f77;
+                margin-bottom: 15px;
+                display: flex;
+                justify-content: space-between;
+            }
+
+        .close {
+            position: absolute;
+            right: 15px;
+            top: 10px;
+            color: #999;
+            font-size: 24px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+            .close:hover {
+                color: red;
+            }
+
+        .modal-footer {
+            text-align: right;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        .loading {
+            text-align: center;
+            color: #666;
+            padding: 20px;
+        }
+
+        .success-message {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+            border: 1px solid #c3e6cb;
+        }
+
+        .error-message {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-wrapper">
+        <!-- Left Sidebar -->
+        <aside class="sidebar sidebar-left">
+            <div class="sidebar-header">
+                <img style="height:160px;width:220px;" src="~/css/img/ibhayi2.png" />
+            </div>
+            <div class="sidebar-content">
+                <nav>
+                    <div class="sidebar-button-container">
+                        <a asp-controller="Customer" asp-action="uploadPrescription" class="sidebar-button">📥 Upload Prescription</a>
+                        <a asp-controller="Customer" asp-action="placeOrder" class="sidebar-button">🛒 Place Orders</a>
+                        <a asp-controller="Customer" asp-action="trackOrder" class="sidebar-button">📦 Track Orders</a>
+                        <a asp-controller="CustomerRefill" asp-action="ManageRepeats" class="sidebar-button">🔁 Manage Repeats</a>
+                        <a asp-controller="Customer" asp-action="viewReports" class="sidebar-button">📄 View Reports</a>
+                        <a asp-controller="Home" asp-action="Index"
+                           class="sidebar-button"
+                           onclick="return confirm('Are you sure you want to log out?');">
+                            &#10145; Logout
+                        </a>
+                    </div>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content" id="mainContent">
+            <div class="upload-prescription-panel">
+                <h2>Manage Repeat Prescriptions</h2>
+
+                <table class="prescription-table" id="orders-table">
+                    <thead>
+                        <tr>
+                            <th>Doctor</th>
+                            <th>Prescription Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null && Model.Any())
+                        {
+                            @foreach (var prescription in Model)
+                            {
+                                <tr class="order-row" data-prescription-id="@prescription.PrescriptionID">
+                                    <td data-doctor="@prescription.DoctorName">@prescription.DoctorName</td>
+                                    <td data-date="@prescription.FormattedDate">@prescription.FormattedDate</td>
+                                </tr>
+                                <tr class="medication-details" data-parent-id="@prescription.PrescriptionID">
+                                    <td colspan="2">
+                                        <table class="modal-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Medication</th>
+                                                    <th>Instructions</th>
+                                                    <th>Quantity</th>
+                                                    <th>Repeats Left</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var medication in prescription.Medications)
+                                                {
+                                                    <tr class="prescription-row"
+                                                        data-script-line-id="@medication.ScriptLineID"
+                                                        data-prescription-id="@prescription.PrescriptionID"
+                                                        data-medication-id="@medication.MedicationID"
+                                                        data-medication="@medication.MedicationName"
+                                                        data-price="@medication.CurrentPrice"
+                                                        data-qty="@medication.Quantity"
+                                                        data-repeats-left="@medication.RepeatsLeft">
+                                                        <td class="medication-name">@medication.MedicationName</td>
+                                                        <td>@medication.Instructions</td>
+                                                        <td>@medication.Quantity</td>
+                                                        <td class="repeats-left">@medication.RepeatsLeft</td>
+                                                        <td>
+                                                            <button class="btn-view-history"
+                                                                    data-script-line-id="@medication.ScriptLineID"
+                                                                    data-medication-name="@medication.MedicationName">
+                                                                View History
+                                                            </button>
+                                                            @if (medication.RepeatsLeft > 0)
+                                                            {
+                                                                <button class="btn-request-refill"
+                                                                        data-script-line-id="@medication.ScriptLineID"
+                                                                        data-medication-name="@medication.MedicationName">
+                                                                    Request Refill
+                                                                </button>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="no-repeats">No repeats left</span>
+                                                            }
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="2" style="text-align: center; padding: 20px;">
+                                    No medications available for refill at this time.
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </main>
+
+        <!-- Right Sidebar -->
+        <aside class="sidebar sidebar-right">
+            <div class="profile-container">
+                <div class="profile-icon" onclick="toggleProfileMenu()">
+                    <img src="~/css/img/Customer_img/Profile.png" alt="Profile" />
+                </div>
+                <div id="profileMenu" class="profile-menu hidden">
+                    <a asp-controller="Customer" asp-action="profile" class="sidebar-button">👤 Account</a>
+                    <a asp-controller="Home" asp-action="Index" class="sidebar-button">🚪 Logout</a>
+                </div>
+            </div>
+
+            <div class="notifications" style="background-color: #ffffff; border: 1px solid #dcdcdc; padding: 20px; border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.05); margin: 20px 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+                <h4 style="font-size: 18px; margin-bottom: 15px; color: #333;">🔔 Notifications</h4>
+                <ul style="list-style-type: none; padding: 0; margin: 0;">
+                    <li style="padding: 12px 0; border-bottom: 1px solid #eee; font-size: 15px; color: #555;">
+                        🏥 You have <strong>@(Model?.Sum(p => p.Medications.Count(m => m.RepeatsLeft > 0)) ?? 0)</strong> medications available for refill.
+                    </li>
+                    <li style="padding: 12px 0; font-size: 15px; color: #555;">
+                        📧 Check your refill history for past orders.
+                    </li>
+                </ul>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Refill History Modal -->
+    <div class="modal" id="refill-modal">
+        <div class="modal-content">
+            <span class="close" id="modal-close">&times;</span>
+            <h3 id="modal-medication-title">Refill History & Request</h3>
+            <div id="refill-messages"></div>
+            <table class="modal-table" id="refill-history-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Order No.</th>
+                        <th>Repeats Left</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="refill-history-body">
+                    <!-- Filled by JS -->
+                </tbody>
+            </table>
+            <div class="modal-footer">
+                <button id="btn-request-refill-modal" class="btn-request-refill" style="display: none;">Request Refill</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Summary Modal -->
+    <div class="modal" id="order-summary-modal">
+        <div class="modal-content">
+            <span class="close" id="order-summary-close">&times;</span>
+            <h3>
+                <span id="summary-order-no">Order No: </span>
+                <span id="summary-order-date" style="float:right;"></span>
+            </h3>
+            <p><strong>Doctor:</strong> <span id="summary-doctor"></span></p>
+            <table class="modal-table">
+                <thead>
+                    <tr>
+                        <th>Medication</th>
+                        <th>Qty</th>
+                        <th>Price</th>
+                        <th>Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody id="order-summary-body">
+                    <!-- JS will populate -->
+                </tbody>
+            </table>
+            <div class="modal-footer">
+                Total: R<span id="order-total">0.00</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            let currentScriptLineId = null;
+            let currentMedicationName = null;
+
+            const refillModal = document.getElementById('refill-modal');
+            const modalClose = document.getElementById('modal-close');
+            const refillHistoryBody = document.getElementById('refill-history-body');
+            const modalTitle = document.getElementById('modal-medication-title');
+            const refillMessages = document.getElementById('refill-messages');
+            const requestRefillBtn = document.getElementById('btn-request-refill-modal');
+
+            // Toggle prescription details when clicking doctor rows
+            document.querySelectorAll('.order-row').forEach(row => {
+                row.addEventListener('click', () => {
+                    const id = row.dataset.prescriptionId;
+                    const detailsRow = document.querySelector(`.medication-details[data-parent-id="${id}"]`);
+
+                    // Toggle the current details
+                    if (detailsRow.style.display === 'table-row') {
+                        detailsRow.style.display = 'none';
+                    } else {
+                        // Close all other open details first
+                        document.querySelectorAll('.medication-details').forEach(detail => {
+                            detail.style.display = 'none';
+                        });
+                        // Then open the current one
+                        detailsRow.style.display = 'table-row';
+                    }
+                });
+            });
+
+            // Show refill history modal
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('btn-view-history')) {
+                    currentScriptLineId = e.target.dataset.scriptLineId;
+                    currentMedicationName = e.target.dataset.medicationName;
+
+                    modalTitle.textContent = `${currentMedicationName} - Refill History`;
+                    refillMessages.innerHTML = '';
+                    requestRefillBtn.style.display = 'none';
+
+                    loadRefillHistory(currentScriptLineId);
+                }
+            });
+
+            // Request refill from main table
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('btn-request-refill')) {
+                    const scriptLineId = e.target.dataset.scriptLineId;
+                    const medicationName = e.target.dataset.medicationName;
+
+                    if (confirm(`Request refill for ${medicationName}?`)) {
+                        requestRefill(scriptLineId, e.target);
+                    }
+                }
+            });
+
+            // Request refill from modal
+            requestRefillBtn.addEventListener('click', function() {
+                if (currentScriptLineId) {
+                    requestRefill(currentScriptLineId, null, true);
+                }
+            });
+
+            // Load refill history from API
+            async function loadRefillHistory(scriptLineId) {
+                refillHistoryBody.innerHTML = '<tr><td colspan="4" class="loading">Loading history...</td></tr>';
+                refillModal.style.display = 'block';
+
+                try {
+                    const response = await fetch(`/CustomerRefill/GetRefillHistory?scriptLineId=${scriptLineId}`);
+                    const data = await response.json();
+
+                    if (data.success) {
+                        refillHistoryBody.innerHTML = '';
+
+                        if (data.history && data.history.length > 0) {
+                            data.history.forEach(entry => {
+                                const tr = document.createElement('tr');
+                                tr.innerHTML = `
+                                    <td>${entry.date || 'N/A'}</td>
+                                    <td>${entry.orderNumber || 'N/A'}</td>
+                                    <td>${entry.repeatsLeft !== undefined ? entry.repeatsLeft : 'N/A'}</td>
+                                    <td>${entry.status || 'N/A'}</td>`;
+                                refillHistoryBody.appendChild(tr);
+                            });
+
+                            // Show request button if current repeats > 0
+                            if (data.currentRepeats > 0) {
+                                requestRefillBtn.style.display = 'inline-block';
+                                requestRefillBtn.textContent = `Request Refill (${data.currentRepeats} left)`;
+                            } else {
+                                requestRefillBtn.style.display = 'none';
+                            }
+                        } else {
+                            refillHistoryBody.innerHTML = '<tr><td colspan="4" style="color:#999; padding: 20px;">No refill history found for this medication.</td></tr>';
+                            requestRefillBtn.style.display = 'none';
+                        }
+                    } else {
+                        refillHistoryBody.innerHTML = `<tr><td colspan="4" style="color:red; padding: 20px;">Error: ${data.message || 'Unknown error'}</td></tr>`;
+                        requestRefillBtn.style.display = 'none';
+                    }
+                } catch (error) {
+                    refillHistoryBody.innerHTML = `<tr><td colspan="4" style="color:red; padding: 20px;">Network error: Unable to load history</td></tr>`;
+                    requestRefillBtn.style.display = 'none';
+                }
+            }
+
+            // Request refill function
+            async function requestRefill(scriptLineId, buttonElement = null, fromModal = false) {
+                const requestBody = new FormData();
+                requestBody.append('scriptLineId', scriptLineId);
+
+                // Get anti-forgery token
+                const token = document.querySelector('input[name="__RequestVerificationToken"]');
+                if (token) {
+                    requestBody.append('__RequestVerificationToken', token.value);
+                }
+
+                try {
+                    const response = await fetch('/CustomerRefill/RequestRefill', {
+                        method: 'POST',
+                        body: requestBody
+                    });
+                    const data = await response.json();
+
+                    if (data.success) {
+                        // Show success message
+                        const successMsg = `<div class="success-message">${data.message}</div>`;
+
+                        if (fromModal) {
+                            refillMessages.innerHTML = successMsg;
+                            requestRefillBtn.style.display = 'none';
+                        } else {
+                            // Update the button in the main table
+                            if (buttonElement) {
+                                const row = buttonElement.closest('tr');
+                                const repeatsCell = row.querySelector('.repeats-left');
+                                if (repeatsCell) {
+                                    repeatsCell.textContent = data.repeatsLeft;
+                                }
+
+                                if (data.repeatsLeft === 0) {
+                                    buttonElement.style.display = 'none';
+                                    const noRepeatsSpan = document.createElement('span');
+                                    noRepeatsSpan.className = 'no-repeats';
+                                    noRepeatsSpan.textContent = 'No repeats left';
+                                    buttonElement.parentNode.appendChild(noRepeatsSpan);
+                                }
+                            }
+
+                            // Show success message
+                            alert(data.message);
+                        }
+
+                        // Reload history if in modal
+                        if (fromModal && currentScriptLineId) {
+                            loadRefillHistory(currentScriptLineId);
+                        }
+                    } else {
+                        const errorMsg = `<div class="error-message">${data.message}</div>`;
+                        if (fromModal) {
+                            refillMessages.innerHTML = errorMsg;
+                        } else {
+                            alert('Error: ' + data.message);
+                        }
+                    }
+                } catch (error) {
+                    const errorMsg = `<div class="error-message">Network error: ${error.message}</div>`;
+                    if (fromModal) {
+                        refillMessages.innerHTML = errorMsg;
+                    } else {
+                        alert('Network error: ' + error.message);
+                    }
+                }
+            }
+
+            // Modal close functionality
+            modalClose.addEventListener('click', () => refillModal.style.display = 'none');
+            window.addEventListener('click', e => {
+                if (e.target === refillModal) refillModal.style.display = 'none';
+            });
+
+            // Order Summary Modal logic
+            const orderSummaryModal = document.getElementById('order-summary-modal');
+            const orderSummaryClose = document.getElementById('order-summary-close');
+
+            orderSummaryClose.addEventListener('click', () => orderSummaryModal.style.display = 'none');
+            window.addEventListener('click', e => {
+                if (e.target === orderSummaryModal) orderSummaryModal.style.display = 'none';
+            });
+        });
+
+        function toggleProfileMenu() {
+            const menu = document.getElementById("profileMenu");
+            menu.classList.toggle("hidden");
+        }
+    </script>
+</body>
+</html>

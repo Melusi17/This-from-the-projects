@@ -1,0 +1,51 @@
+﻿@model IbhayiPharmacy.Models.Doctor
+@{
+    ViewData["Title"] = "Add Doctor";
+    Layout = "~/Views/Shared/_ManagerLayout.cshtml";
+}
+
+<div class="card p-3">
+    <h5 class="title-underline">New Doctor</h5>
+    <div class="card-body">
+        <form asp-action="AddDoctor" method="post">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Name" class="form-label"></label>
+                    <input asp-for="Name" class="form-control" placeholder="e.g. John" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Surname" class="form-label"></label>
+                    <input asp-for="Surname" class="form-control" placeholder="e.g. Smith" />
+                    <span asp-validation-for="Surname" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="HealthCouncilRegistrationNumber" class="form-label"></label>
+                <input asp-for="HealthCouncilRegistrationNumber" class="form-control" placeholder="e.g. PRC-987654" />
+                <span asp-validation-for="HealthCouncilRegistrationNumber" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="ContactNumber" class="form-label"></label>
+                <input asp-for="ContactNumber" class="form-control" placeholder="e.g. 071 123 4567" />
+                <span asp-validation-for="ContactNumber" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label"></label>
+                <input asp-for="Email" class="form-control" placeholder="e.g. dr.smith@email.com" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Add Doctor</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

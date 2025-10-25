@@ -1,0 +1,252 @@
+﻿@{
+    ViewData["Title"] = "Dispensary";
+    Layout = "~/Views/Shared/PharmacistLayouts/_PrescriptionReviewLayout.cshtml";
+}
+
+<!-- MAIN CONTENT -->
+<div>
+    <div class="form-container-three-cards">
+        <!-- CARD 1: PATIENT INFO -->
+        <div class="card patient-card">
+            <h3><i class="fas fa-user-injured"></i> Patient Information</h3>
+
+            <div class="patient-info-grid">
+                <div class="patient-details">
+                    <div class="detail-row">
+                        <span class="detail-label">Name:</span>
+                        <span class="detail-value">John Doe</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Surname:</span>
+                        <span class="detail-value">Smith</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">DOB:</span>
+                        <span class="detail-value">15/06/1990 (33 yrs)</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">ID Number:</span>
+                        <span class="detail-value">9001011234081</span>
+                    </div>
+                </div>
+
+                <div class="medical-info">
+                    <div class="alert alert-warning">
+                        <h4><i class="fas fa-allergy"></i> Allergies</h4>
+                        <ul>
+                            <li>Penicillin</li>
+                            <li>Sulfa drugs</li>
+                            <li>Ibuprofen</li>
+                        </ul>
+                    </div>
+
+                    <div class="doctor-info">
+                        <h4><i class="fas fa-user-md"></i> Prescribing Doctor</h4>
+                        <p>Dr. Sarah Smith (PR1234567)</p>
+                        <p>Date: <strong>15 June 2023</strong></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CARD 2: MEDICATION DISPENSING -->
+        <div class="card medication-card">
+            <h3><i class="fas fa-pills"></i> Medication Dispensing</h3>
+
+            <div class="alert alert-danger allergy-alert">
+                <i class="fas fa-exclamation-triangle"></i> <strong>ALLERGY WARNING:</strong> Patient is allergic to this medication!
+            </div>
+
+            <div class="alert alert-warning stock-alert">
+                <i class="fas fa-box-open"></i> <strong>LOW STOCK:</strong> This medication is near reorder level!
+            </div>
+
+            <table class="medication-table">
+                <thead>
+                    <tr>
+                        <th width="5%"></th>
+                        <th width="20%">Medication</th>
+                        <th width="10%">Dosage</th>
+                        <th width="10%">Qty</th>
+                        <th width="10%">Price (ZAR)</th>
+                        <th width="20%">Instructions</th>
+                        <th width="10%">Repeats Left</th>
+                        <th width="10%">Status</th>
+                        <th width="5%">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="medsTableBody">
+                    <!-- Sample row with allergy warning -->
+                    <tr class="has-allergy">
+                        <td><input type="checkbox" class="dispense-checkbox"></td>
+                        <td>
+                            Amoxicillin 500mg
+                            <div class="med-details">
+                                <small><strong>Active:</strong> Amoxicillin</small><br>
+                                <small><strong>Stock:</strong> 142 (Reorder: 50)</small>
+                            </div>
+                        </td>
+                        <td>Capsule</td>
+                        <td>14</td>
+                        <td>R 85.50</td>
+                        <td>Take 1 capsule twice daily for 7 days</td>
+                        <td>
+                            <input type="number" class="repeats-input" min="0" value="2" readonly>
+                        </td>
+                        <td><span class="badge bg-warning">Pending</span></td>
+                        <td>
+                            <button class="action-btn reject-btn" onclick="showRejectionModal(this)"><i class="fas fa-ban"></i></button>
+                            <button class="action-btn remove-btn" onclick="removeMedication(this)"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>
+
+                    <!-- Sample row with low stock -->
+                    <tr class="low-stock">
+                        <td><input type="checkbox" class="dispense-checkbox"></td>
+                        <td>
+                            Lisinopril 10mg
+                            <div class="med-details">
+                                <small><strong>Active:</strong> Lisinopril</small><br>
+                                <small><strong>Stock:</strong> 12 (Reorder: 30)</small>
+                            </div>
+                        </td>
+                        <td>Tablet</td>
+                        <td>30</td>
+                        <td>R 120.00</td>
+                        <td>Take 1 tablet daily</td>
+                        <td>
+                            <!-- Empty for no repeats -->
+                        </td>
+                        <td><span class="badge bg-warning">Pending</span></td>
+                        <td>
+                            <button class="action-btn reject-btn" onclick="showRejectionModal(this)"><i class="fas fa-ban"></i></button>
+                            <button class="action-btn remove-btn" onclick="removeMedication(this)"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>
+
+                    <!-- Normal row -->
+                    <tr>
+                        <td><input type="checkbox" class="dispense-checkbox"></td>
+                        <td>
+                            Panado Extra
+                            <div class="med-details">
+                                <small><strong>Active:</strong> Paracetamol 500mg + Caffeine 65mg</small><br>
+                                <small><strong>Stock:</strong> 256 (Reorder: 100)</small>
+                            </div>
+                        </td>
+                        <td>Tablet</td>
+                        <td>20</td>
+                        <td>R 45.75</td>
+                        <td>Take 2 tablets every 6 hours as needed</td>
+                        <td>
+                            <input type="number" class="repeats-input" min="0" value="3" readonly>
+                        </td>
+                        <td><span class="badge bg-warning">Pending</span></td>
+                        <td>
+                            <button class="action-btn reject-btn" onclick="showRejectionModal(this)"><i class="fas fa-ban"></i></button>
+                            <button class="action-btn remove-btn" onclick="removeMedication(this)"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>
+
+                    <!-- Rejected row example -->
+                    <tr class="rejected-row">
+                        <td></td>
+                        <td>
+                            Ibuprofen 200mg
+                            <div class="med-details">
+                                <small><strong>Active:</strong> Ibuprofen</small><br>
+                                <small><strong>Stock:</strong> 85 (Reorder: 40)</small>
+                            </div>
+                        </td>
+                        <td>Tablet</td>
+                        <td>10</td>
+                        <td>R 32.50</td>
+                        <td>Take 1 tablet every 8 hours</td>
+                        <td>
+                            <!-- Empty for no repeats -->
+                        </td>
+                        <td><span class="badge bg-danger">Rejected</span></td>
+                        <td>
+                            <button class="action-btn remove-btn" onclick="removeMedication(this)"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>
+
+                    <!-- Dispensed row example -->
+                    <tr class="dispensed-row">
+                        <td></td>
+                        <td>
+                            Simvastatin 20mg
+                            <div class="med-details">
+                                <small><strong>Active:</strong> Simvastatin</small><br>
+                                <small><strong>Stock:</strong> 120 (Reorder: 40)</small>
+                            </div>
+                        </td>
+                        <td>Tablet</td>
+                        <td>30</td>
+                        <td>R 95.00</td>
+                        <td>Take 1 tablet at bedtime</td>
+                        <td>
+                            <!-- Empty for no repeats -->
+                        </td>
+                        <td><span class="badge bg-success">Dispensed</span></td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="form-footer">
+                <button class="btn btn-alert"><i class="fas fa-exclamation-triangle"></i> Check Interactions</button>
+                <button class="btn btn-add" onclick="markAsDispensed()"><i class="fas fa-check-circle"></i> Mark as Dispensed</button>
+                <a asp-controller="Pharmacy" asp-action="loadPrescription" class="btn btn-danger" style="text-decoration: none;">
+                    <i class="fas fa-save"></i> Back
+                </a>
+            </div>
+        </div>
+
+        <!-- CARD 3: PDF VIEWER -->
+        <div class="card pdf-viewer-card">
+            <h3>
+                <i class="fas fa-file-prescription"></i> Prescription
+                <div class="pdf-controls">
+                    <button class="btn btn-sm"><i class="fas fa-print"></i> Print</button>
+                    <button class="btn btn-sm"><i class="fas fa-download"></i> Download</button>
+                </div>
+            </h3>
+            <div id="pdfViewer">
+                <embed src="/sample-prescription.pdf" type="application/pdf" width="100%" height="100%">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- REJECTION MODAL -->
+<div class="modal-overlay" id="rejectionModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4><i class="fas fa-ban"></i> Reject Medication</h4>
+            <button class="close-modal" onclick="closeModal()">&times;</button>
+        </div>
+        <div class="rejection-reasons">
+            <p>Please select the reason for rejecting this medication:</p>
+            <div class="reason-option">
+                <input type="radio" id="reason1" name="rejectionReason" value="Out of stock">
+                <label for="reason1">Out of stock</label>
+            </div>
+            <div class="reason-option">
+                <input type="radio" id="reason2" name="rejectionReason" value="Patient allergic">
+                <label for="reason2">Patient allergic</label>
+            </div>
+            <div class="reason-option">
+                <input type="radio" id="reason3" name="rejectionReason" value="Patient already has it">
+                <label for="reason3">Patient already has it</label>
+            </div>
+        </div>
+        <div class="modal-actions">
+            <button class="btn" onclick="closeModal()">Cancel</button>
+            <button class="btn btn-alert" onclick="confirmRejection()">Confirm Rejection</button>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script src="~/js/PrescriptionReview.js"></script>
+}

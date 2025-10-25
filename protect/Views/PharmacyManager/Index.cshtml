@@ -1,0 +1,104 @@
+﻿
+@{
+    ViewData["Title"] = "Pharmacy Manager Dashboard";
+    Layout = "~/Views/Shared/_ManagerLayout.cshtml";
+}
+<style>
+    .title-underline {
+        color: #2c3e50;
+        margin-top: 0;
+        border-bottom: 2px solid #3498db;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+    }
+</style>
+<div class="containers mt-4">
+    
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+      
+        <div class="col">
+            <div class="card  h-100">
+                <div class="card-body">
+                    <h5 class="card-title title-underline">Pharmacy Info</h5>
+                    <p class="card-text">Manage the pharmacy’s basic details and contact info.</p>
+                    <a asp-controller="PharmacyManager" asp-action="PharmacyInfo" class="btn btn-primary">Manage</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card   h-100">
+                <div class="card-body">
+                    <h5 class="card-title title-underline">Active Ingredients</h5>
+                    <p class="card-text">View and manage active ingredients in medications.</p>
+                    <a asp-controller="PharmacyManager" asp-action="ActiveIngredients" class="btn btn-primary">Manage</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card   h-100">
+                <div class="card-body">
+                    <h5 class="card-title title-underline">Dosage Forms</h5>
+                    <p class="card-text">Maintain dosage form records for medications.</p>
+                    <a asp-controller="PharmacyManager" asp-action="DosageForms" class="btn btn-primary">Manage</a>
+                </div>
+            </div>
+        </div>
+
+    
+
+        <div class="col">
+            <div class="card   h-100">
+                <div class="card-body">
+                    <h5 class="card-title title-underline">Medications</h5>
+                    <p class="card-text">Add, edit, and track medication records.</p>
+                    <a asp-controller="PharmacyManager" asp-action="ManageMedication" class="btn btn-primary">Manage</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card   h-100">
+                <div class="card-body">
+                    <h5 class="card-title title-underline">Doctors</h5>
+                    <p class="card-text">Maintain prescribing doctor records.</p>
+                    <a asp-controller="PharmacyManager" asp-action="ManageDoctor" class="btn btn-primary">Manage</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card   h-100">
+                <div class="card-body">
+                    <h5 class="card-title title-underline">Pharmacists</h5>
+                    <p class="card-text">Add or update pharmacists in the system.</p>
+                    <a asp-controller="PharmacyManager" asp-action="ManagePharmacists" class="btn btn-primary">Manage</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card   h-100">
+                <div class="card-body">
+                    <h5 class="card-title title-underline">Stock Management</h5>
+                    <p class="card-text">View and adjust current stock levels.</p>
+                    <a asp-controller="PharmacyManager" asp-action="StockManagement" class="btn btn-primary">Manage</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card   h-100">
+                <div class="card-body">
+                    <h5 class="card-title title-underline">Orders</h5>
+                    <p class="card-text">Order medication and track deliveries.</p>
+                    <a asp-controller="PharmacyManager" asp-action="Orders" class="btn btn-primary">Manage</a>
+                </div>
+            </div>
+        </div>
+
+        
+    </div>
+</div>

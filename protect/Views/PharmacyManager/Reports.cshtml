@@ -1,0 +1,71 @@
+﻿
+@{
+    ViewData["Title"] = "Stock Take Reports";
+    Layout = "~/Views/Shared/_ManagerLayout.cshtml";
+
+}
+
+<div class="container mt-4">
+    <h2 class="mb-2">Stock Take Reports</h2>
+
+    <!-- Report Filter Options -->
+    <div class="card mb-4">
+        <h5 class="card-header">Generate Report</h5>
+        <div class="card-body">
+            <form>
+                <div class="mb-3">
+                    <label for="groupBy" class="form-label">Group By</label>
+                    <select class="form-select" id="groupBy">
+                        <option selected disabled>Select grouping</option>
+                        <option value="dosage">Dosage Form</option>
+                        <option value="schedule">Schedule</option>
+                        <option value="supplier">Supplier</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Generate PDF</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Sample Report Preview -->
+    <div class="card p-3">
+        <h6 class="title-underline">Sample Report Preview</h6>
+        <div class="card-body">
+            <table class="table table-hover table-borderless">
+                <thead class="table-light" style=" color: #2c3e50;">
+                    <tr>
+                        <th>Medication</th>
+                        <th>Dosage Form</th>
+                        <th>Schedule</th>
+                        <th>Supplier</th>
+                        <th>Qty on Hand</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @* Dummy preview data *@
+                    <tr>
+                        <td>Panado</td>
+                        <td>Tablet</td>
+                        <td>0</td>
+                        <td>MedLife Distributors</td>
+                        <td>120</td>
+                    </tr>
+                    <tr>
+                        <td>Myprodol</td>
+                        <td>Capsule</td>
+                        <td>3</td>
+                        <td>PharmaDirect</td>
+                        <td>60</td>
+                    </tr>
+                    <tr>
+                        <td>Allergex</td>
+                        <td>Syrup</td>
+                        <td>1</td>
+                        <td>MedLife Distributors</td>
+                        <td>35</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

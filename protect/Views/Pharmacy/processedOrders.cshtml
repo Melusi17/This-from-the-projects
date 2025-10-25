@@ -1,0 +1,48 @@
+﻿@{
+    ViewData["Title"] = "Processed Orders";
+    Layout = "~/Views/Shared/PharmacistLayouts/_ProcessedOrdersLayout.cshtml";
+}
+
+<!-- MAIN CONTENT -->
+<div class="main-content">
+    <!-- SEARCH SECTION -->
+    <div class="search-section">
+        <div class="search-container">
+            <input type="text" class="search-input" placeholder="Search by patient name or ID number..." id="patientSearch">
+            <button class="search-btn" onclick="searchPatients()"><i class="fas fa-search"></i> Search</button>
+        </div>
+    </div>
+
+    <!-- PATIENT CARDS -->
+    <div class="patient-cards" id="patientCards">
+        <!-- Patient cards will be dynamically inserted here -->
+    </div>
+
+    <!-- PRESCRIPTION TABLE (HIDDEN BY DEFAULT) -->
+    <div id="prescriptionTableContainer" style="display: none;">
+        <h3 id="selectedPatientName"></h3>
+        <table class="prescription-table">
+            <thead>
+                <tr>
+                    <th width="20%">Date</th>
+                    <th width="40%">Script</th>
+                    <th width="20%">Processed Date</th>
+                    <th width="20%">Status</th>
+                </tr>
+            </thead>
+            <tbody id="prescriptionTableBody">
+                <!-- Prescription rows will be dynamically inserted here -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- NO RESULTS MESSAGE (HIDDEN BY DEFAULT) -->
+    <div class="no-results" id="noResults" style="display: none;">
+        <i class="fas fa-search" style="font-size: 24px; margin-bottom: 10px;"></i>
+        <p>No processed scripts found</p>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/ProcessedOrders.js"></script>
+}

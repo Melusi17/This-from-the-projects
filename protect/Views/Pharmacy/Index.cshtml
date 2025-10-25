@@ -1,0 +1,63 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/PharmacistLayouts/_dashboardLayout.cshtml";
+}
+
+<div class="main-content">
+    <h2 class="dashboard-title">Dashboard Overview</h2>
+
+    <!-- DASHBOARD CARDS -->
+    <div class="dashboard-cards">
+        <div class="dashboard-card">
+            <i class="fas fa-notes-medical"></i>
+            <div class="card-info">
+                <h3>128</h3>
+                <span>Total Prescriptions</span>
+            </div>
+        </div>
+        <a asp-controller="Pharmacy" asp-action="dispensedOrders" class="dashboard-link">
+            <div class="dashboard-card">
+                <i class="fas fa-box-open"></i>
+                <div class="card-info">
+                    <h3>76</h3>
+                    <span>Processed & Dispensed Orders History</span>
+                </div>
+            </div>
+        </a>
+        <div class="dashboard-card">
+            <i class="fas fa-ban"></i>
+            <div class="card-info">
+                <h3>12</h3>
+                <span>Rejected Prescriptions</span>
+            </div>
+        </div>
+        <div class="dashboard-card">
+            <i class="fas fa-capsules"></i>
+            <div class="card-info">
+                <h3>452</h3>
+                <span>Medication Stock</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- RECENT ACTIVITY -->
+    <div class="recent-section">
+        <h3>Recent Prescription Activity</h3>
+        <div class="recent-list">
+            <div class="recent-item">
+                <span>John Doe - Dispensed 2 items</span>
+                <span>Today, 10:15 AM</span>
+            </div>
+            <div class="recent-item">
+                <span>Jane Smith - Rejected Prescription</span>
+                <span>Yesterday, 4:22 PM</span>
+            </div>
+            <div class="recent-item">
+                <span>Luke Adams - Ready for Collection</span>
+                <span>Yesterday, 2:10 PM</span>
+            </div>
+        </div>
+    </div>
+</div>
+

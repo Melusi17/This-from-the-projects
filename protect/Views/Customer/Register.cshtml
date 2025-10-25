@@ -1,0 +1,92 @@
+﻿@model IbhayiPharmacy.Models.CustomerVM.CustomerRegisterViewModel
+
+@{
+    ViewData["Title"] = "Register";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register</title>
+    <link rel="stylesheet" href="~/css/Customer/Register.css" />
+</head>
+<body>
+    <div class="register-container">
+        <h2>Registration</h2>
+        <form asp-action="Register" asp-controller="Customer" method="post" id="registerForm">
+            
+            <input asp-for="Name" placeholder="Name" />
+            <span asp-validation-for="Name" class="error-message"></span>
+
+            <input asp-for="Surname" placeholder="Surname" />
+            <span asp-validation-for="Surname" class="error-message"></span>
+
+            <input asp-for="IdNumber" placeholder="ID Number" />
+            <span asp-validation-for="IdNumber" class="error-message"></span>
+
+            <input asp-for="Cellphone" placeholder="Cellphone Number" />
+            <span asp-validation-for="Cellphone" class="error-message"></span>
+
+            <input asp-for="Email" placeholder="Email Address" />
+            <span asp-validation-for="Email" class="error-message"></span>
+
+            <div class="password-wrapper">
+                <input asp-for="Password" placeholder="Password" />
+                <span class="toggle-icon" onclick="togglePassword('Password', this)">
+                    👁
+                </span>
+            </div>
+            <span asp-validation-for="Password" class="error-message"></span>
+
+            <div class="password-wrapper">
+                <input asp-for="ConfirmPassword" placeholder="Confirm Password" />
+                <span class="toggle-icon" onclick="togglePassword('ConfirmPassword', this)">
+                    👁
+                </span>
+            </div>
+            <span asp-validation-for="ConfirmPassword" class="error-message"></span>
+
+            <!-- Allergy picker -->
+            <div class="allergy-section">
+                <label for="allergySelect">Select Allergy</label>
+                <select id="allergySelect" class="form-control">
+                    <option value="" disabled selected hidden>Select an allergy</option>
+                    @if (Model.AllergiesList != null && Model.AllergiesList.Any())
+                    {
+                        foreach (var allergy in Model.AllergiesList)
+                        {
+                            <option value="@allergy.Value">@allergy.Text</option>
+                        }
+                    }
+                </select>
+                <button type="button" id="addAllergyBtn" class="add-allergy-btn">Add Allergy</button>
+
+                <!-- Live allergy cart -->
+                <ul id="allergyCart" class="allergy-cart"></ul>
+            </div>
+
+            <!-- Hidden field to store selected allergy IDs -->
+            <input type="hidden" asp-for="SelectedAllergies" id="SelectedAllergies" />
+
+            <button type="submit">Submit</button>
+        </form>
+
+        <div id="confirmationModal" class="modal hidden">
+            <div class="modal-content">
+                <h2>Registration Successful!</h2>
+                <p>Your information has been saved.</p>
+                <a asp-controller="Customer" asp-action="Login" class="login-link">Proceed to Login</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/js/Customer/Register.js"></script>
+    @section Scripts {
+        <partial name="_ValidationScriptsPartial" />
+    }
+
+</body>
+</html>

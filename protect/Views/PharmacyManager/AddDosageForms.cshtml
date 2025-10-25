@@ -1,0 +1,26 @@
+﻿@model DosageForm
+
+@{
+    ViewData["Title"] = "Add Dosage Form";
+    Layout = "~/Views/Shared/_ManagerLayout.cshtml";
+}
+
+<div class="card p-3 mt-4">
+    <h5 class="title-underline mb-3">Add New Dosage Form</h5>
+
+    <form asp-action="AddDosageForms" method="post">
+       
+        <div class="mb-3">
+            <label asp-for="DosageFormName" class="form-label"></label>
+            <input asp-for="DosageFormName" class="form-control" placeholder="e.g. Tablet, Syrup" />
+            <span asp-validation-for="DosageFormName" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Add Dosage Form</button>
+        <a asp-action="DosageForms" class="btn btn-secondary ms-2">Cancel</a>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

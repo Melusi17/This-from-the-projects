@@ -1,0 +1,73 @@
+﻿@{
+    ViewData["Title"] = "dispensedOrders";
+    Layout = "~/Views/Shared/PharmacistLayouts/_dispensedOrdersLayout.cshtml";
+}
+
+<div class="container">
+    <h2>Processed & Collected Orders</h2>
+
+    <div class="search-bar">
+        <input type="text" id="searchInput" onkeyup="filterCards()" placeholder="Search customer, doctor, or order number...">
+    </div>
+
+    <div class="order-cards" id="ordersContainer">
+
+        <!-- Order Card 1 -->
+        <div class="order-card" onclick="toggleDetails(this)">
+            <div class="order-details">
+                <div class="order-header">Customer: John Doe</div>
+                <p>Doctor: Dr. Smith</p>
+                <p>Date: 2025-05-18</p>
+                <p>Order #: ORD12345</p>
+            </div>
+            <div class="medication-list">
+                <ul>
+                    <li>Paracetamol 500mg</li>
+                    <li>Ibuprofen 200mg</li>
+                </ul>
+            </div>
+            <button class="generate-btn">Generate Report</button>
+        </div>
+
+        <!-- Order Card 2 -->
+        <div class="order-card" onclick="toggleDetails(this)">
+            <div class="order-details">
+                <div class="order-header">Customer: Jane Roe</div>
+                <p>Doctor: Dr. Adams</p>
+                <p>Date: 2025-05-17</p>
+                <p>Order #: ORD12346</p>
+            </div>
+            <div class="medication-list">
+                <ul>
+                    <li>Amoxicillin 250mg</li>
+                    <li>Vitamin C 500mg</li>
+                </ul>
+            </div>
+            <button class="generate-btn">Generate Report</button>
+        </div>
+
+        <!-- Order Card 3 -->
+        <div class="order-card" onclick="toggleDetails(this)">
+            <div class="order-details">
+                <div class="order-header">Customer: Chris Evans</div>
+                <p>Doctor: Dr. Carter</p>
+                <p>Date: 2025-05-14</p>
+                <p>Order #: ORD12349</p>
+            </div>
+            <div class="medication-list">
+                <ul>
+                    <li>Azithromycin 500mg</li>
+                    <li>Panado 500mg</li>
+                </ul>
+            </div>
+            <button class="generate-btn">Generate Report</button>
+        </div>
+
+        <!-- Add more cards dynamically as needed -->
+
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/dispensedOrders.js"></script>
+}

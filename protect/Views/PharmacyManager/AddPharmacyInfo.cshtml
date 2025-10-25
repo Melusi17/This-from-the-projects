@@ -1,0 +1,66 @@
+﻿@model IbhayiPharmacy.Models.Pharmacy
+
+@{
+    ViewData["Title"] = "Add Pharmacy Info";
+    Layout = "~/Views/Shared/_ManagerLayout.cshtml";
+}
+
+<div class="card p-3 mt-4">
+    <h5 class="mb-4 title-underline">Manage Pharmacy Information</h5>
+
+    <form asp-action="AddPharmacyInfo" method="post">
+       
+
+        <div class="mb-3">
+            <label asp-for="Name" class="form-label"></label>
+            <input asp-for="Name" class="form-control" placeholder="Ibhayi Pharmacy" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="HealthCouncilRegNo" class="form-label"></label>
+            <input asp-for="HealthCouncilRegNo" class="form-control" placeholder="HCR-123456" />
+            <span asp-validation-for="HealthCouncilRegNo" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Address" class="form-label"></label>
+            <textarea asp-for="Address" class="form-control" rows="2" placeholder="123 Main Street, Nelson Mandela Bay"></textarea>
+            <span asp-validation-for="Address" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="PhoneNumber" class="form-label"></label>
+            <input asp-for="PhoneNumber" class="form-control" placeholder="+27 41 123 4567" />
+            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Email" class="form-label"></label>
+            <input asp-for="Email" class="form-control" placeholder="info@ibhayipharmacy.co.za" />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="WebsiteURL" class="form-label"></label>
+            <input asp-for="WebsiteURL" class="form-control" placeholder="https://www.ibhayipharmacy.co.za" />
+            <span asp-validation-for="WebsiteURL" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label for="PharmacistID" class="form-label">Responsible Pharmacist</label>
+            <select asp-for="PharmacistID" class="form-select" asp-items="ViewBag.Pharmacists">
+                <option value="">Select a pharmacist</option>
+            </select>
+            <span asp-validation-for="PharmacistID" class="text-danger"></span>
+        </div>
+
+        <div class="text-end">
+            <button type="submit" class="btn btn-success">Save Pharmacy</button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

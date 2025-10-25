@@ -1,0 +1,73 @@
+﻿.container {
+    margin-left: 240px;
+    margin-top: 30px;
+    padding: 30px;
+}
+
+h2 {
+    margin-bottom: 20px;
+}
+
+.search-bar {
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+    .search-bar input {
+        padding: 10px;
+        width: 300px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+.order-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.order-card {
+    background-color: #ffffff;
+    padding: 20px;
+    width: 100%;
+    max-width: 480px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+    .order-card:hover {
+        transform: scale(1.02);
+    }
+
+.order-header {
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.order-details p {
+    margin: 5px 0;
+}
+
+.medication-list {
+    margin-top: 10px;
+    padding-left: 20px;
+    display: none;
+}
+
+.generate-btn {
+    margin-top: 15px;
+    padding: 10px 16px;
+    background-color: #2ed573;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+    .generate-btn:hover {
+        background-color: #1eae60;
+    }
+

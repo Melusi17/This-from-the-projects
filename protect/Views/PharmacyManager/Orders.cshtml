@@ -1,0 +1,89 @@
+﻿@model Order
+@{
+    ViewData["Title"] = "Add Orders";
+    Layout = "~/Views/Shared/_ManagerLayout.cshtml";
+    var meds = ViewBag.Medications as List<Medication>;
+}
+
+<div class="container mt-2">
+    <div class="card p-3">
+        <h5 class="title-underline">Add New Order</h5>
+
+        <form asp-action="AddOrders" method="post" id="orderForm">
+            <div class="mb-3">
+                <label class="form-label">Customer ID</label>
+                <input type="number" name="CustomerID" class="form-control" required>
+            </div>
+
+            <!-- Medication Selection -->
+            <div class="mb-3">
+                <label class="form-label">Select Medication</label>
+                <select class="form-select" id="medicationSelect">
+                    <option selected disabled>Select medication</option>
+                    @foreach (var med in meds)
+                    {
+                        <option value="@med.MedcationID" data-name="@med.MedicationName" data-form="@med.DosageForm.DosageFormName" data-supplier="@med.Supplier.SupplierName">
+                            @med.MedicationName (@med.DosageForm.DosageFormName)
+                        </option>
+                    }
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Quantity</label>
+                <input type="number" id="medQty" class="form-control" value="1" min="1">
+            </div>
+
+            <button type="button" class="btn btn-primary mb-3" onclick="addMedication()">Add Medication</button>
+
+            <!-- Order Table -->
+            <div class="card p-2 mb-3">
+                <table class="table table-borderless" id="orderTable">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Medication</th>
+                            <th>Form</th>
+                            <th>Supplier</th>
+                            <th>Quantity</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Dynamic rows will be added here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <button type="submit" class="btn btn-success">Submit Order</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    function addMedication() {
+        const select = document.getElementById('medicationSelect');
+        const qty = document.getElementById('medQty').value;
+        const table = document.getElementById('orderTable').getElementsByTagName('tbody')[0];
+
+        if (!select.value || qty < 1) return alert("Select medication and enter quantity");
+
+        const medId = select.value;
+        const medName = select.options[select.selectedIndex].dataset.name;
+        const medForm = select.options[select.selectedIndex].dataset.form;
+        const medSupplier = select.options[select.selectedIndex].dataset.supplier;
+
+        // Prevent duplicates
+        const exists = Array.from(table.rows).some(r => r.dataset.medid == medId);
+        if (exists) return alert("Medication already added.");
+
+        const row = table.insertRow();
+        row.dataset.medid = medId;
+        row.innerHTML = `
+            <td>${medName}<input type="hidden" name="lines[${table.rows.length - 1}].MedicationID" value="${medId}"></td>
+            <td>${medForm}</td>
+            <td>${medSupplier}</td>
+            <td><input type="number" name="lines[${table.rows.length - 1}].Quantity" value="${qty}" min="1" class="form-control"></td>
+            <td><button type="button" class="btn btn-sm btn-danger" onclick="this.closest('tr').remove()">Remove</button></td>
+        `;
+    }
+</script>

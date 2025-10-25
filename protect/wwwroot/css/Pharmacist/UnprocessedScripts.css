@@ -1,0 +1,235 @@
+﻿/* Main Content */
+.main-content {
+    margin-left: 220px;
+    margin-top: 60px;
+    padding: 30px;
+    width: calc(100% - 220px);
+}
+
+/* Scripts Page Styles */
+.search-container {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    margin-bottom: 30px;
+}
+
+.search-bar {
+    display: flex;
+    gap: 15px;
+}
+
+    .search-bar input {
+        flex: 1;
+        padding: 10px 15px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 16px;
+    }
+
+    .search-bar button {
+        background-color: #3498db;
+        color: white;
+        border: none;
+        padding: 0 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+
+        .search-bar button:hover {
+            background-color: #2980b9;
+        }
+
+.scripts-list {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    overflow: hidden;
+}
+
+.script-card {
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+    .script-card:hover {
+        background-color: #f8fafc;
+    }
+
+    .script-card.expanded {
+        background-color: #f0f7ff;
+        box-shadow: 0 4px 12px rgba(52, 152, 219, 0.2);
+    }
+
+.script-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.script-patient, .script-doctor {
+    font-weight: 600;
+}
+
+.script-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.script-status {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    background: #e0e0e0;
+    color: #333;
+}
+
+.status-pending {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.status-ready {
+    background: #d4edda;
+    color: #155724;
+}
+
+.script-repeat {
+    color: #d35400;
+    font-weight: 600;
+}
+
+.dispense-btn {
+    background-color: #27ae60;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    float: right;
+    transition: all 0.2s;
+    margin-left: 10px;
+}
+
+    .dispense-btn:hover {
+        background-color: #219653;
+        transform: scale(1.05);
+    }
+
+.email-btn {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    float: right;
+    transition: all 0.2s;
+}
+
+    .email-btn:hover {
+        background-color: #2980b9;
+        transform: scale(1.05);
+    }
+
+.script-details {
+    display: none;
+    margin-top: 15px;
+    padding: 15px;
+    background: white;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.expanded .script-details {
+    display: block;
+}
+
+.doctor-prescriptions {
+    display: flex;
+    gap: 15px;
+    margin-top: 15px;
+    overflow-x: auto;
+    padding-bottom: 10px;
+}
+
+.prescription-option {
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    min-width: 200px;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+    .prescription-option:hover {
+        border-color: #3498db;
+        transform: translateY(-3px);
+    }
+
+    .prescription-option.selected {
+        border-color: #27ae60;
+        background-color: #e8f5e9;
+    }
+
+.prescription-pdf {
+    height: 250px;
+    width: 100%;
+    border: 1px dashed #3498db;
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #7f8c8d;
+}
+
+.prescription-meta {
+    font-size: 13px;
+    color: #666;
+    margin-top: 5px;
+}
+
+.loading {
+    display: none;
+    text-align: center;
+    padding: 20px;
+}
+
+.loading-spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(0,0,0,0.1);
+    border-radius: 50%;
+    border-top-color: #3498db;
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}

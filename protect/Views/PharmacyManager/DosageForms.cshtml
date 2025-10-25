@@ -1,0 +1,45 @@
+﻿@model IEnumerable<DosageForm>
+
+@{
+    ViewData["Title"] = "Dosage Forms";
+    Layout = "~/Views/Shared/_ManagerLayout.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="card p-3">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="title-underline">Existing Dosage Forms</h5>
+            <a asp-action="AddDosageForms" class="btn btn-sm btn-success">+ Add New Form</a>
+        </div>
+
+        <div class="card-body">
+            @if (Model != null && Model.Any())
+            {
+                <table class="table table-hover table-borderless">
+                    <thead class="table-light" style="color: #2c3e50;">
+                        <tr>
+                            <th>Form Name</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.DosageFormName</td>
+                                <td>
+                                    <a asp-action="EditDosageForm" asp-route-id="@item.DosageFormID" class="btn btn-sm btn-warning me-2">Edit</a>
+                                    <a asp-action="DeleteDosageForm" asp-route-id="@item.DosageFormID" class="btn btn-sm btn-danger">Delete</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <p class="text-muted">No dosage forms found.</p>
+            }
+        </div>
+    </div>
+</div>
