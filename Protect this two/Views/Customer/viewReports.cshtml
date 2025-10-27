@@ -1,0 +1,223 @@
+﻿@{
+    ViewData["Title"] = "View Reports";
+    Layout = "~/Views/Shared/CustomerLayout/_CustomerLayout.cshtml";
+
+    var startDate = new DateTime(2025, 1, 1).ToString("d/M/yyyy");
+    var endDate = new DateTime(2025, 12, 31).ToString("d/M/yyyy");
+
+    var doctorReports = new[]
+    {
+        new {
+            DoctorName = "Dr. Alice Smith",
+            Prescriptions = new[]
+            {
+                new { Date = "01/01/2025", Medication = "Amoxicillin 500mg", Quantity = 10, Repeats = 2 },
+                new { Date = "15/02/2025", Medication = "Ibuprofen 200mg", Quantity = 5, Repeats = 1 },
+                new { Date = "10/03/2025", Medication = "Metformin 850mg", Quantity = 7, Repeats = 0 }
+            },
+            SubTotal = 22
+        },
+        new {
+            DoctorName = "Dr. John Doe",
+            Prescriptions = new[]
+            {
+                new { Date = "05/04/2025", Medication = "Lisinopril 10mg", Quantity = 8, Repeats = 1 },
+                new { Date = "20/05/2025", Medication = "Atorvastatin 20mg", Quantity = 6, Repeats = 2 },
+                new { Date = "30/06/2025", Medication = "Paracetamol 500mg", Quantity = 4, Repeats = 0 }
+            },
+            SubTotal = 18
+        }
+    };
+
+    var grandTotal = doctorReports.Sum(d => d.SubTotal);
+}
+
+
+<style>
+    .report-container {
+        padding: 30px;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f4f9fd;
+        color: #333;
+    }
+
+    .filter-form {
+        max-width: 800px;
+        margin: 0 auto 30px auto;
+        padding: 20px;
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    }
+
+        .filter-form h2 {
+            text-align: center;
+            font-size: 22px;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .filter-form .form-group {
+            margin-bottom: 16px;
+        }
+
+        .filter-form label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .filter-form input,
+        .filter-form select {
+            width: 100%;
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+
+        .filter-form button {
+            padding: 10px 20px;
+            background-color: #1e5b8c;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+            .filter-form button:hover {
+                background-color: #14496b;
+            }
+
+    .filter-summary {
+        text-align: center;
+        font-size: 14px;
+        color: #666;
+        margin-top: 10px;
+    }
+
+    .doctor-section {
+        margin-top: 40px;
+    }
+
+    .doctor-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: #1e5b8c;
+        border-left: 4px solid #1e5b8c;
+        padding-left: 10px;
+        margin-bottom: 10px;
+    }
+
+    .table-wrapper {
+        overflow-x: auto;
+    }
+
+    .prescription-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 600px;
+        background-color: #fff;
+        border: 1px solid #ddd;
+    }
+
+        .prescription-table th,
+        .prescription-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .prescription-table th {
+            background-color: #e9f3fb;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .prescription-table tr:nth-child(even) {
+            background-color: #f9fcfe;
+        }
+
+    .subtotal-row {
+        background-color: #f0f8ff;
+        font-weight: bold;
+    }
+
+    .grandtotal {
+        font-size: 16px;
+        font-weight: bold;
+        margin-top: 30px;
+        color: #1a5276;
+        border-top: 2px solid #ccc;
+        padding-top: 10px;
+    }
+</style>
+
+<div class="report-container">
+
+    <!-- Filter + PDF generation form -->
+    <form class="filter-form" method="post" asp-action="GeneratePdfReport" asp-controller="Reports">
+        <h2> Prescriptions Report</h2>
+
+        <div class="form-group">
+            <label for="startDate">Start Date</label>
+            <input type="date" name="startDate" required />
+        </div>
+
+        <div class="form-group">
+            <label for="endDate">End Date</label>
+            <input type="date" name="endDate" required />
+        </div>
+
+        <div class="form-group">
+            <label for="groupBy">Group By</label>
+            <select name="groupBy" required>
+                <option value="Doctor">Doctor</option>
+                <option value="Medication">Medication</option>
+            </select>
+        </div>
+
+        <button type="submit">Generate PDF Report</button>
+
+        <div class="filter-summary">
+            Report for period: <strong>@startDate</strong> to <strong>@endDate</strong>
+        </div>
+    </form>
+
+    <!-- Static Report View -->
+    @foreach (var doctor in doctorReports)
+    {
+        <div class="doctor-section">
+            <div class="doctor-title">@doctor.DoctorName</div>
+            <div class="table-wrapper">
+                <table class="prescription-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Medication</th>
+                            <th>Quantity</th>
+                            <th>Repeats</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var prescription in doctor.Prescriptions)
+                        {
+                            <tr>
+                                <td>@prescription.Date</td>
+                                <td>@prescription.Medication</td>
+                                <td>@prescription.Quantity</td>
+                                <td>@prescription.Repeats</td>
+                            </tr>
+                        }
+                        <tr class="subtotal-row">
+                            <td colspan="3">Sub-total</td>
+                            <td>@doctor.SubTotal</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+
+    <div class="grandtotal">Grand Total: @grandTotal</div>
+</div>

@@ -1,0 +1,758 @@
+﻿@model IbhayiPharmacy.Models.PharmacistVM.PharmacistDispensingDashboardVM
+@using System.Text.Json
+@{
+    ViewData["Title"] = "Orders - Ibhayi Pharmacy";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Orders - Ibhayi Pharmacy</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ===== GLOBAL STYLES ===== */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f4f6f9;
+            color: #333;
+            transition: all 0.3s;
+        }
+
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            width: 220px;
+            background: linear-gradient(to bottom, #22586A, #22586A);
+            height: 100vh;
+            padding: 20px 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+            transition: all 0.3s;
+        }
+
+            .sidebar.collapsed {
+                width: 60px;
+                overflow: hidden;
+            }
+
+                .sidebar.collapsed .sidebar-header h2,
+                .sidebar.collapsed .sidebar-nav a span,
+                .sidebar.collapsed .sidebar-footer p {
+                    display: none;
+                }
+
+                .sidebar.collapsed .sidebar-nav a {
+                    justify-content: center;
+                }
+
+        .sidebar-header {
+            padding: 0 20px 20px;
+            border-bottom: 1px solid #34495e;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .sidebar h2 {
+            font-size: 22px;
+            margin: 0;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+            .sidebar h2 i {
+                color: #3498db;
+            }
+
+        .sidebar-nav {
+            padding: 0 10px;
+        }
+
+        .sidebar a {
+            color: #ecf0f1;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 8px 0;
+            padding: 10px 15px;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+
+            .sidebar a:hover, .sidebar a.active {
+                background-color: #34495e;
+                transform: translateX(5px);
+            }
+
+        .sidebar-footer {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            padding: 0 20px;
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+
+        .toggle-sidebar {
+            position: absolute;
+            right: -15px;
+            top: 20px;
+            background: #3498db;
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        /* ===== TOPBAR ===== */
+        .topbar {
+            background-color: #ffffff;
+            height: 60px;
+            padding: 0 20px;
+            position: fixed;
+            left: 220px;
+            right: 0;
+            top: 0;
+            border-bottom: 1px solid #ccc;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 999;
+            transition: all 0.3s;
+        }
+
+        .sidebar.collapsed + .topbar {
+            left: 60px;
+        }
+
+        .topbar span {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .main-content {
+            margin-left: 220px;
+            margin-top: 60px;
+            padding: 30px;
+            transition: all 0.3s;
+        }
+
+        .sidebar.collapsed + .topbar + .main-content {
+            margin-left: 60px;
+        }
+
+        /* ===== DASHBOARD STATS ===== */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+            border-left: 4px solid #3498db;
+        }
+
+            .stat-card.pending {
+                border-left-color: #f39c12;
+            }
+
+            .stat-card.waiting {
+                border-left-color: #e74c3c;
+            }
+
+            .stat-card.today {
+                border-left-color: #9b59b6;
+            }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+
+        /* ===== SEARCH SECTION ===== */
+        .search-section {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .search-container {
+            display: flex;
+            gap: 15px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .search-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+            .search-btn:hover {
+                opacity: 0.9;
+            }
+
+        /* ===== PATIENT CARDS ===== */
+        .patient-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .patient-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.2s;
+            border-left: 4px solid #3498db;
+        }
+
+            .patient-card:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            }
+
+            .patient-card.active {
+                background: #f0f7fc;
+                border-left: 4px solid #27ae60;
+            }
+
+        .patient-name {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .patient-id {
+            font-size: 13px;
+            color: #7f8c8d;
+        }
+
+        .order-count {
+            font-size: 12px;
+            color: #3498db;
+            margin-top: 5px;
+        }
+
+        /* ===== ORDERS TABLE ===== */
+        .orders-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+
+            .orders-table th {
+                background: #3498db;
+                color: white;
+                padding: 12px;
+                text-align: left;
+            }
+
+            .orders-table td {
+                padding: 12px;
+                border-bottom: 1px solid #eee;
+            }
+
+        .order-number {
+            color: #2c3e50;
+            font-weight: 500;
+        }
+
+            .order-number i {
+                margin-right: 8px;
+                color: #3498db;
+            }
+
+        .order-status {
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .status-ordered {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-waiting {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-dispensary {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        /* ===== NO RESULTS ===== */
+        .no-results {
+            text-align: center;
+            padding: 30px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            color: #95a5a6;
+            font-style: italic;
+        }
+
+        /* ===== ALERT MESSAGES ===== */
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            border-left: 4px solid;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            border-left-color: #28a745;
+            color: #155724;
+        }
+
+        .alert-warning {
+            background-color: #fff3cd;
+            border-left-color: #ffc107;
+            color: #856404;
+        }
+
+        .alert-danger {
+            background-color: #f8d7da;
+            border-left-color: #dc3545;
+            color: #721c24;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @@media (max-width: 768px) {
+            .sidebar {
+                width: 60px;
+            }
+
+                .sidebar:not(.collapsed) {
+                    width: 220px;
+                }
+
+            .topbar {
+                left: 60px;
+            }
+
+            .sidebar:not(.collapsed) + .topbar {
+                left: 220px;
+            }
+
+            .main-content {
+                margin-left: 60px;
+            }
+
+            .sidebar:not(.collapsed) + .topbar + .main-content {
+                margin-left: 220px;
+            }
+
+            .search-container {
+                flex-direction: column;
+            }
+
+            .patient-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- SIDEBAR -->
+    <div class="sidebar" id="sidebar">
+        <button class="toggle-sidebar" onclick="toggleSidebar()">
+            <i class="fas fa-chevron-left" id="sidebarIcon"></i>
+        </button>
+        <div class="sidebar-header">
+            <h2><i class="fas fa-prescription-bottle-alt"></i> <span>Pharmacist Panel</span></h2>
+            <small style="color: #bdc3c7;">Dedicated Dictionary</small>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="@Url.Action("Index", "PharmacistDispensing")"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+            <a href="LoadPrescriptions.html"><i class="fas fa-tachometer-alt"></i> Walk In Prescription</a>
+            <a href="@Url.Action("Index", "PharmacistDispensing")"><i class="fas fa-clipboard-list"></i> Orders</a>
+            <a href="unprocessedScripts.html"><i class="fas fa-file-prescription"></i> Unprocessed Scritps</a>
+            <a href="processedScripts.html"><i class="fas fa-boxes"></i> Processed Scripts</a>
+            <a href="TrackOrders.html"><i class="fas fa-boxes"></i> Track Orders</a>
+            <a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </nav>
+        <div class="sidebar-footer">
+            <p>Ibhayi Pharmacy v2.1</p>
+        </div>
+    </div>
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+        <span>Active Orders - Require Processing</span>
+        <div>Welcome, <strong>Pharmacist</strong></div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <!-- Alert Messages -->
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success">
+                <i class="fas fa-check-circle"></i> @TempData["SuccessMessage"]
+            </div>
+        }
+        @if (TempData["WarningMessage"] != null)
+        {
+            <div class="alert alert-warning">
+                <i class="fas fa-exclamation-triangle"></i> @TempData["WarningMessage"]
+            </div>
+        }
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger">
+                <i class="fas fa-exclamation-circle"></i> @TempData["ErrorMessage"]
+            </div>
+        }
+
+        <!-- DASHBOARD STATS -->
+        <div class="stats-container">
+            <div class="stat-card pending">
+                <div class="stat-number">@Model.PendingOrders.Count</div>
+                <div class="stat-label">Pending Orders</div>
+            </div>
+            <div class="stat-card waiting">
+                <div class="stat-number">@Model.WaitingCustomerAction.Count</div>
+                <div class="stat-label">Waiting Customer Action</div>
+            </div>
+            <div class="stat-card today">
+                <div class="stat-number">@Model.TodayDispensed</div>
+                <div class="stat-label">Processed Today</div>
+            </div>
+        </div>
+
+        <!-- SEARCH SECTION -->
+        <div class="search-section">
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="Search by patient name or order number..." id="patientSearch">
+                <button class="search-btn" onclick="searchPatients()"><i class="fas fa-search"></i> Search</button>
+            </div>
+        </div>
+
+        <!-- PATIENT CARDS -->
+        <div class="patient-cards" id="patientCards">
+            @{
+                // Create a list of only active orders that need processing
+                var activeOrders = Model.PendingOrders
+                .Concat(Model.WaitingCustomerAction)
+                .ToList();
+
+                // Group orders by customer
+                var patientsGrouped = activeOrders
+                .GroupBy(o => o.CustomerID)
+                .Select(g => new
+                {
+                    Customer = g.First().Customer,
+                    Orders = g.ToList()
+                })
+                .ToList();
+            }
+
+            @foreach (var patientGroup in patientsGrouped)
+            {
+                var customer = patientGroup.Customer;
+                var orders = patientGroup.Orders;
+                var latestOrder = orders.OrderByDescending(o => o.OrderDate).First();
+
+                <div class="patient-card"
+                     data-patient-id="@customer.CustormerID"
+                     data-patient-name="@customer.ApplicationUser?.Name @customer.ApplicationUser?.Surname"
+                     data-patient-idnumber="@customer.ApplicationUser?.IDNumber">
+                    <div class="patient-name">@customer.ApplicationUser?.Name @customer.ApplicationUser?.Surname</div>
+                    <div class="patient-id">ID: @customer.ApplicationUser?.IDNumber</div>
+                    <div class="order-count">@orders.Count order(s) - Latest: @latestOrder.OrderDate.ToString("dd/MM/yyyy")</div>
+
+                    <!-- Hidden orders data -->
+                    <div class="orders-data" style="display: none;">
+                        @foreach (var order in orders)
+                        {
+                            <div class="order-item"
+                                 data-order-id="@order.OrderID"
+                                 data-order-number="@order.OrderNumber"
+                                 data-order-date="@order.OrderDate.ToString("yyyy-MM-dd")"
+                                 data-total-due="@order.TotalDue"
+                                 data-status="@order.Status">
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- ORDERS TABLE (HIDDEN BY DEFAULT) -->
+        <div id="ordersTableContainer" style="display: none;">
+            <h3 id="selectedPatientName"></h3>
+            <table class="orders-table">
+                <thead>
+                    <tr>
+                        <th width="25%">Order Number</th>
+                        <th width="20%">Date</th>
+                        <th width="20%">Total Due</th>
+                        <th width="20%">Status</th>
+                        <th width="15%">Action</th>
+                    </tr>
+                </thead>
+                <tbody id="ordersTableBody">
+                    <!-- Order rows will be dynamically inserted here -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- NO RESULTS MESSAGE (HIDDEN BY DEFAULT) -->
+        <div class="no-results" id="noResults" style="display: none;">
+            <i class="fas fa-search" style="font-size: 24px; margin-bottom: 10px;"></i>
+            <p>No active orders requiring processing</p>
+        </div>
+    </div>
+
+    <script>
+        // Toggle sidebar
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            sidebar.classList.toggle('collapsed');
+
+            const toggleBtn = document.querySelector('.toggle-sidebar i');
+            if (sidebar.classList.contains('collapsed')) {
+                toggleBtn.classList.remove('fa-chevron-left');
+                toggleBtn.classList.add('fa-chevron-right');
+            } else {
+                toggleBtn.classList.remove('fa-chevron-right');
+                toggleBtn.classList.add('fa-chevron-left');
+            }
+        }
+
+        // Search patients by name or order number
+        function searchPatients() {
+            const searchTerm = document.getElementById('patientSearch').value.toLowerCase();
+            const patientCards = document.querySelectorAll('.patient-card');
+            let hasVisibleCards = false;
+
+            patientCards.forEach(card => {
+                const patientName = card.getAttribute('data-patient-name').toLowerCase();
+                const patientId = card.getAttribute('data-patient-idnumber').toLowerCase();
+
+                if (patientName.includes(searchTerm) || patientId.includes(searchTerm)) {
+                    card.style.display = 'block';
+                    hasVisibleCards = true;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            document.getElementById('noResults').style.display = hasVisibleCards ? 'none' : 'block';
+            document.getElementById('ordersTableContainer').style.display = 'none';
+        }
+
+        // Show/hide orders for selected patient
+        function showOrders(patientCard) {
+            const patientName = patientCard.getAttribute('data-patient-name');
+            const ordersTableContainer = document.getElementById('ordersTableContainer');
+            const isCurrentlyActive = patientCard.classList.contains('active');
+
+            // Remove active class from all cards
+            document.querySelectorAll('.patient-card').forEach(card => {
+                card.classList.remove('active');
+            });
+
+            // If clicking the same card that was already active, hide the table
+            if (isCurrentlyActive) {
+                ordersTableContainer.style.display = 'none';
+                return;
+            }
+
+            // Add active class to clicked card
+            patientCard.classList.add('active');
+
+            document.getElementById('selectedPatientName').textContent = `Active Orders for ${patientName}`;
+
+            // Get orders from hidden data
+            const orderItems = patientCard.querySelectorAll('.order-item');
+            const orders = Array.from(orderItems).map(item => ({
+                orderId: item.getAttribute('data-order-id'),
+                orderNumber: item.getAttribute('data-order-number'),
+                orderDate: item.getAttribute('data-order-date'),
+                totalDue: item.getAttribute('data-total-due'),
+                status: item.getAttribute('data-status')
+            }));
+
+            // Populate orders table
+            const tableBody = document.getElementById('ordersTableBody');
+            tableBody.innerHTML = '';
+
+            if (orders.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="5" style="text-align: center; color: #95a5a6; font-style: italic;">
+                            No active orders found for this patient
+                        </td>
+                    </tr>
+                `;
+            } else {
+                // Sort orders by date (newest first)
+                orders.sort((a, b) => new Date(b.orderDate) - new Date(a.orderDate));
+
+                orders.forEach(order => {
+                    const row = document.createElement('tr');
+
+                    // Determine status class and display text
+                    let statusClass = 'status-ordered';
+                    let statusText = order.status;
+
+                    if (order.status === 'Waiting Customer Action') {
+                        statusClass = 'status-waiting';
+                    } else if (order.status === 'Ordered') {
+                        statusClass = 'status-ordered';
+                    }
+
+                    // Format date properly
+                    let formattedDate = 'Invalid Date';
+                    try {
+                        const orderDate = new Date(order.orderDate);
+                        if (!isNaN(orderDate)) {
+                            formattedDate = `${orderDate.getDate().toString().padStart(2, '0')}/${(orderDate.getMonth() + 1).toString().padStart(2, '0')}/${orderDate.getFullYear()}`;
+                        }
+                    } catch (e) {
+                        console.error('Date parsing error:', e);
+                    }
+
+                    // Only show action button for orders that can be processed
+                    const canProcess = order.status === 'Ordered';
+
+                    row.innerHTML = `
+                        <td class="order-number">
+                            <i class="fas fa-receipt"></i> ${order.orderNumber || 'N/A'}
+                        </td>
+                        <td>${formattedDate}</td>
+                        <td>${order.totalDue || 'N/A'}</td>
+                        <td>
+                            <span class="order-status ${statusClass}">
+                                ${statusText || 'Unknown'}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="action-buttons">
+                                ${canProcess ? `
+                                    <a href="/PharmacistDispensing/DispenseOrder/${order.orderId}" class="btn btn-dispensary">
+                                        <i class="fas fa-clinic-medical"></i> Process Order
+                                    </a>
+                                ` : `
+                                    <span style="color: #95a5a6; font-style: italic;">No action required</span>
+                                `}
+                            </div>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            }
+
+            // Show orders table
+            ordersTableContainer.style.display = 'block';
+            document.getElementById('noResults').style.display = 'none';
+        }
+
+        // Add click event listeners to patient cards
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.patient-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    showOrders(this);
+                });
+            });
+
+            // Add enter key support for search
+            document.getElementById('patientSearch').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    searchPatients();
+                }
+            });
+
+            // Auto-click the first patient card if available
+            const firstPatientCard = document.querySelector('.patient-card');
+            if (firstPatientCard) {
+                firstPatientCard.click();
+            }
+        });
+    </script>
+</body>
+</html>

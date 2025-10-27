@@ -1,0 +1,141 @@
+﻿@{
+    ViewData["Title"] = "Unprocessed Scripts";
+    Layout = "~/Views/Shared/PharmacistLayouts/_UnprocessedScriptsLayout.cshtml";
+}
+
+<div>
+    <h2>Prescriptions To Be Dispensed</h2>
+
+    <div class="search-container">
+        <div class="search-bar">
+            <input type="text" placeholder="Search by patient name or ID..." id="searchInput">
+            <button id="searchButton"><i class="fas fa-search"></i> Search</button>
+        </div>
+    </div>
+
+    <div class="loading" id="loading">
+        <div class="loading-spinner"></div> Searching...
+    </div>
+
+    <div class="scripts-list" id="scriptsList">
+        <!-- Script 1 - With Multiple Doctors -->
+        <div class="script-card" data-script-id="1001">
+            <div class="script-header">
+                <div>
+                    <span class="script-patient">Patient: John Doe (ID: 9001011234081)</span>
+                </div>
+                <span class="script-status status-pending">Ready</span>
+            </div>
+            <div class="script-meta">
+                <span>New Order</span>
+                <span>Date: 2023-05-15</span>
+                <span class="script-repeat">Repeat (2 remaining)</span>
+            </div>
+
+            <div class="script-details">
+                <h4>Available Prescriptions:</h4>
+                <div class="doctor-prescriptions">
+                    <div class="prescription-option selected" data-pdf="script1001a.pdf">
+                        <strong>Order No: Jhn146</strong>
+                        <div class="prescription-meta">Issued: 15 May 2025</div>
+                        <div class="prescription-pdf">
+                            <embed src="script1001a.pdf" type="application/pdf" width="100%" height="100%">
+                        </div>
+                    </div>
+                    <div class="prescription-option" data-pdf="script1001b.pdf">
+                        <strong>Order No: Jhn1414</strong>
+                        <div class="prescription-meta">Issued: 10 May 2025</div>
+                        <div class="prescription-pdf">
+                            <embed src="script1001b.pdf" type="application/pdf" width="100%" height="100%">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="email-btn"><i class="fas fa-envelope"></i> Email</button>
+            <button class="dispense-btn"><i class="fas fa-pills"></i> Dispense Selected</button>
+            <div style="clear:both"></div>
+        </div>
+
+        <!-- Script 2 - Single Doctor -->
+        <div class="script-card" data-script-id="1002">
+            <div class="script-header">
+                <div>
+                    <span class="script-patient">Patient: Amanda Johnson (ID: 8902021234082)</span>
+                </div>
+                <span class="script-status status-pending">Ready</span>
+            </div>
+            <div class="script-meta">
+                <span></span>
+                <span>Date: 2025-05-14</span>
+            </div>
+
+            <div class="script-details">
+                <h4>Available Prescription:</h4>
+                <div class="doctor-prescriptions">
+                    <div class="prescription-option selected" data-pdf="script1002.pdf">
+                        <strong>Order No: Lk137</strong>
+                        <div class="prescription-meta">Issued: 14 May 2025</div>
+                        <div class="prescription-pdf">
+                            <embed src="script1002.pdf" type="application/pdf" width="100%" height="100%">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="email-btn"><i class="fas fa-envelope"></i> Email</button>
+            <button class="dispense-btn"><i class="fas fa-pills"></i> Dispense</button>
+            <div style="clear:both"></div>
+        </div>
+
+        <!-- Script 3 - Another Multi-Doctor -->
+        <div class="script-card" data-script-id="1003">
+            <div class="script-header">
+                <div>
+                    <span class="script-patient">Patient: Lunga Dlamini (ID: 8803031234083)</span>
+                </div>
+                <span class="script-status status-pending">Ready</span>
+            </div>
+            <div class="script-meta">
+                <span></span>
+                <span>Date: 2023-05-12</span>
+                <span class="script-repeat">Repeat (FINAL)</span>
+            </div>
+
+            <div class="script-details">
+                <h4>Available Prescriptions:</h4>
+                <div class="doctor-prescriptions">
+                    <div class="prescription-option selected" data-pdf="script1003a.pdf">
+                        <strong>Order No: Ish6011</strong>
+                        <div class="prescription-meta">Issued: 12 May 2025</div>
+                        <div class="prescription-pdf">
+                            <embed src="script1003a.pdf" type="application/pdf" width="100%" height="100%">
+                        </div>
+                    </div>
+                    <div class="prescription-option" data-pdf="script1003b.pdf">
+                        <strong>Order No: Ish6022</strong>
+                        <div class="prescription-meta">Issued: 05 May 2025</div>
+                        <div class="prescription-pdf">
+                            <embed src="script1003b.pdf" type="application/pdf" width="100%" height="100%">
+                        </div>
+                    </div>
+                    <div class="prescription-option" data-pdf="script1003b.pdf">
+                        <strong>Order No: Eph320</strong>
+                        <div class="prescription-meta">Issued: 05 May 2025</div>
+                        <div class="prescription-pdf">
+                            <embed src="script1003b.pdf" type="application/pdf" width="100%" height="100%">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="email-btn"><i class="fas fa-envelope"></i> Email</button>
+            <button class="dispense-btn"><i class="fas fa-pills"></i> Dispense Selected</button>
+            <div style="clear:both"></div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/unprocessedScripts.js"></script>
+}

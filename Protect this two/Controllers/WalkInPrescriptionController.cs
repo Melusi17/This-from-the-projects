@@ -1,4 +1,4 @@
-using IbhayiPharmacy.Data;
+﻿using IbhayiPharmacy.Data;
 using IbhayiPharmacy.Models;
 using IbhayiPharmacy.Models.PharmacistVM;
 using Microsoft.AspNetCore.Authorization;

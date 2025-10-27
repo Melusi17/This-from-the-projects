@@ -1,0 +1,27 @@
+﻿@model IbhayiPharmacy.Models.Active_Ingredient
+
+@{
+    ViewData["Title"] = "Add Active Ingredient";
+    Layout = "~/Views/Shared/_ManagerLayout.cshtml";
+}
+
+<div class="card p-3 mt-4">
+    <h5 class="title-underline mb-3">Add New Ingredient</h5>
+
+    <form asp-action="AddActiveIngredients" method="post">
+       
+
+        <div class="mb-3">
+            <label asp-for="Name" class="form-label"></label>
+            <input asp-for="Name" class="form-control" placeholder="e.g. Paracetamol" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Add Ingredient</button>
+        <a asp-action="ActiveIngredients" class="btn btn-secondary ms-2">Cancel</a>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

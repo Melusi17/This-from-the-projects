@@ -1,0 +1,233 @@
+﻿
+@{
+    ViewData["Title"] = "Track Order";
+    Layout = "~/Views/Shared/CustomerLayout/_CustomerLayout.cshtml";
+}
+<style>
+    body {
+        background-color: #ffffff;
+        color: #333;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    .track-order-panel {
+        padding: 30px;
+        margin: 30px auto;
+        max-width: 1000px;
+        background-color: #fdfdfd;
+        border: 2px solid #e0e0e0;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+        border-radius: 10px;
+    }
+
+    h2 {
+        font-size: 26px;
+        color: #1f9f77;
+        margin-bottom: 20px;
+    }
+
+    .prescription-table {
+        width: 100%;
+        border-collapse: collapse;
+        background-color: #ffffff;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+        .prescription-table th,
+        .prescription-table td {
+            padding: 14px 16px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .prescription-table th {
+            background-color: #1f9f77;
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+    .order-summary-row {
+        cursor: pointer;
+        background-color: #e3f5f0;
+        font-weight: bold;
+        transition: background-color 0.3s ease;
+    }
+
+        .order-summary-row:hover {
+            background-color: #c1e8dd;
+        }
+
+    .status {
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 14px;
+        background-color: #1f9f77;
+        color: #ffffff;
+        display: inline-block;
+    }
+
+    .details-row {
+        display: none;
+        background-color: #f9f9f9;
+    }
+
+    .details-table {
+        width: 100%;
+        border-collapse: collapse;
+        background-color: #ffffff;
+        border: 1px solid #ccc;
+        margin-top: 10px;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+        .details-table th,
+        .details-table td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+            color: #333;
+        }
+
+        .details-table thead {
+            background-color: #1f9f77;
+            color: #ffffff;
+            font-weight: bold;
+        }
+
+</style>
+<div class="track-order-panel">
+    <h2>📦 Track Your Orders</h2>
+    <table class="prescription-table">
+        <thead>
+            <tr>
+                <th>Order No.</th>
+                <th>Date</th>              
+                <th>Status</th>
+                <th>Total Due (R)</th>
+            </tr>
+        </thead>
+
+        <tbody id="orderBody">
+            <!-- Rendered by JavaScript -->
+        </tbody>
+
+    </table>
+</div>
+
+<script>
+    // Sample demo data in localStorage
+    if (!localStorage.getItem("allMedicationOrders")) {
+        const sampleOrders = [
+            {
+                orderNumber: "ORD1001",
+                date: "2025-05-13",
+                status: "Ordered",
+                medications: [
+                    {
+                        doctor: "Dr. John Smith",
+                        name: "Amoxicillin 250mg",
+                        qty: 20,
+                        instruction: "1 capsule three times a day",
+                        repeats: 4,
+                        price: "150.00"
+                    },
+                    {
+                        doctor: "Dr. John Smith",
+                        name: "Ibuprofen 200mg",
+                        qty: 15,
+                        instruction: "Take after meals",
+                        repeats: 2,
+                        price: "75.00"
+                    }
+                ]
+            },
+            {
+                orderNumber: "ORD1002",
+                date: "2025-05-15",
+                status: "Packaging",
+                medications: [
+                    {
+                        doctor: "Dr. Clara Jones",
+                        name: "Paracetamol 500mg",
+                        qty: 30,
+                        instruction: "2 tablets every 6 hours",
+                        repeats: 3,
+                        price: "120.00"
+                    }
+                ]
+            }
+        ];
+        localStorage.setItem("allMedicationOrders", JSON.stringify(sampleOrders));
+    }
+
+    const orders = JSON.parse(localStorage.getItem("allMedicationOrders"));
+
+    function renderOrders() {
+        const tbody = document.getElementById("orderBody");
+        tbody.innerHTML = "";
+
+    orders.forEach((order, index) => {
+        const totalDue = order.medications.reduce((sum, med) => sum + parseFloat(med.price), 0).toFixed(2);
+
+        const summaryRow = document.createElement("tr");
+        summaryRow.className = "order-summary-row";
+        summaryRow.innerHTML = `
+            <td>${order.orderNumber}</td>
+            <td>${order.date}</td>
+            <td><span class="status">${order.status}</span></td>
+            <td>R ${totalDue}</td>
+        `;
+        summaryRow.addEventListener("click", () => toggleDetails(index));
+
+
+            const detailsRow = document.createElement("tr");
+            detailsRow.className = "details-row";
+            detailsRow.id = `details-${index}`;
+            detailsRow.innerHTML = `
+                <td colspan="3">
+                    <table class="details-table">
+                        <thead>
+                            <tr>
+                                <th>Doctor</th>
+                                <th>Medication</th>
+                                <th>Qty</th>
+                                <th>Instruction</th>
+                                <th>Repeats</th>
+                                <th>Price (R)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${order.medications.map(med => `
+                                <tr>
+                                    <td>${med.doctor}</td>
+                                    <td>${med.name}</td>
+                                    <td>${med.qty}</td>
+                                    <td>${med.instruction}</td>
+                                    <td>${med.repeats}</td>
+                                    <td>${med.price}</td>
+                                </tr>
+                            `).join("")}
+                        </tbody>
+                    </table>
+                </td>
+            `;
+
+            tbody.appendChild(summaryRow);
+            tbody.appendChild(detailsRow);
+        });
+    }
+
+    function toggleDetails(index) {
+        const row = document.getElementById(`details-${index}`);
+        row.style.display = (row.style.display === "table-row") ? "none" : "table-row";
+    }
+
+    window.onload = renderOrders;
+    localStorage.clear();
+</script>
+

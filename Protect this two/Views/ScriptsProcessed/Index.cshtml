@@ -1,0 +1,559 @@
+﻿@model List<Prescription>
+@{
+    ViewData["Title"] = "Unprocessed Scripts - Ibhayi Pharmacy";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Unprocessed Scripts - Ibhayi Pharmacy</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ===== GLOBAL STYLES ===== */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f4f6f9;
+            color: #333;
+            transition: all 0.3s;
+        }
+
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            width: 220px;
+            background: linear-gradient(to bottom, #22586A, #22586A);
+            height: 100vh;
+            padding: 20px 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+            transition: all 0.3s;
+        }
+
+            .sidebar.collapsed {
+                width: 60px;
+                overflow: hidden;
+            }
+
+                .sidebar.collapsed .sidebar-header h2,
+                .sidebar.collapsed .sidebar-nav a span,
+                .sidebar.collapsed .sidebar-footer p {
+                    display: none;
+                }
+
+                .sidebar.collapsed .sidebar-nav a {
+                    justify-content: center;
+                }
+
+        .sidebar-header {
+            padding: 0 20px 20px;
+            border-bottom: 1px solid #34495e;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .sidebar h2 {
+            font-size: 22px;
+            margin: 0;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+            .sidebar h2 i {
+                color: #3498db;
+            }
+
+        .sidebar-nav {
+            padding: 0 10px;
+        }
+
+        .sidebar a {
+            color: #ecf0f1;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 8px 0;
+            padding: 10px 15px;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+
+            .sidebar a:hover, .sidebar a.active {
+                background-color: #34495e;
+                transform: translateX(5px);
+            }
+
+        .sidebar-footer {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            padding: 0 20px;
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+
+        .toggle-sidebar {
+            position: absolute;
+            right: -15px;
+            top: 20px;
+            background: #3498db;
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        /* ===== TOPBAR ===== */
+        .topbar {
+            background-color: #ffffff;
+            height: 60px;
+            padding: 0 20px;
+            position: fixed;
+            left: 220px;
+            right: 0;
+            top: 0;
+            border-bottom: 1px solid #ccc;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 999;
+            transition: all 0.3s;
+        }
+
+        .sidebar.collapsed + .topbar {
+            left: 60px;
+        }
+
+        .topbar span {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .main-content {
+            margin-left: 220px;
+            margin-top: 60px;
+            padding: 30px;
+            transition: all 0.3s;
+        }
+
+        .sidebar.collapsed + .topbar + .main-content {
+            margin-left: 60px;
+        }
+
+        /* ===== SEARCH SECTION ===== */
+        .search-section {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .search-container {
+            display: flex;
+            gap: 15px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .search-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+            .search-btn:hover {
+                opacity: 0.9;
+            }
+
+        /* ===== PRESCRIPTION TABLE ===== */
+        .prescription-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+
+            .prescription-table th {
+                background: #3498db;
+                color: white;
+                padding: 12px;
+                text-align: left;
+            }
+
+            .prescription-table td {
+                padding: 12px;
+                border-bottom: 1px solid #eee;
+            }
+
+        .prescription-file {
+            color: #3498db;
+            font-weight: 500;
+        }
+
+            .prescription-file i {
+                margin-right: 8px;
+            }
+
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-unprocessed {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-processed {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .dispense-yes {
+            background: #d4edda;
+            color: #155724;
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .dispense-no {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-process {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-dispense {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-download {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        /* ===== NO RESULTS ===== */
+        .no-results {
+            text-align: center;
+            padding: 30px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            color: #95a5a6;
+            font-style: italic;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @@media (max-width: 768px) {
+            .sidebar {
+                width: 60px;
+            }
+
+                .sidebar:not(.collapsed) {
+                    width: 220px;
+                }
+
+            .topbar {
+                left: 60px;
+            }
+
+            .sidebar:not(.collapsed) + .topbar {
+                left: 220px;
+            }
+
+            .main-content {
+                margin-left: 60px;
+            }
+
+            .sidebar:not(.collapsed) + .topbar + .main-content {
+                margin-left: 220px;
+            }
+
+            .search-container {
+                flex-direction: column;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .btn {
+                text-align: center;
+                padding: 8px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2><i class="fas fa-prescription-bottle-alt"></i> Pharmacist Panel</h2>
+            <button class="toggle-sidebar" onclick="toggleSidebar()">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <small style="color: #bdc3c7;">Dedicated Dictionary</small>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="#"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+            <a href="LoadPrescriptions.html"><i class="fas fa-tachometer-alt"></i> Walk In Prescription</a>
+            <a href="Orders.html"><i class="fas fa-clipboard-list"></i> Orders</a>
+            <a href="unprocessedScripts.html" class="active"><i class="fas fa-file-prescription"></i> Unprocessed Scripts</a>
+            <a href="processedScripts.html"><i class="fas fa-boxes"></i> Processed Scripts</a>
+            <a href="TrackOrders.html"><i class="fas fa-boxes"></i> Track Orders</a>
+            <a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </nav>
+        <div class="sidebar-footer">
+            <p>Ibhayi Pharmacy v2.1</p>
+        </div>
+    </div>
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+        <span>Unprocessed Scripts</span>
+        <div>Welcome, <strong>Pharmacist</strong></div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <!-- SEARCH SECTION -->
+        <div class="search-section">
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="Search by patient name, ID number, or email..." id="patientSearch">
+                <button class="search-btn" onclick="searchPrescriptions()"><i class="fas fa-search"></i> Search</button>
+            </div>
+        </div>
+
+        <!-- PRESCRIPTION TABLE -->
+        @if (Model.Any())
+        {
+            <table class="prescription-table">
+                <thead>
+                    <tr>
+                        <th width="15%">Patient Name</th>
+                        <th width="15%">ID Number</th>
+                        <th width="15%">Email</th>
+                        <th width="15%">Date Issued</th>
+                        <th width="10%">Status</th>
+                        <th width="10%">Dispense Upon Approval</th>
+                        <th width="20%">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="prescriptionTableBody">
+                    @foreach (var prescription in Model)
+                    {
+                        <tr>
+                            <td>@prescription.ApplicationUser?.Name @prescription.ApplicationUser?.Surname</td>
+                            <td>@prescription.ApplicationUser?.IDNumber</td>
+                            <td>@prescription.ApplicationUser?.Email</td>
+                            <td>@prescription.DateIssued.ToString("yyyy-MM-dd")</td>
+                            <td>
+                                @{
+                                    var status = string.IsNullOrEmpty(prescription.Status) ? "Unprocessed" : prescription.Status;
+                                    var statusClass = status.ToLower() switch
+                                    {
+                                        "unprocessed" => "status-unprocessed",
+                                        "pending" => "status-pending",
+                                        "processed" => "status-processed",
+                                        _ => "status-pending"
+                                    };
+                                }
+                                <span class="status-badge @statusClass">@status</span>
+                            </td>
+                            <td>
+                                @if (prescription.DispenseUponApproval)
+                                {
+                                    <span class="dispense-yes">Yes</span>
+                                }
+                                else
+                                {
+                                    <span class="dispense-no">No</span>
+                                }
+                            </td>
+                            <td>
+                                <div class="action-buttons">
+                                    @if (prescription.Script != null && prescription.Script.Length > 0)
+                                    {
+                                        <a asp-action="Download" asp-route-id="@prescription.PrescriptionID" class="btn btn-download">
+                                            <i class="fas fa-download"></i> Download
+                                        </a>
+                                    }
+
+                                    @if (prescription.DispenseUponApproval)
+                                    {
+                                        <!-- Process And Dispense Button - Goes to ProcessAndDispense View -->
+                                        <a asp-controller="ScriptsProcessed"
+                                           asp-action="ProcessAndDispense"
+                                           asp-route-id="@prescription.PrescriptionID"
+                                           class="btn btn-dispense">
+                                            <i class="fas fa-cogs"></i> Process & Dispense
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <!-- Regular Process Button - Goes to Edit View -->
+                                        <a asp-controller="ScriptsProcessed"
+                                           asp-action="Edit"
+                                           asp-route-id="@prescription.PrescriptionID"
+                                           class="btn btn-process">
+                                            <i class="fas fa-edit"></i> Process
+                                        </a>
+                                    }
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <div class="no-results">
+                <i class="fas fa-search" style="font-size: 24px; margin-bottom: 10px;"></i>
+                <p>No unprocessed scripts found</p>
+                <p class="small">All prescriptions have been processed or there are no pending prescriptions.</p>
+            </div>
+        }
+    </div>
+
+    <script>
+        // Toggle sidebar
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            sidebar.classList.toggle('collapsed');
+
+            const toggleBtn = document.querySelector('.toggle-sidebar i');
+            if (sidebar.classList.contains('collapsed')) {
+                toggleBtn.classList.remove('fa-chevron-left');
+                toggleBtn.classList.add('fa-chevron-right');
+            } else {
+                toggleBtn.classList.remove('fa-chevron-right');
+                toggleBtn.classList.add('fa-chevron-left');
+            }
+        }
+
+        // Search prescriptions
+        function searchPrescriptions() {
+            const searchTerm = document.getElementById('patientSearch').value.toLowerCase();
+            const rows = document.querySelectorAll('#prescriptionTableBody tr');
+            let hasVisibleRows = false;
+
+            rows.forEach(row => {
+                const name = row.cells[0].textContent.toLowerCase();
+                const idNumber = row.cells[1].textContent.toLowerCase();
+                const email = row.cells[2].textContent.toLowerCase();
+
+                if (name.includes(searchTerm) || idNumber.includes(searchTerm) || email.includes(searchTerm)) {
+                    row.style.display = '';
+                    hasVisibleRows = true;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            // Show/hide no results message
+            const noResults = document.querySelector('.no-results');
+            if (!hasVisibleRows && rows.length > 0) {
+                if (!noResults) {
+                    const table = document.querySelector('.prescription-table');
+                    const newNoResults = document.createElement('div');
+                    newNoResults.className = 'no-results';
+                    newNoResults.innerHTML = `
+                        <i class="fas fa-search" style="font-size: 24px; margin-bottom: 10px;"></i>
+                        <p>No prescriptions match your search criteria</p>
+                    `;
+                    table.parentNode.insertBefore(newNoResults, table.nextSibling);
+                } else {
+                    noResults.style.display = 'block';
+                }
+            } else if (noResults) {
+                noResults.style.display = 'none';
+            }
+        }
+
+        // Add enter key support for search
+        document.getElementById('patientSearch').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchPrescriptions();
+            }
+        });
+
+        // Auto-focus search on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('patientSearch').focus();
+        });
+    </script>
+</body>
+</html>

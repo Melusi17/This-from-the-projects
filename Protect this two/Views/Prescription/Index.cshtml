@@ -1,0 +1,50 @@
+﻿@model IEnumerable<IbhayiPharmacy.Models.Prescription>
+
+@{
+    ViewData["Title"] = "Prescriptions List";
+}
+
+<div class="container py-4">
+    <h2>Prescriptions</h2>
+
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Prescription ID</th>
+                <th>Date Issued</th>
+                <th>Script</th>
+                <th>Dispense Upon Approval</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var prescription in Model)
+            {
+                <tr>
+                    <td>@prescription.PrescriptionID</td>
+                    <td>@prescription.DateIssued.ToString("yyyy-MM-dd HH:mm")</td>
+                    <td>
+                        @if (prescription.Script != null && prescription.Script.Length > 0)
+                        {
+                            <a asp-controller="Prescription" asp-action="Download" asp-route-id="@prescription.PrescriptionID">
+                                @($"Prescription_{prescription.PrescriptionID}.pdf")
+                            </a>
+                        }
+                        else
+                        {
+                            <span>No file</span>
+                        }
+                    </td>
+                    <td>
+                        @(prescription.DispenseUponApproval ? "Yes" : "")
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@prescription.PrescriptionID" class="btn btn-sm btn-primary">Edit</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <a asp-action="Upsert" class="btn btn-success">Create New Prescription</a>
+</div>

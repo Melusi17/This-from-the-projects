@@ -1,0 +1,690 @@
+﻿@model List<IbhayiPharmacy.Models.PharmacistVM.CustomerOrderVM>
+@{
+    ViewData["Title"] = "Place Order - Customer Dashboard";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Place Order - Customer Dashboard</title>
+    <style>
+        /* Your exact CSS styles */
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f4f6f9;
+            overflow: hidden;
+        }
+
+        .dashboard-wrapper {
+            display: flex;
+            height: 100vh;
+        }
+
+        .sidebar {
+            width: 220px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.05);
+        }
+
+        .sidebar-left {
+            background: linear-gradient(to bottom, #22586A, #22586A);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            padding: 10px;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        .sidebar-right {
+            background: linear-gradient(145deg, #ffffff, #f0f0f0);
+            border-top-left-radius: 30px;
+            border-bottom-left-radius: 30px;
+            border-left: 1px solid #ddd;
+            width: 180px;
+        }
+
+        .upload-prescription-panel {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.07);
+            max-width: 1200px;
+            margin: 20px auto;
+        }
+
+        .btn-upload {
+            background-color: #1f9f77;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+            .btn-upload:hover {
+                background-color: #28bf96;
+            }
+
+        .prescription-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+
+            .prescription-table th,
+            .prescription-table td {
+                padding: 12px 15px;
+                border: 1px solid #ccc;
+                text-align: left;
+            }
+
+            .prescription-table th {
+                background-color: #e0f2f1;
+                color: #004d40;
+            }
+
+        .sidebar-button-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            width: 100%;
+        }
+
+        .sidebar-button {
+            display: block;
+            width: 100%;
+            text-align: left;
+            padding: 15px 25px;
+            margin: 5px 0;
+            background: transparent;
+            color: white;
+            font-weight: bold;
+            text-decoration: none;
+            border: none;
+            border-radius: 25px 0 0 25px;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.2s ease;
+            font-size: 16px;
+        }
+
+            .sidebar-button:hover {
+                background-color: rgba(255, 255, 255, 0.15);
+                transform: translateX(5px);
+                color: #e0f7f5;
+            }
+
+        .hidden {
+            display: none;
+        }
+
+        .profile-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        .profile-icon img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 3px solid #1f9f77;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+
+            .profile-icon img:hover {
+                transform: scale(1.05);
+            }
+
+        .profile-menu {
+            position: absolute;
+            top: 70px;
+            right: 0;
+            background: #fff;
+            border: 1px solid #ccc;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            padding: 10px;
+            border-radius: 8px;
+            width: 160px;
+            z-index: 10;
+        }
+
+        .notifications {
+            border-top: 0px solid #eee;
+            padding-top: 50px;
+        }
+
+        /* Medication Order Panel */
+        .track-order-panel {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.07);
+            max-width: 900px;
+            margin: 0 auto;
+            font-family: Arial, sans-serif;
+        }
+
+            .track-order-panel h2 {
+                margin-bottom: 20px;
+                font-size: 24px;
+                color: #00796b;
+            }
+
+        /* Alert Messages */
+        .alert {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        /* Medication Table */
+        .styled-medication-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0 auto 30px auto;
+            font-size: 14px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+            .styled-medication-table th,
+            .styled-medication-table td {
+                border: 1px solid #ccc;
+                padding: 10px 12px;
+                text-align: center;
+            }
+
+            .styled-medication-table thead {
+                background-color: #1f9f77;
+                color: white;
+            }
+
+            .styled-medication-table tbody tr:nth-child(even) {
+                background-color: #f9f9f9;
+            }
+
+            .styled-medication-table tbody tr:hover {
+                background-color: #e3f5f0;
+            }
+
+        .no-medications {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            font-style: italic;
+        }
+
+        /* Order Summary */
+        .order-summary-container {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #e6f5f1;
+            border-left: 4px solid #1f9f77;
+            border-radius: 8px;
+        }
+
+        .summary {
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        .btn-upload:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        .btn-upload.cancel {
+            background-color: #999;
+        }
+
+            .btn-upload.cancel:hover {
+                background-color: #777;
+            }
+
+        /* Modal Styling */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+
+            .modal-content h3 {
+                margin-bottom: 20px;
+                font-size: 20px;
+            }
+
+        .modal-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+            .modal-table th,
+            .modal-table td {
+                border: 1px solid #ccc;
+                padding: 8px;
+                text-align: left;
+            }
+
+            .modal-table th {
+                background-color: #f5f5f5;
+            }
+
+        .modal-buttons {
+            text-align: right;
+        }
+
+        .total-summary {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .checkbox-cell {
+            text-align: center;
+        }
+
+        .price-cell {
+            text-align: right;
+            font-weight: bold;
+        }
+
+        .repeat-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 5px;
+        }
+
+        .repeat-available {
+            background-color: #e8f5e8;
+            color: #2e7d32;
+        }
+
+        .no-repeat {
+            background-color: #fff3e0;
+            color: #ef6c00;
+        }
+
+        .success-message {
+            text-align: center;
+            color: #1f9f77;
+            font-weight: 500;
+            background-color: #e6f5f1;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+
+        .error-message {
+            text-align: center;
+            color: #e74c3c;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-wrapper">
+        <!-- Left Sidebar -->
+        <aside class="sidebar sidebar-left">
+            <div class="sidebar-header">
+                <img style="height:160px;width:220px;" src="~/css/img/ibhayi2.png" alt="Ibhayi Pharmacy" />
+            </div>
+            <div class="sidebar-content">
+                <nav>
+                    <div class="sidebar-button-container">
+                        <a asp-controller="CustomerDashboard" asp-action="UploadPrescription" class="sidebar-button">📥 Upload Prescription</a>
+                        <a asp-controller="CustomerDashboard" asp-action="PlaceOrder" class="sidebar-button">🛒 Place Orders</a>
+                        <a asp-controller="CustomerDashboard" asp-action="TrackOrder" class="sidebar-button">📦 Track Orders</a>
+                        <a asp-controller="CustomerDashboard" asp-action="ManageRepeats" class="sidebar-button">🔁 Manage Repeats</a>
+                        <a asp-controller="CustomerDashboard" asp-action="ViewReports" class="sidebar-button">📄 View Reports</a>
+                        <a asp-controller="Home" asp-action="Index" class="sidebar-button" onclick="return confirm('Are you sure you want to log out?');">
+                            &#10145; Logout
+                        </a>
+                    </div>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content" id="mainContent">
+            <div class="upload-prescription-panel">
+                <h2>📦 Place Medication Order</h2>
+
+                <!-- Alert Messages -->
+                <div id="orderStatus"></div>
+
+                @if (!Model.Any())
+                {
+                    <div class="no-medications">
+                        <h3>No medications available for ordering</h3>
+                        <p>You don't have any approved prescriptions ready for ordering.</p>
+                        <p>Please upload a prescription first or check if your prescriptions have been processed.</p>
+                        <a asp-controller="CustomerDashboard" asp-action="UploadPrescription" class="btn-upload" style="margin-top: 15px;">
+                            📥 Upload Prescription
+                        </a>
+                    </div>
+                }
+                else
+                {
+                    <form id="orderForm" asp-controller="CustomerOrders" asp-action="PlaceOrder" method="post">
+                        @Html.AntiForgeryToken()
+
+                        <table class="prescription-table">
+                            <thead>
+                                <tr>
+                                    <th>Select</th>
+                                    <th>Doctor</th>
+                                    <th>Medication</th>
+                                    <th>Qty</th>
+                                    <th>Repeats</th>
+                                    <th>Instructions</th>
+                                    <th>Price (R)</th>
+                                    <th>Line Total (R)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="medicationBody">
+                                @for (int i = 0; i < Model.Count; i++)
+                                {
+                                    var medication = Model[i];
+                                    <tr>
+                                        <td class="checkbox-cell">
+                                            <input type="checkbox"
+                                                   class="med-check"
+                                                   name="SelectedScriptLineIds"
+                                                   value="@medication.ScriptLineID"
+                                                   data-price="@medication.CurrentPrice"
+                                                   data-quantity="@medication.Quantity"
+                                                   onchange="updateTotals()" />
+                                        </td>
+                                        <td>@medication.FullDoctorName</td>
+                                        <td>@medication.MedicationName</td>
+                                        <td>@medication.Quantity</td>
+                                        <td>
+                                            @if (medication.RepeatsLeft > 0)
+                                            {
+                                                <span class="repeat-badge repeat-available" title="Available for refills">
+                                                    🔄 @medication.RepeatsLeft of @medication.TotalRepeats
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="repeat-badge no-repeat" title="One-time medication">
+                                                    ⏸️ No repeats
+                                                </span>
+                                            }
+                                        </td>
+                                        <td>@medication.Instructions</td>
+                                        <td class="price-cell">@medication.CurrentPrice.ToString("F2")</td>
+                                        <td class="price-cell">@medication.LineTotal.ToString("F2")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+
+                        <div class="order-summary-container">
+                            <div class="summary">
+                                <p>Subtotal: R<span id="subtotal">0.00</span></p>
+                                <p>Tax (15%): R<span id="tax">0.00</span></p>
+                                <p><strong>Total Due: R</strong><span id="total">0.00</span></p>
+                            </div>
+
+                            <div class="form-group">
+                                <button type="button" class="btn-upload" onclick="showOrderSummary()" id="placeOrderBtn" disabled>
+                                    Place Order
+                                </button>
+                                <button type="button" class="btn-upload cancel" onclick="clearSelection()">
+                                    Clear Selection
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <!-- Confirmation Modal -->
+                    <div id="confirmationModal" class="modal-overlay">
+                        <div class="modal-content">
+                            <h3>✅ Confirm Medication Order</h3>
+
+                            <p><strong>Order Summary</strong></p>
+                            <table class="modal-table">
+                                <thead>
+                                    <tr>
+                                        <th>Doctor</th>
+                                        <th>Medication</th>
+                                        <th>Qty</th>
+                                        <th>Repeats</th>
+                                        <th>Price (R)</th>
+                                        <th>Total (R)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="confirmationBody"></tbody>
+                            </table>
+                            <p class="total-summary"><strong>Subtotal: R<span id="modalSubtotal">0.00</span></strong></p>
+                            <p class="total-summary"><strong>Tax (15%): R<span id="modalTax">0.00</span></strong></p>
+                            <p class="total-summary"><strong>Total Due (incl. VAT): R<span id="modalTotal">0.00</span></strong></p>
+                            <div class="modal-buttons">
+                                <button type="button" class="btn-upload" onclick="submitOrder()">Confirm Order</button>
+                                <button type="button" class="btn-upload cancel" onclick="closeConfirmation()">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </main>
+
+        <!-- Right Sidebar -->
+        <aside class="sidebar sidebar-right">
+            <div class="profile-container">
+                <div class="profile-icon" onclick="toggleProfileMenu()">
+                    <img src="~/css/img/Customer_img/Profile.png" alt="Profile" />
+                </div>
+                <div id="profileMenu" class="profile-menu hidden">
+                    <a asp-controller="CustomerDashboard" asp-action="Profile" class="sidebar-button">👤 Account</a>
+                    <a asp-controller="Home" asp-action="Index" class="sidebar-button">🚪 Logout</a>
+                </div>
+            </div>
+
+            <div class="notifications" style="background-color: #ffffff; border: 1px solid #dcdcdc; padding: 20px; border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.05); margin: 20px 0;">
+                <h4 style="font-size: 18px; margin-bottom: 15px; color: #333;">🔔 Notifications</h4>
+                <ul style="list-style-type: none; padding: 0; margin: 0;">
+                    <li style="padding: 12px 0; border-bottom: 1px solid #eee; font-size: 15px; color: #555;">
+                        🏥 You have <strong>@Model.Count medications</strong> available for ordering
+                    </li>
+                    @{
+                        var medicationsWithRepeats = Model.Count(m => m.RepeatsLeft > 0);
+                    }
+                    @if (medicationsWithRepeats > 0)
+                    {
+                        <li style="padding: 12px 0; font-size: 15px; color: #555;">
+                            🔄 <strong>@medicationsWithRepeats medications</strong> available for refills
+                        </li>
+                    }
+                </ul>
+            </div>
+        </aside>
+    </div>
+
+    <script>
+        // Update order totals based on selected medications
+        function updateTotals() {
+            const checkboxes = document.querySelectorAll('.med-check:checked');
+            let subtotal = 0;
+            const selectedItems = [];
+
+            checkboxes.forEach(cb => {
+                const price = parseFloat(cb.dataset.price || 0);
+                const quantity = parseInt(cb.dataset.quantity || 1);
+                const lineTotal = price * quantity;
+                subtotal += lineTotal;
+
+                // Get row data for confirmation modal
+                const row = cb.closest('tr');
+                const cells = row.querySelectorAll('td');
+                selectedItems.push({
+                    doctor: cells[1].textContent.trim(),
+                    medication: cells[2].textContent.trim(),
+                    quantity: cells[3].textContent.trim(),
+                    repeats: cells[4].textContent.trim(),
+                    price: price,
+                    lineTotal: lineTotal
+                });
+            });
+
+            const tax = subtotal * 0.15;
+            const total = subtotal + tax;
+
+            document.getElementById('subtotal').textContent = subtotal.toFixed(2);
+            document.getElementById('tax').textContent = tax.toFixed(2);
+            document.getElementById('total').textContent = total.toFixed(2);
+
+            // Enable/disable place order button
+            const placeOrderBtn = document.getElementById('placeOrderBtn');
+            placeOrderBtn.disabled = checkboxes.length === 0;
+
+            // Store selected items for confirmation modal
+            window.selectedOrderItems = selectedItems;
+            window.orderSubtotal = subtotal;
+            window.orderTax = tax;
+            window.orderTotal = total;
+        }
+
+        // Show order summary in modal
+        function showOrderSummary() {
+            const checkboxes = document.querySelectorAll('.med-check:checked');
+            if (checkboxes.length === 0) {
+                showOrderStatus('⚠️ Please select at least one medication.', 'error');
+                return;
+            }
+
+            const tbody = document.getElementById('confirmationBody');
+            tbody.innerHTML = '';
+
+            window.selectedOrderItems.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.doctor}</td>
+                    <td>${item.medication}</td>
+                    <td>${item.quantity}</td>
+                    <td>${item.repeats}</td>
+                    <td>${item.price.toFixed(2)}</td>
+                    <td>${item.lineTotal.toFixed(2)}</td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            // Show totals in modal
+            document.getElementById('modalSubtotal').textContent = window.orderSubtotal.toFixed(2);
+            document.getElementById('modalTax').textContent = window.orderTax.toFixed(2);
+            document.getElementById('modalTotal').textContent = window.orderTotal.toFixed(2);
+
+            // Show modal
+            document.getElementById('confirmationModal').style.display = 'flex';
+        }
+
+        // Submit the actual form
+        function submitOrder() {
+            document.getElementById('orderForm').submit();
+        }
+
+        // Close confirmation modal
+        function closeConfirmation() {
+            document.getElementById('confirmationModal').style.display = 'none';
+        }
+
+        // Clear selection
+        function clearSelection() {
+            document.querySelectorAll('.med-check').forEach(cb => {
+                cb.checked = false;
+            });
+            updateTotals();
+        }
+
+        // Show order status message
+        function showOrderStatus(message, type) {
+            const statusDiv = document.getElementById('orderStatus');
+            statusDiv.innerHTML = '';
+
+            const messageDiv = document.createElement('div');
+            messageDiv.className = type === 'success' ? 'success-message' : 'error-message';
+            messageDiv.textContent = message;
+            statusDiv.appendChild(messageDiv);
+        }
+
+        // Profile menu functions
+        function toggleProfileMenu() {
+            const menu = document.getElementById('profileMenu');
+            if (menu) {
+                menu.classList.toggle('hidden');
+            }
+        }
+
+        // Close profile menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const profileMenu = document.getElementById('profileMenu');
+            const profileIcon = document.querySelector('.profile-icon');
+
+            if (profileMenu && !profileMenu.contains(event.target) && !profileIcon.contains(event.target)) {
+                profileMenu.classList.add('hidden');
+            }
+        });
+
+        // Initialize page - update totals on load
+        document.addEventListener('DOMContentLoaded', function() {
+            updateTotals();
+        });
+    </script>
+</body>
+</html>

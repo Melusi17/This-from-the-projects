@@ -1,0 +1,1111 @@
+﻿@model IbhayiPharmacy.Models.PharmacistVM.CollectionTrackingVM
+@{
+    ViewData["Title"] = "Order Collection Tracking - Ibhayi Pharmacy";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Collection Tracking - Ibhayi Pharmacy</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ===== GLOBAL STYLES ===== */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f4f6f9;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            width: 220px;
+            background: linear-gradient(to bottom, #22586A, #22586A);
+            height: 100vh;
+            padding: 20px 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+            .sidebar.collapsed {
+                width: 70px;
+                overflow: hidden;
+            }
+
+                .sidebar.collapsed .sidebar-header h2 span,
+                .sidebar.collapsed .sidebar-nav a span,
+                .sidebar.collapsed .sidebar-footer {
+                    display: none;
+                }
+
+                .sidebar.collapsed .sidebar-header h2 {
+                    justify-content: center;
+                }
+
+                .sidebar.collapsed .sidebar-nav a {
+                    justify-content: center;
+                    padding: 10px;
+                }
+
+        .sidebar-header {
+            padding: 0 20px 20px;
+            border-bottom: 1px solid #34495e;
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar h2 {
+            font-size: 22px;
+            margin: 0;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+            .sidebar h2 i {
+                color: #3498db;
+            }
+
+        .sidebar-nav {
+            padding: 0 10px;
+        }
+
+        .sidebar a {
+            color: #ecf0f1;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 8px 0;
+            padding: 10px 15px;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+
+            .sidebar a:hover, .sidebar a.active {
+                background-color: #34495e;
+                transform: translateX(5px);
+            }
+
+        .sidebar-footer {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            padding: 0 20px;
+            font-size: 12px;
+            color: #7f8c8d;
+            transition: all 0.3s;
+        }
+
+        .toggle-sidebar {
+            position: absolute;
+            top: 20px;
+            right: -15px;
+            background: #2c3e50;
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 0 5px rgba(0,0,0,0.2);
+            z-index: 1001;
+        }
+
+        /* ===== TOPBAR ===== */
+        .topbar {
+            background-color: #ffffff;
+            height: 60px;
+            padding: 0 20px;
+            position: fixed;
+            left: 220px;
+            right: 0;
+            top: 0;
+            border-bottom: 1px solid #ccc;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 999;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar.collapsed + .topbar {
+            left: 70px;
+        }
+
+        .topbar span {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .main-content {
+            margin-left: 220px;
+            margin-top: 60px;
+            padding: 30px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar.collapsed ~ .main-content {
+            margin-left: 70px;
+        }
+
+        /* ===== STATS CARDS ===== */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+            border-left: 4px solid #3498db;
+        }
+
+        .stat-ready {
+            border-left-color: #28a745;
+        }
+
+        .stat-collected {
+            border-left-color: #17a2b8;
+        }
+
+        .stat-total {
+            border-left-color: #6c757d;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-ready .stat-number {
+            color: #28a745;
+        }
+
+        .stat-collected .stat-number {
+            color: #17a2b8;
+        }
+
+        .stat-total .stat-number {
+            color: #6c757d;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        /* ===== FILTERS AND SEARCH ===== */
+        .filter-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 10px 20px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+            .filter-btn:hover, .filter-btn.active {
+                background: #3498db;
+                color: white;
+                border-color: #3498db;
+            }
+
+        .search-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .search-bar {
+            display: flex;
+            gap: 15px;
+        }
+
+            .search-bar input {
+                flex: 1;
+                padding: 12px 15px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                font-size: 16px;
+            }
+
+            .search-bar button {
+                background-color: #3498db;
+                color: white;
+                border: none;
+                padding: 0 25px;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: background 0.2s;
+                font-weight: 500;
+            }
+
+                .search-bar button:hover {
+                    background-color: #2980b9;
+                }
+
+        /* ===== CUSTOMER CARDS ===== */
+        .customer-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .customer-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.2s;
+            border-left: 4px solid #3498db;
+        }
+
+            .customer-card:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            }
+
+            .customer-card.active {
+                background: #f0f7fc;
+                border-left: 4px solid #27ae60;
+            }
+
+        .customer-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .customer-id {
+            font-size: 13px;
+            color: #7f8c8d;
+            margin-bottom: 10px;
+        }
+
+        .order-count {
+            font-size: 12px;
+            color: #3498db;
+            margin-top: 5px;
+        }
+
+        /* ===== ORDERS LIST ===== */
+        .orders-list {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .order-card {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+            .order-card:hover {
+                background-color: #f8fafc;
+            }
+
+            .order-card.expanded {
+                background-color: #f0f7ff;
+            }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .order-number {
+            font-weight: 600;
+            font-size: 1rem;
+            color: #2c3e50;
+        }
+
+        .order-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .order-status {
+            display: inline-block;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-ready {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-collected {
+            background: #bee5eb;
+            color: #0c5460;
+        }
+
+        .order-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 15px;
+        }
+
+        .action-btn {
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .collect-btn {
+            background-color: #2ecc71;
+        }
+
+        .email-btn {
+            background-color: #3498db;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            opacity: 0.9;
+        }
+
+        .action-btn:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+            opacity: 0.6;
+        }
+
+        .order-details {
+            display: none;
+            margin-top: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #eee;
+        }
+
+            .order-details table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+
+            .order-details th {
+                background: #3498db;
+                color: white;
+                padding: 12px;
+                text-align: left;
+                font-weight: 500;
+            }
+
+            .order-details td {
+                padding: 12px;
+                border-bottom: 1px solid #eee;
+            }
+
+        .med-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .badge-s0 {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge-s1 {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .badge-s2 {
+            background: #ffeeba;
+            color: #856404;
+        }
+
+        .badge-s3 {
+            background: #bee5eb;
+            color: #0c5460;
+        }
+
+        .badge-s4 {
+            background: #f5c6cb;
+            color: #721c24;
+        }
+
+        .badge-s5 {
+            background: #c6c8ca;
+            color: #1b1e21;
+        }
+
+        .badge-s6 {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .badge-s7 {
+            background: #343a40;
+            color: white;
+        }
+
+        .no-orders {
+            text-align: center;
+            padding: 60px 40px;
+            color: #666;
+        }
+
+            .no-orders i {
+                font-size: 4rem;
+                margin-bottom: 20px;
+                color: #bdc3c7;
+            }
+
+        /* ===== ANIMATIONS ===== */
+        @@keyframes fadeIn {
+            from
+
+        {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        }
+
+        .expanded .order-details {
+            display: block;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        /* ===== LOADING SPINNER ===== */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 3px solid #3498db;
+            animation: spin 1s linear infinite;
+        }
+
+        @@keyframes spin {
+            0%
+
+        {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+
+        }
+
+        /* ===== NOTIFICATIONS ===== */
+        .notification {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 5px;
+            color: white;
+            font-weight: 500;
+            z-index: 10000;
+            transition: all 0.3s ease;
+            max-width: 300px;
+        }
+
+            .notification.success {
+                background-color: #28a745;
+            }
+
+            .notification.error {
+                background-color: #dc3545;
+            }
+    </style>
+</head>
+<body>
+    @Html.AntiForgeryToken()
+
+    <!-- SIDEBAR -->
+    <div class="sidebar" id="sidebar">
+        <button class="toggle-sidebar" onclick="toggleSidebar()">
+            <i class="fas fa-chevron-left" id="sidebarIcon"></i>
+        </button>
+        <div class="sidebar-header">
+            <h2><i class="fas fa-prescription-bottle-alt"></i> <span>Pharmacist Panel</span></h2>
+            <small style="color: #bdc3c7;">Dedicated Dictionary</small>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="@Url.Action("Index", "PharmacistDispensing")"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+            <a href="LoadPrescriptions.html"><i class="fas fa-tachometer-alt"></i> Walk In Prescription</a>
+            <a href="@Url.Action("Index", "PharmacistDispensing")"><i class="fas fa-clipboard-list"></i> Orders</a>
+            <a href="unprocessedScripts.html"><i class="fas fa-file-prescription"></i> Unprocessed Scritps</a>
+            <a href="processedScripts.html"><i class="fas fa-boxes"></i> Processed Scripts</a>
+            <a href="TrackOrders.html"><i class="fas fa-boxes"></i> Track Orders</a>
+            <a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </nav>
+        <div class="sidebar-footer">
+            <p>Ibhayi Pharmacy v2.1</p>
+        </div>
+    </div>
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+        <span>Order Collection Tracking</span>
+        <div>Welcome, <strong>Pharmacist</strong></div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <h2 style="color: #2c3e50; margin-bottom: 20px;">
+            <i class="fas fa-boxes"></i> Order Collection Tracking
+        </h2>
+
+        <!-- Stats Cards -->
+        <div class="stats-container">
+            <div class="stat-card stat-ready">
+                <div class="stat-number">@Model.ReadyForCollectionCount</div>
+                <div class="stat-label">Ready for Collection</div>
+            </div>
+            <div class="stat-card stat-collected">
+                <div class="stat-number">@Model.CollectedCount</div>
+                <div class="stat-label">Collected</div>
+            </div>
+            <div class="stat-card stat-total">
+                <div class="stat-number">@Model.TotalOrders</div>
+                <div class="stat-label">Total Orders</div>
+            </div>
+        </div>
+
+        <!-- Filters and Search -->
+        <div class="filter-container">
+            <button class="filter-btn active" onclick="filterCustomers('all')">All Customers</button>
+            <button class="filter-btn" onclick="filterCustomers('ready')">Ready for Collection</button>
+            <button class="filter-btn" onclick="filterCustomers('collected')">Collected</button>
+        </div>
+
+        <div class="search-container">
+            <div class="search-bar">
+                <input type="text" placeholder="Search by patient name or ID..." id="searchInput">
+                <button onclick="searchCustomers()"><i class="fas fa-search"></i> Search</button>
+            </div>
+        </div>
+
+        <!-- Customer Cards -->
+        <div class="customer-cards" id="customerCards">
+            @{
+                // Group orders by customer
+                var customersGrouped = Model.Orders
+                .GroupBy(o => o.CustomerID)
+                .Select(g => new
+                {
+                    Customer = g.First().Customer,
+                    Orders = g.ToList(),
+                    ReadyCount = g.Count(o => o.Status == "Ready for Collection"),
+                    CollectedCount = g.Count(o => o.Status == "Collected")
+                })
+                .ToList();
+            }
+
+            @if (!customersGrouped.Any())
+            {
+                <div class="no-orders">
+                    <i class="fas fa-box-open"></i>
+                    <h3>No Orders Found</h3>
+                    <p>There are no orders ready for collection or collected.</p>
+                </div>
+            }
+            else
+            {
+                @foreach (var customerGroup in customersGrouped)
+                {
+                    var customer = customerGroup.Customer;
+                    var orders = customerGroup.Orders;
+                    var readyCount = customerGroup.ReadyCount;
+                    var collectedCount = customerGroup.CollectedCount;
+
+                    <div class="customer-card"
+                         data-customer-id="@customer.CustormerID"
+                         data-customer-name="@customer.ApplicationUser?.Name @customer.ApplicationUser?.Surname"
+                         data-customer-idnumber="@customer.ApplicationUser?.IDNumber"
+                         data-ready-count="@readyCount"
+                         data-collected-count="@collectedCount">
+
+                        <div class="customer-name">
+                            <i class="fas fa-user"></i> @customer.ApplicationUser?.Name @customer.ApplicationUser?.Surname
+                        </div>
+                        <div class="customer-id">ID: @customer.ApplicationUser?.IDNumber</div>
+                        <div class="order-count">
+                            <span style="color: #28a745;">@readyCount Ready</span> •
+                            <span style="color: #17a2b8;">@collectedCount Collected</span> •
+                            <span style="color: #3498db;">@orders.Count Total Orders</span>
+                        </div>
+
+                        <!-- Hidden orders data -->
+                        <div class="orders-data" style="display: none;">
+                            @foreach (var order in orders)
+                            {
+                                <div class="order-item"
+                                     data-order-id="@order.OrderID"
+                                     data-order-number="@order.OrderNumber"
+                                     data-order-date="@order.OrderDate.ToString("yyyy-MM-dd")"
+                                     data-total-due="@order.TotalDue"
+                                     data-status="@order.Status"
+                                     data-pharmacist="@order.Pharmacist?.ApplicationUser?.Name"
+                                     data-vat="@order.VAT">
+                                    @foreach (var orderLine in order.OrderLines)
+                                    {
+                                        var medication = orderLine.Medications;
+                                        <div class="orderline-item"
+                                             data-medication="@medication?.MedicationName"
+                                             data-dosage="@medication?.DosageForm?.DosageFormName"
+                                             data-quantity="@orderLine.Quantity"
+                                             data-schedule="@medication?.Schedule"
+                                             data-price="@orderLine.ItemPrice"
+                                             data-instructions="@orderLine.ScriptLine?.Instructions">
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+
+        <!-- Orders List (Hidden by default) -->
+        <div class="orders-list" id="ordersList">
+            <h3 id="selectedCustomerName" style="padding: 20px; margin: 0; border-bottom: 1px solid #eee;"></h3>
+            <div id="ordersListContent">
+                <!-- Orders will be dynamically inserted here -->
+            </div>
+        </div>
+
+        <!-- NO RESULTS MESSAGE -->
+        <div class="no-results" id="noResults" style="display: none;">
+            <i class="fas fa-search" style="font-size: 24px; margin-bottom: 10px;"></i>
+            <p>No customers match your search criteria</p>
+        </div>
+    </div>
+
+    <script>
+        // Toggle sidebar
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const icon = document.getElementById('sidebarIcon');
+
+            sidebar.classList.toggle('collapsed');
+            if (sidebar.classList.contains('collapsed')) {
+                icon.classList.remove('fa-chevron-left');
+                icon.classList.add('fa-chevron-right');
+            } else {
+                icon.classList.remove('fa-chevron-right');
+                icon.classList.add('fa-chevron-left');
+            }
+        }
+
+        // Show/hide orders for selected customer
+        function showOrders(customerCard) {
+            const customerName = customerCard.getAttribute('data-customer-name');
+            const ordersList = document.getElementById('ordersList');
+            const isCurrentlyActive = customerCard.classList.contains('active');
+
+            // Remove active class from all cards
+            document.querySelectorAll('.customer-card').forEach(card => {
+                card.classList.remove('active');
+            });
+
+            // If clicking the same card that was already active, hide the orders list
+            if (isCurrentlyActive) {
+                ordersList.style.display = 'none';
+                return;
+            }
+
+            // Add active class to clicked card
+            customerCard.classList.add('active');
+
+            document.getElementById('selectedCustomerName').textContent = `Orders for ${customerName}`;
+
+            // Get orders from hidden data
+            const orderItems = customerCard.querySelectorAll('.order-item');
+            const orders = Array.from(orderItems).map(item => {
+                const orderlines = Array.from(item.querySelectorAll('.orderline-item')).map(ol => ({
+                    medication: ol.getAttribute('data-medication'),
+                    dosage: ol.getAttribute('data-dosage'),
+                    quantity: ol.getAttribute('data-quantity'),
+                    schedule: ol.getAttribute('data-schedule'),
+                    price: ol.getAttribute('data-price'),
+                    instructions: ol.getAttribute('data-instructions')
+                }));
+
+                return {
+                    orderId: item.getAttribute('data-order-id'),
+                    orderNumber: item.getAttribute('data-order-number'),
+                    orderDate: item.getAttribute('data-order-date'),
+                    totalDue: item.getAttribute('data-total-due'),
+                    status: item.getAttribute('data-status'),
+                    pharmacist: item.getAttribute('data-pharmacist'),
+                    vat: item.getAttribute('data-vat'),
+                    orderlines: orderlines
+                };
+            });
+
+            // Populate orders list
+            const ordersListContent = document.getElementById('ordersListContent');
+            ordersListContent.innerHTML = '';
+
+            if (orders.length === 0) {
+                ordersListContent.innerHTML = `
+                    <div style="padding: 40px; text-align: center; color: #95a5a6;">
+                        <i class="fas fa-box-open" style="font-size: 3rem; margin-bottom: 15px;"></i>
+                        <p>No orders found for this customer</p>
+                    </div>
+                `;
+            } else {
+                // Sort orders by date (newest first)
+                orders.sort((a, b) => new Date(b.orderDate) - new Date(a.orderDate));
+
+                orders.forEach(order => {
+                    const orderCard = document.createElement('div');
+                    orderCard.className = 'order-card';
+                    orderCard.setAttribute('data-status', order.status.toLowerCase().replace(' ', '-'));
+                    orderCard.setAttribute('data-order-id', order.orderId);
+
+                    // Format date
+                    let formattedDate = 'Invalid Date';
+                    try {
+                        const orderDate = new Date(order.orderDate);
+                        if (!isNaN(orderDate)) {
+                            formattedDate = `${orderDate.getDate().toString().padStart(2, '0')}/${(orderDate.getMonth() + 1).toString().padStart(2, '0')}/${orderDate.getFullYear()}`;
+                        }
+                    } catch (e) {
+                        console.error('Date parsing error:', e);
+                    }
+
+                    orderCard.innerHTML = `
+                        <div class="order-header">
+                            <div>
+                                <div class="order-number">
+                                    <i class="fas fa-receipt"></i> ${order.orderNumber || 'N/A'}
+                                </div>
+                                <div class="order-meta">
+                                    <span><i class="fas fa-calendar"></i> ${formattedDate}</span>
+                                    <span><i class="fas fa-money-bill"></i> ${order.totalDue || 'N/A'}</span>
+                                    <span><i class="fas fa-user-md"></i> ${order.pharmacist || 'N/A'}</span>
+                                </div>
+                            </div>
+                            <span class="order-status ${order.status === 'Ready for Collection' ? 'status-ready' : 'status-collected'}">
+                                <i class="fas ${order.status === 'Ready for Collection' ? 'fa-box' : 'fa-check-circle'}"></i>
+                                ${order.status}
+                            </span>
+                        </div>
+
+                        <div class="order-actions">
+                            <button class="action-btn email-btn" onclick="sendCollectionEmail(${order.orderId}, this)">
+                                <i class="fas fa-envelope"></i> Email Patient
+                            </button>
+                            ${order.status === 'Ready for Collection' ? `
+                                <button class="action-btn collect-btn" onclick="markAsCollected(${order.orderId}, this)">
+                                    <i class="fas fa-check"></i> Mark as Collected
+                                </button>
+                            ` : ''}
+                        </div>
+
+                        <div class="order-details">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Medication</th>
+                                        <th>Dosage Form</th>
+                                        <th>Qty</th>
+                                        <th>Schedule</th>
+                                        <th>Price (ZAR)</th>
+                                        <th>Instructions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${order.orderlines.map(ol => `
+                                        <tr>
+                                            <td><strong>${ol.medication || 'N/A'}</strong></td>
+                                            <td>${ol.dosage || 'N/A'}</td>
+                                            <td>${ol.quantity || 'N/A'}</td>
+                                            <td>
+                                                <span class="med-badge badge-s${ol.schedule?.charAt(ol.schedule.length - 1) || '0'}">
+                                                    S${ol.schedule?.charAt(ol.schedule.length - 1) || '0'}
+                                                </span>
+                                            </td>
+                                            <td>R ${parseFloat(ol.price || 0).toFixed(2)}</td>
+                                            <td>${ol.instructions || 'Take as directed'}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                            <div style="margin-top: 15px; padding: 15px; background: #f8f9fa; border-radius: 5px; border-left: 4px solid #3498db;">
+                                <strong>Total: ${order.totalDue || 'N/A'}</strong> |
+                                <strong>VAT: ${order.vat || 'N/A'}%</strong> |
+                                <strong>Dispensed by: ${order.pharmacist || 'N/A'}</strong>
+                            </div>
+                        </div>
+                    `;
+                    ordersListContent.appendChild(orderCard);
+                });
+
+                // Add click event to order cards for expanding details
+                ordersListContent.querySelectorAll('.order-card').forEach(card => {
+                    card.addEventListener('click', function(e) {
+                        if (!e.target.classList.contains('action-btn')) {
+                            this.classList.toggle('expanded');
+                        }
+                    });
+                });
+            }
+
+            // Show orders list
+            ordersList.style.display = 'block';
+            document.getElementById('noResults').style.display = 'none';
+        }
+
+        // Filter customers by status
+        function filterCustomers(status) {
+            // Update active filter button
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            const customerCards = document.querySelectorAll('.customer-card');
+
+            customerCards.forEach(card => {
+                const readyCount = parseInt(card.getAttribute('data-ready-count'));
+                const collectedCount = parseInt(card.getAttribute('data-collected-count'));
+
+                if (status === 'all') {
+                    card.style.display = 'block';
+                } else if (status === 'ready' && readyCount > 0) {
+                    card.style.display = 'block';
+                } else if (status === 'collected' && collectedCount > 0) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // Search customers
+        function searchCustomers() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const customerCards = document.querySelectorAll('.customer-card');
+            let hasVisibleCards = false;
+
+            customerCards.forEach(card => {
+                const customerName = card.getAttribute('data-customer-name').toLowerCase();
+                const customerId = card.getAttribute('data-customer-idnumber').toLowerCase();
+                const shouldShow = customerName.includes(searchTerm) || customerId.includes(searchTerm);
+
+                card.style.display = shouldShow ? 'block' : 'none';
+                if (shouldShow) hasVisibleCards = true;
+            });
+
+            document.getElementById('noResults').style.display = hasVisibleCards ? 'none' : 'block';
+            document.getElementById('ordersList').style.display = 'none';
+        }
+
+        // Mark order as collected
+        async function markAsCollected(orderId, button) {
+            console.log('Marking order as collected:', orderId);
+
+            const card = button.closest('.order-card');
+            const originalText = button.innerHTML;
+
+            // Show loading state
+            button.innerHTML = '<div class="loading"></div> Processing...';
+            button.disabled = true;
+
+            try {
+                const response = await fetch('@Url.Action("MarkAsCollected", "PharmacistDispensing")', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                    },
+                    body: JSON.stringify({ orderId: orderId })
+                });
+
+                const result = await response.json();
+                console.log('Server response:', result);
+
+                if (result.success) {
+                    // Update UI
+                    card.dataset.status = 'collected';
+                    const statusElement = card.querySelector('.order-status');
+                    statusElement.className = 'order-status status-collected';
+                    statusElement.innerHTML = '<i class="fas fa-check-circle"></i> Collected';
+
+                    // Remove the collect button
+                    button.remove();
+
+                    // Show success message
+                    showNotification(result.message, 'success');
+
+                    // Update stats
+                    updateStats();
+                } else {
+                    showNotification(result.message, 'error');
+                    button.innerHTML = originalText;
+                    button.disabled = false;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showNotification('Error marking order as collected', 'error');
+                button.innerHTML = originalText;
+                button.disabled = false;
+            }
+        }
+
+        // Send collection email
+        async function sendCollectionEmail(orderId, button) {
+            console.log('Sending email for order:', orderId);
+
+            const originalText = button.innerHTML;
+
+            // Show loading state
+            button.innerHTML = '<div class="loading"></div> Sending...';
+            button.disabled = true;
+
+            try {
+                const response = await fetch('@Url.Action("SendCollectionEmail", "PharmacistDispensing")', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                    },
+                    body: JSON.stringify({ orderId: orderId })
+                });
+
+                const result = await response.json();
+                console.log('Email response:', result);
+
+                if (result.success) {
+                    showNotification(result.message, 'success');
+                } else {
+                    showNotification(result.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showNotification('Error sending email', 'error');
+            } finally {
+                button.innerHTML = originalText;
+                button.disabled = false;
+            }
+        }
+
+        // Update stats (simplified)
+        function updateStats() {
+            const readyCards = document.querySelectorAll('.order-card[data-status="ready-for-collection"]');
+            const collectedCards = document.querySelectorAll('.order-card[data-status="collected"]');
+            const totalCards = document.querySelectorAll('.order-card');
+
+            document.querySelector('.stat-ready .stat-number').textContent = readyCards.length;
+            document.querySelector('.stat-collected .stat-number').textContent = collectedCards.length;
+            document.querySelector('.stat-total .stat-number').textContent = totalCards.length;
+        }
+
+        // Notification system
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.remove();
+            }, 5000);
+        }
+
+        // Make search work on Enter key
+        document.getElementById('searchInput').addEventListener('keyup', function(event) {
+            if (event.key === 'Enter') {
+                searchCustomers();
+            }
+        });
+
+        // Add click event listeners to customer cards
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.customer-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    showOrders(this);
+                });
+            });
+
+            // Auto-click the first customer card if available
+            const firstCustomerCard = document.querySelector('.customer-card');
+            if (firstCustomerCard) {
+                firstCustomerCard.click();
+            }
+        });
+    </script>
+</body>
+</html>

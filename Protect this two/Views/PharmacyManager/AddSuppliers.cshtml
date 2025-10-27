@@ -1,0 +1,40 @@
+﻿@model Supplier
+@{
+    ViewData["Title"] = "Add Supplier";
+    Layout = "~/Views/Shared/_ManagerLayout.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="card mb-4">
+        <div class="card-header">Add New Supplier</div>
+        <div class="card-body">
+            <form asp-action="AddSuppliers" asp-controller="Pharmacy" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="mb-3">
+                    <label asp-for="SupplierName" class="form-label"></label>
+                    <input asp-for="SupplierName" class="form-control" placeholder="e.g. MedLife Distributors" />
+                    <span asp-validation-for="SupplierName" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="ContactName" class="form-label"></label>
+                    <input asp-for="ContactName" class="form-control" placeholder="e.g. Jane" />
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="ContactSurname" class="form-label"></label>
+                    <input asp-for="ContactSurname" class="form-control" placeholder="e.g. Doe" />
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="EmailAddress" class="form-label"></label>
+                    <input asp-for="EmailAddress" type="email" class="form-control" placeholder="e.g. jane.doe@medlife.co.za" />
+                    <span asp-validation-for="EmailAddress" class="text-danger"></span>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Add Supplier</button>
+            </form>
+        </div>
+    </div>
+</div>

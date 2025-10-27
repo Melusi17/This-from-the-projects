@@ -1,0 +1,216 @@
+﻿@{
+    ViewData["Title"] = "Update Profile";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Update Profile</title>
+    <link rel="stylesheet" href="~/css/Customer/Register.css" />
+    <style>
+        /* Extra styling for buttons */
+        .form-actions {
+            display: flex;
+            justify-content: flex-start;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+            .form-actions button {
+                flex: 1;
+                padding: 12px 0;
+                border: none;
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 16px;
+                font-weight: 500;
+                transition: background-color 0.2s ease, transform 0.2s ease;
+            }
+
+                .form-actions button[type="submit"] {
+                    background-color: #28a745; /* Green */
+                    color: white;
+                }
+
+                .form-actions button[type="button"] {
+                    background-color: #dc3545; /* Red */
+                    color: white;
+                }
+
+                .form-actions button:hover {
+                    opacity: 0.9;
+                    transform: translateY(-1px);
+                }
+
+        /* Password error highlight */
+        .input-error {
+            border: 2px solid red;
+        }
+
+        /* Password wrapper with eye icon */
+        .password-wrapper {
+            position: relative;
+            margin-bottom: 10px;
+        }
+
+            .password-wrapper input {
+                width: 100%;
+                padding-right: 40px; /* Space for eye icon */
+            }
+
+            .password-wrapper .toggle-password {
+                position: absolute;
+                right: 10px; /* align to right */
+                top: 50%;
+                transform: translateY(-50%);
+                cursor: pointer;
+                border: none;
+                background: none;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 0;
+            }
+
+                .password-wrapper .toggle-password svg {
+                    width: 20px;
+                    height: 20px;
+                    fill: #555;
+                }
+
+                .password-wrapper .toggle-password:hover svg {
+                    fill: #007bff;
+                }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <h2>Update Profile</h2>
+        <form id="updateProfileForm" method="post" action="/Customer/UpdateProfile">
+            <!-- Static (non-editable) fields -->
+            <input type="text" name="name" value="John" placeholder="Name" readonly />
+            <input type="text" name="surname" value="Doe" placeholder="Surname" readonly />
+            <input type="text" name="idNumber" value="9001015009087" placeholder="ID Number" readonly />
+
+            <!-- Editable fields -->
+            <input type="tel" name="cellphone" value="0721234567" placeholder="Cellphone Number" required maxlength="10" pattern="[0-9]{10}" title="Enter a 10-digit phone number" />
+            <input type="email" name="email" value="john.doe@email.com" placeholder="Email Address" required />
+
+            <!-- Change Password Section -->
+            <button type="button" id="togglePasswordBtn" class="change-password-btn">Change Password</button>
+
+            <div id="passwordSection" class="password-section hidden">
+                <div class="password-wrapper">
+                    <input type="password" id="password" name="password" placeholder="New Password" />
+                    <button type="button" class="toggle-password" data-target="password" aria-label="Toggle Password Visibility">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M12 5c-7 0-11 7-11 7s4 7 11 7 11-7 11-7-4-7-11-7zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10z" />
+                            <circle cx="12" cy="12" r="2.5" />
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="password-wrapper">
+                    <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password" />
+                    <button type="button" class="toggle-password" data-target="confirmPassword" aria-label="Toggle Password Visibility">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M12 5c-7 0-11 7-11 7s4 7 11 7 11-7 11-7-4-7-11-7zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10z" />
+                            <circle cx="12" cy="12" r="2.5" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Allergy Section -->
+            <div class="allergy-section">
+                <select id="allergySelect">
+                    <option value="" disabled selected hidden>Select an allergy</option>
+                    <option value="Penicillin">Penicillin</option>
+                    <option value="Aspirin">Aspirin</option>
+                    <option value="Latex">Latex</option>
+                    <option value="Peanuts">Peanuts</option>
+                    <option value="Shellfish">Shellfish</option>
+                    <option value="None">None</option>
+                </select>
+
+                <button type="button" id="addAllergyBtn" class="add-allergy-btn">Add Allergy</button>
+
+                <!-- Preloaded Allergies -->
+                <ul id="allergyCart" class="allergy-cart">
+                    <li>Peanuts</li>
+                    <li>Latex</li>
+                </ul>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="form-actions">
+                <button type="submit" id="updateBtn">Update</button>
+                <button type="button" id="cancelBtn">Cancel</button>
+            </div>
+        </form>
+
+        <!-- Confirmation Modal -->
+        <div id="updateConfirmationModal" class="modal hidden">
+            <div class="modal-content">
+                <h2>Profile Updated!</h2>
+                <p>Your profile has been successfully updated.</p>
+                <a href="/Customer/uploadPrescription" class="login-link">Back to Login</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Toggle password section
+        document.getElementById("togglePasswordBtn").addEventListener("click", function () {
+            const section = document.getElementById("passwordSection");
+            section.classList.toggle("hidden");
+        });
+
+        // Show/Hide password with right-aligned SVG
+        document.querySelectorAll(".toggle-password").forEach(button => {
+            button.addEventListener("click", function() {
+                const targetId = this.getAttribute("data-target");
+                const input = document.getElementById(targetId);
+                input.type = input.type === "password" ? "text" : "password";
+            });
+        });
+
+        // Form submission with password matching validation
+        document.getElementById("updateProfileForm").addEventListener("submit", function(event) {
+            const passwordField = document.getElementById("password");
+            const confirmPasswordField = document.getElementById("confirmPassword");
+
+            // Remove previous error highlights
+            passwordField.classList.remove("input-error");
+            confirmPasswordField.classList.remove("input-error");
+
+            if (passwordField.value || confirmPasswordField.value) {
+                if (passwordField.value !== confirmPasswordField.value) {
+                    passwordField.classList.add("input-error");
+                    confirmPasswordField.classList.add("input-error");
+                    alert("Passwords do not match. Please re-enter.");
+                    event.preventDefault();
+                    return;
+                }
+            }
+
+            const confirmUpdate = confirm("Are you sure you want to update your profile?");
+            if (!confirmUpdate) {
+                event.preventDefault();
+            }
+        });
+
+        // Cancel confirmation
+        document.getElementById("cancelBtn").addEventListener("click", function() {
+            const confirmCancel = confirm("Are you sure you want to cancel? Unsaved changes will be lost.");
+            if (confirmCancel) {
+                window.location.href = '/Customer/Profile';
+            }
+        });
+    </script>
+
+    <script src="~/js/Customer/Register.js"></script>
+</body>
+</html>

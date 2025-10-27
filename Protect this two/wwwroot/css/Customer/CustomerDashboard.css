@@ -1,0 +1,734 @@
+﻿/* General Body Style */
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #f4f6f9;
+    overflow: hidden;
+}
+
+/* Dashboard Layout */
+.dashboard-wrapper {
+    display: flex;
+    height: 100vh;
+}
+
+/* Shared Sidebar Styles */
+.sidebar {
+    width: 220px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.05);
+}
+
+/* Left Sidebar */
+.sidebar-left {
+    background: linear-gradient(to bottom, #22586A, #22586A);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* vertical centering */
+    align-items: center;
+    height: 100vh;
+    padding: 10px;
+}
+
+    .sidebar-left ul a{
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .sidebar-left li a {
+        display: block;
+        padding: 1rem 2rem;
+        color: white;
+        text-decoration: none;
+        transition: 0.3s;
+    }
+
+        .sidebar-left li a:hover {
+            background-color: rgba(244, 246, 246, 0.15);
+            transform: translateX(5px);
+        }
+
+.logo-container {
+    text-align: center;
+    margin-bottom: 0px;
+}
+
+.logo {
+    width: 200px;
+    height: auto;
+}
+
+.sidebar-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* vertical centering */
+    align-items: center; /* horizontal centering */
+}
+
+    .sidebar-content ul {
+        list-style: none;
+        padding: 0;
+    }
+
+    .sidebar-content li {
+        margin: 10px 0;
+        font-size: 16px;
+    }
+/* Main Content */
+.main-content {
+    flex: 1;
+    padding: 30px;
+    overflow-y: auto;
+}
+
+/* Welcome Panel */
+.welcome-panel {
+    background: white;
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.07);
+}
+
+/* Right Sidebar */
+.sidebar-right {
+    background: linear-gradient(145deg, #ffffff, #f0f0f0);
+    border-top-left-radius: 30px;
+    border-bottom-left-radius: 30px;
+    border-left: 1px solid #ddd;
+}
+
+.profile-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    margin-bottom: 30px;
+}
+
+.profile-icon img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 3px solid #1f9f77;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    transition: transform 0.2s;
+}
+
+    .profile-icon img:hover {
+        transform: scale(1.05);
+    }
+
+.profile-menu {
+    position: absolute;
+    top: 70px;
+    right: 0;
+    background: #fff;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    padding: 10px;
+    border-radius: 8px;
+    width: 160px;
+    z-index: 10;
+}
+
+    .profile-menu a {
+        display: block;
+        padding: 8px;
+        color: #333;
+        text-decoration: none;
+        border-radius: 5px;
+    }
+
+        .profile-menu a:hover {
+            background-color: #eaeaea;
+        }
+
+.notifications {
+    border-top: 0px solid #eee;
+    padding-top: 50px;
+}
+
+    .notifications h4 {
+        margin-top: 20;
+        color: #444;
+    }
+
+.hidden {
+    display: none;
+}
+
+.sidebar-right {
+    width: 180px; /* Adjust this value to reduce the sidebar width */
+    background: linear-gradient(145deg, #ffffff, #f0f0f0);
+    border-left: 1px solid #ddd;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 20px;
+    box-shadow: -4px 0 10px rgba(0, 0, 0, 0.03);
+    border-top-left-radius: 30px;
+    border-bottom-left-radius: 30px;
+}
+
+.upload-prescription-panel {
+    background: white;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.07);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+    .upload-prescription-panel h2 {
+        margin-bottom: 20px;
+        color: #1f9f77;
+    }
+
+    .upload-prescription-panel input,
+    .upload-prescription-panel textarea {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 14px;
+    }
+
+.btn-upload {
+    background-color: #1f9f77;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+    .btn-upload:hover {
+        background-color: #28bf96;
+    }
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.inline-fields {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+    .inline-fields input[type="text"],
+    .inline-fields input[type="date"] {
+        flex: 1;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        font-size: 14px;
+    }
+
+input[type="file"] {
+    margin-bottom: 15px;
+    font-size: 14px;
+}
+
+.btn-upload {
+    background-color: #1f9f77;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    font-size: 15px;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+    .btn-upload:hover {
+        background-color: #28bf96;
+    }
+/* Panel styling */
+.upload-prescription-panel {
+    background-color: #f8f9fa;
+    border: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 30px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.05);
+
+    width: 90%;               /* Custom width, adjust as needed */
+    max-width: 1200px;        /* Set a max width */
+    height: auto;             /* or set fixed height like 600px */
+    padding: 40px 30px;       /* More spacing inside the panel */
+    margin: 20px auto;   
+}
+
+    .upload-prescription-panel h2 {
+        margin-bottom: 20px;
+        font-size: 24px;
+        color: #00796b;
+    }
+
+    /* Form styling */
+    .upload-prescription-panel form {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+.inline-fields {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+    .inline-fields input[type="date"],
+    .inline-fields input[type="text"] {
+        flex: 1;
+        padding: 10px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        font-size: 14px;
+    }
+
+input[type="file"] {
+    padding: 6px;
+    font-size: 14px;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+}
+
+.btn-upload {
+    background-color: #00796b;
+    color: white;
+    padding: 10px;
+    border-radius: 6px;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+    .btn-upload:hover {
+        background-color: #00695c;
+    }
+
+.prescription-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    font-size: 14px;
+}
+
+    .prescription-table th,
+    .prescription-table td {
+        padding: 12px 15px;
+        border: 1px solid #ccc;
+        text-align: left;
+    }
+
+    .prescription-table th {
+        background-color: #e0f2f1;
+        color: #004d40;
+    }
+
+    .prescription-table tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    .prescription-table button {
+        background-color: #1f9f77;
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 5px;
+        font-size: 13px;
+        cursor: pointer;
+        margin-right: 5px;
+    }
+
+        .prescription-table button:hover {
+            background-color: #28bf96;
+        }
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: white;
+    padding: 30px;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 700px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+}
+
+    .modal-content h2 {
+        color: #1f9f77;
+        margin-bottom: 20px;
+    }
+
+.total-summary {
+    margin-top: 20px;
+    font-size: 16px;
+}
+
+.order-tracker {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.order-card {
+    border: 1px solid #ccc;
+    background: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.tracker {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+}
+
+.step {
+    flex: 1;
+    text-align: center;
+    padding: 10px;
+    border-radius: 10px;
+    background: #eee;
+    color: #777;
+    position: relative;
+    font-weight: bold;
+}
+
+    .step::after {
+        content: '';
+        position: absolute;
+        right: -50%;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 100%;
+        height: 4px;
+        background: #ccc;
+        z-index: -1;
+    }
+
+    .step:last-child::after {
+        display: none;
+    }
+
+    .step.completed {
+        background: #1f9f77;
+        color: white;
+    }
+
+        .step.completed::after {
+            background: #1f9f77;
+        }
+
+    .step.active {
+        background: #ffc107;
+        color: white;
+    }
+
+.status-tracker {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 14px;
+}
+
+.status {
+    padding: 4px 8px;
+    border-radius: 6px;
+    background: #e0e0e0;
+    color: #555;
+    font-weight: 500;
+}
+
+    .status.done {
+        background: #1f9f77;
+        color: white;
+    }
+
+    .status.current {
+        background: #ffc107;
+        color: black;
+    }
+
+.track-order-panel {
+    background: white;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.07);
+    max-width: 800px;
+    margin: 0 auto;
+    font-family: Arial, sans-serif;
+}
+
+    .track-order-panel h2 {
+        margin-bottom: 20px;
+        font-size: 24px;
+        color: #00796b;
+    }
+
+.prescription-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+    .prescription-table th, .prescription-table td {
+        padding: 12px;
+        text-align: center;
+        border: 1px solid #ddd;
+    }
+
+    .prescription-table th {
+        background-color: #1f9f77;
+        color: white;
+    }
+
+.status-tracker {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.status {
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+    .status.ordered {
+        background-color: #1f9f77;
+        color: white;
+    }
+
+    .status.packed {
+        background-color: #ffc107;
+        color: white;
+    }
+
+    .status.ready {
+        background-color: #00bcd4;
+        color: white;
+    }
+
+    .status.collected {
+        background-color: #28a745;
+        color: white;
+    }
+
+    .status:hover {
+        cursor: pointer;
+        opacity: 0.8;
+    }
+
+    .status.current {
+        background-color: #00796b;
+    }
+
+    .status[title] {
+        cursor: help;
+    }
+
+.btn-upload {
+    background-color: #1f9f77;
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    font-size: 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+    .btn-upload:hover {
+        background-color: #28bf96;
+    }
+
+.order-section {
+    background: #ffffff;
+    border: 1px solid #ccc;
+    padding: 20px;
+    margin-bottom: 25px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+label {
+    font-weight: 600;
+    display: block;
+    margin-top: 10px;
+}
+
+select,
+input[type="number"] {
+    padding: 8px;
+    width: 100%;
+    margin: 8px 0 16px;
+    border: 1px solid #bbb;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+.add-button {
+    background-color: #1f9f77;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+    .add-button:hover {
+        background-color: #28bf96;
+    }
+
+.summary {
+    margin-top: 30px;
+    padding: 20px;
+    background-color: #e6f5f1;
+    border-left: 4px solid #1f9f77;
+    border-radius: 8px;
+}
+
+.order-item {
+    margin-bottom: 10px;
+}
+
+.submit-button {
+    margin-top: 20px;
+    background-color: #1f9f77;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+    .submit-button:hover {
+        background-color: #28bf96;
+    }
+
+.order-container {
+    background: white;
+    padding: 20px 30px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+label {
+    display: block;
+    margin: 10px 0;
+}
+
+.doctor-checkboxes label {
+    margin-right: 20px;
+}
+
+.doctor-section {
+    margin-top: 30px;
+    border-top: 2px solid #ccc;
+    padding-top: 20px;
+}
+
+.medication-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+    .medication-table th, .medication-table td {
+        border: 1px solid #ccc;
+        padding: 8px;
+        text-align: center;
+    }
+
+.summary {
+    font-size: 16px;
+    margin-top: 20px;
+}
+
+button {
+    background-color: #1f9f77;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-top: 20px;
+}
+
+    button:hover {
+        background-color: #28bf96;
+    }
+
+.sidebar-button-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.sidebar-button {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 15px 25px;
+    margin: 5px 0;
+    background: transparent;
+    color: white;
+    font-weight: bold;
+    text-decoration: none;
+    border: none;
+    border-radius: 25px 0 0 25px;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+    font-size: 16px;
+}
+
+    .sidebar-button:hover {
+        background-color: rgba(255, 255, 255, 0.15);
+        transform: translateX(5px);
+        color: #e0f7f5;
+    }

@@ -1,0 +1,78 @@
+﻿@model Pharmacist
+
+@{
+    ViewData["Title"] = "Add Pharmacist";
+    Layout = "~/Views/Shared/_ManagerLayout.cshtml";
+}
+
+<div class="card p-3 mt-4">
+    <h5 class="title-underline">Add New Pharmacist</h5>
+    <div class="card-body">
+        <form asp-action="AddPharmacists" method="post">
+            @Html.AntiForgeryToken()
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="ApplicationUser.Name" class="form-label">First Name</label>
+                    <input asp-for="ApplicationUser.Name" class="form-control" placeholder="e.g. Thuli" />
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label asp-for="ApplicationUser.Surname" class="form-label">Surname</label>
+                    <input asp-for="ApplicationUser.Surname" class="form-control" placeholder="e.g. Mthembu" />
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="ApplicationUser.IDNumber" class="form-label">ID Number</label>
+                <input asp-for="ApplicationUser.IDNumber" class="form-control" placeholder="e.g. 9001234567890" />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="ApplicationUser.PhoneNumber" class="form-label">Cellphone Number</label>
+                <input asp-for="ApplicationUser.PhoneNumber" class="form-control" placeholder="e.g. 082 123 4567" />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="HealthCouncilRegNo" class="form-label">Health Council Reg. Number</label>
+                <input asp-for="HealthCouncilRegNo" class="form-control" placeholder="e.g. HCR-000123" />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="ApplicationUser.Email" class="form-label">Email Address</label>
+                <input asp-for="ApplicationUser.Email" class="form-control" placeholder="e.g. thuli.m@pharmacy.co.za" />
+            </div>
+
+            <!-- Auto-generated password field -->
+            <div class="mb-3">
+                <label class="form-label">Initial Password</label>
+                <div class="input-group">
+                    <input type="text" id="generatedPassword" name="GeneratedPassword" class="form-control" readonly>
+                    <button type="button" class="btn btn-outline-secondary" onclick="generatePassword()">Regenerate</button>
+                </div>
+                <small class="text-muted">Password will be auto-generated and sent to the pharmacist.</small>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Add Pharmacist</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        // Function to generate a secure random password
+        function generatePassword() {
+            const length = 10;
+            const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!#$%^&*()";
+            let password = "";
+            for (let i = 0, n = charset.length; i < length; ++i) {
+                password += charset.charAt(Math.floor(Math.random() * n));
+            }
+            document.getElementById("generatedPassword").value = password;
+        }
+
+        // Generate one on page load
+        document.addEventListener("DOMContentLoaded", generatePassword);
+    </script>
+}
